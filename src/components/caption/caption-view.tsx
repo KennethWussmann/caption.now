@@ -11,7 +11,7 @@ export const CaptionView = () => {
   return (
     <div className="relative flex flex-col h-full gap-4">
       <div className="flex flex-grow">
-        <div className="flex-grow flex items-center justify-center overflow-hidden">
+        <div className="flex-grow w-full h-full flex items-center justify-center overflow-hidden">
           <ImageViewer image={imageFile} />
         </div>
 

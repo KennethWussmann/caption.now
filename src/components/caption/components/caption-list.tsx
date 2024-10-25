@@ -15,6 +15,7 @@ import { CaptionListItem } from "./caption-list-item";
 import { CaptionListFooter } from "./caption-list-footer";
 import { useImageCaption } from "@/lib/image-caption-provider";
 import { AnimatedGroup } from "@/components/ui/animation/animated-group";
+import { useEffect, useRef } from "react";
 
 export const CaptionList = () => {
   const { caption, handleDragEnd } = useImageCaption();
@@ -24,6 +25,22 @@ export const CaptionList = () => {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+  const partRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const lastLength = useRef(0);
+
+  useEffect(() => {
+    const lastPart = caption.parts[caption.parts.length - 1];
+    if (caption.parts.length === lastLength.current) {
+      return;
+    }
+    if (caption.parts.length > 0 && lastPart && partRefs.current[lastPart.id]) {
+      partRefs.current[lastPart.id]?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+      lastLength.current = caption.parts.length;
+    }
+  }, [caption.parts]);
 
   return (
     <div className="border-l ml-2 h-full flex flex-col">
@@ -43,7 +60,11 @@ export const CaptionList = () => {
           >
             <AnimatedGroup preset="blur-slide" className="flex flex-col gap-2">
               {caption.parts.map((item) => (
-                <CaptionListItem key={item.id} part={item} />
+                <CaptionListItem
+                  key={item.id}
+                  part={item}
+                  ref={(el) => (partRefs.current[item.id] = el)}
+                />
               ))}
             </AnimatedGroup>
           </SortableContext>

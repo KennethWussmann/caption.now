@@ -12,8 +12,13 @@ import { useSortable } from "@dnd-kit/sortable";
 import clsx from "clsx";
 import { CaptionPart } from "@/lib/types";
 import { useImageCaption } from "@/lib/image-caption-provider";
+import { forwardRef, useImperativeHandle, useRef } from "react";
+import { motion } from "framer-motion";
 
-export const CaptionListItem = ({ part }: { part: CaptionPart }) => {
+export const CaptionListItem = forwardRef<
+  HTMLDivElement,
+  { part: CaptionPart }
+>(({ part }, ref) => {
   const { enterEditMode, isEditing, deletePart } = useImageCaption();
   const isCurrentItemEditing = isEditing?.id === part.id;
   const {
@@ -30,58 +35,70 @@ export const CaptionListItem = ({ part }: { part: CaptionPart }) => {
     ? `${transition}, ${customTransitions}`
     : customTransitions;
 
+  const localRef = useRef<HTMLDivElement | null>(null);
+
+  useImperativeHandle(ref, () => localRef.current!);
+
   return (
-    <Card
-      className={clsx(
-        "flex justify-between align-middle items-center gap-2 p-1 pl-4 ml-4",
-        {
-          "border-blue-600 border-2 border-dashed bg-blue-50 dark:bg-blue-600 dark:bg-opacity-40":
-            isCurrentItemEditing,
-        }
-      )}
-      style={{
-        transform: CSS.Transform.toString({
-          x: 0,
-          y: transform?.y ?? 0,
-          scaleX: transform?.scaleX ?? 1,
-          scaleY: transform?.scaleY ?? 1,
-        }),
-        transition: finalTransition,
-        boxShadow: isDragging ? "0px 8px 16px rgba(0,0,0,0.2)" : "none",
-        zIndex: isDragging ? 10 : undefined,
-      }}
-      ref={setNodeRef}
-      onDoubleClick={() => enterEditMode(part)}
-      {...attributes}
-      {...listeners}
+    <motion.div
+      initial={{ opacity: 0, filter: "blur(4px)", y: 20 }}
+      animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
     >
-      <div className="flex flex-row gap-4 items-center">
-        {isCurrentItemEditing && (
-          <Pencil className="h-5 w-5 text-blue-600 dark:text-blue-200" />
+      <Card
+        className={clsx(
+          "flex justify-between align-middle items-center gap-2 p-1 pl-4 ml-4",
+          {
+            "border-blue-600 border-2 border-dashed bg-blue-50 dark:bg-blue-600 dark:bg-opacity-40":
+              isCurrentItemEditing,
+          }
         )}
-        {part.text}
-      </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <EllipsisVerticalIcon className="h-5 w-5" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className="w-30"
-          align="end"
-          onPointerDown={(e) => e.stopPropagation()}
-        >
-          <DropdownMenuItem onClick={() => deletePart(part.id)}>
-            <Trash />
-            <span>Delete</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => enterEditMode(part)}>
-            <Pencil />
-            <span>Edit</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </Card>
+        style={{
+          transform: CSS.Transform.toString({
+            x: 0,
+            y: transform?.y ?? 0,
+            scaleX: transform?.scaleX ?? 1,
+            scaleY: transform?.scaleY ?? 1,
+          }),
+          transition: finalTransition,
+          boxShadow: isDragging ? "0px 8px 16px rgba(0,0,0,0.2)" : "none",
+          zIndex: isDragging ? 10 : undefined,
+        }}
+        ref={(node) => {
+          setNodeRef(node);
+          localRef.current = node!;
+        }}
+        onDoubleClick={() => enterEditMode(part)}
+        {...attributes}
+        {...listeners}
+      >
+        <div className="flex flex-row gap-4 items-center">
+          {isCurrentItemEditing && (
+            <Pencil className="h-5 w-5 text-blue-600 dark:text-blue-200" />
+          )}
+          {part.text}
+        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <EllipsisVerticalIcon className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-30"
+            align="end"
+            onPointerDown={(e) => e.stopPropagation()}
+          >
+            <DropdownMenuItem onClick={() => deletePart(part.id)}>
+              <Trash />
+              <span>Delete</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => enterEditMode(part)}>
+              <Pencil />
+              <span>Edit</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </Card>
+    </motion.div>
   );
-};
+});
