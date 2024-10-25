@@ -23,8 +23,8 @@ export const CaptionInput = ({ editing = true }: { editing?: boolean }) => {
           {editing && <EditBanner />}
           <Input
             type="text"
-            className={clsx({ "rounded-t-none": editing })}
-            placeholder="Write one sentence ..."
+            className={clsx("h-14 pl-4 text-xl", { "rounded-t-none": editing })}
+            placeholder={editing ? "Edit caption ..." : "Write a sentence ..."}
           />
         </div>
       </div>

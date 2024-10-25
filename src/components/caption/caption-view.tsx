@@ -10,7 +10,7 @@ export const CaptionView = () => {
           <ImageViewer />
         </div>
 
-        <div className="w-2/4 h-full flex flex-col">
+        <div className="w-1/3 h-full flex flex-col">
           <div className="flex-grow overflow-y-auto">
             <CaptionList />
           </div>
