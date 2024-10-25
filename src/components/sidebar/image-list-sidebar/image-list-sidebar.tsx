@@ -7,15 +7,16 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { AppSidebarHeader } from "./app-sidebar-header";
+import { AppSidebarHeader } from "../app-sidebar-header";
+import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
+import { ImageListItem } from "./image-list-item";
 
 export function ImageListSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
+  const { imageFiles } = useDatasetDirectory();
   return (
     <Sidebar {...props}>
       <AppSidebarHeader />
@@ -24,11 +25,9 @@ export function ImageListSidebar({
           <SidebarGroupLabel>Images</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive>
-                  <a href="#">cute_cat.jpg</a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {imageFiles.map((imageFile) => (
+                <ImageListItem key={imageFile.name} image={imageFile} />
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

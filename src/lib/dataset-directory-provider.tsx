@@ -6,24 +6,20 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-
-type DirectoryFile = {
-  name: string;
-  type: string;
-  content?: string | ArrayBuffer | null;
-};
+import { ImageFile, TextFile } from "./types";
 
 type DatasetDirectoryContextType = {
   supported: boolean;
   openDirectoryPicker: () => Promise<void>;
   isDirectorySelected: boolean;
-  imageFiles: DirectoryFile[];
-  textFiles: DirectoryFile[];
+  imageFiles: ImageFile[];
+  textFiles: TextFile[];
   isDirectoryLoaded: boolean;
   isAccessDenied: boolean;
   isEmpty: boolean;
   reset: () => void;
   writeTextFile: (fileName: string, content: string) => Promise<void>;
+  loadImage: (path: string) => Promise<ImageFile | null>;
 };
 
 const DatasetDirectoryContext = createContext<
@@ -48,8 +44,8 @@ export const DatasetDirectoryProvider = ({
   const [isAccessDenied, setAccessDenied] = useState(false);
   const [isDirectorySelected, setIsDirectorySelected] = useState(false);
   const [isDirectoryLoaded, setDirectoryLoaded] = useState(false);
-  const [imageFiles, setImageFiles] = useState<DirectoryFile[]>([]);
-  const [textFiles, setTextFiles] = useState<DirectoryFile[]>([]);
+  const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
+  const [textFiles, setTextFiles] = useState<TextFile[]>([]);
   const [directoryHandle, setDirectoryHandle] =
     useState<FileSystemDirectoryHandle | null>(null);
   const supported = "showDirectoryPicker" in window;
@@ -69,25 +65,31 @@ export const DatasetDirectoryProvider = ({
       setImageFiles([]);
       setTextFiles([]);
 
-      const files: DirectoryFile[] = [];
+      const imageFiles: ImageFile[] = [];
+      const textFiles: TextFile[] = [];
+
       for await (const entry of handle.values()) {
         if (entry.kind === "file") {
           const file = await entry.getFile();
-          const fileContent = await file.text(); // Read file as text
           const fileType = file.type;
 
-          if (fileType.startsWith("image/") || fileType === "text/plain") {
-            files.push({
+          if (fileType.startsWith("image/")) {
+            const src = URL.createObjectURL(file);
+            imageFiles.push({
               name: file.name,
               type: fileType,
-              content: fileContent,
+              src,
+            });
+          } else if (fileType === "text/plain") {
+            const content = await file.text(); // Read file as text
+            textFiles.push({
+              name: file.name,
+              type: fileType,
+              content,
             });
           }
         }
       }
-
-      const imageFiles = files.filter((file) => file.type.startsWith("image/"));
-      const textFiles = files.filter((file) => file.type === "text/plain");
 
       setImageFiles(imageFiles);
       setTextFiles(textFiles);
@@ -106,7 +108,7 @@ export const DatasetDirectoryProvider = ({
       const dirHandle = await window.showDirectoryPicker({ mode: "readwrite" });
       setDirectoryHandle(dirHandle);
       setIsDirectorySelected(true);
-      loadDirectory(dirHandle);
+      await loadDirectory(dirHandle);
     } catch (err) {
       console.error("Error opening directory:", err);
       resetState();
@@ -130,6 +132,36 @@ export const DatasetDirectoryProvider = ({
       } catch (err) {
         console.error("Error writing file:", err);
         throw new Error("Failed to write file");
+      }
+    },
+    [directoryHandle]
+  );
+
+  const loadImage = useCallback(
+    async (path: string): Promise<ImageFile | null> => {
+      if (!directoryHandle) {
+        throw new Error("No directory selected");
+      }
+
+      try {
+        const fileHandle = await directoryHandle.getFileHandle(path);
+        const file = await fileHandle.getFile();
+
+        if (!file.type.startsWith("image/")) {
+          console.error("File is not an image:", file.type);
+          return null;
+        }
+
+        const src = URL.createObjectURL(file);
+
+        return {
+          name: file.name,
+          type: file.type,
+          src,
+        };
+      } catch (err) {
+        console.error("Error loading image:", err);
+        return null;
       }
     },
     [directoryHandle]
@@ -165,6 +197,7 @@ export const DatasetDirectoryProvider = ({
     isEmpty: imageFiles.length === 0,
     reset: resetState,
     writeTextFile,
+    loadImage,
   };
 
   return (

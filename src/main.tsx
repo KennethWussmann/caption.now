@@ -8,6 +8,7 @@ import HomePage from "./pages/home/page.tsx";
 import SetupPage from "./pages/setup/page.tsx";
 import { DatasetDirectoryProvider } from "./lib/dataset-directory-provider.tsx";
 import { RequireDatasetSelection } from "./lib/require-dataset-selection.tsx";
+import { ImageCaptionProvider } from "./lib/image-caption-provider.tsx";
 
 const router = createBrowserRouter([
   {
@@ -32,7 +33,9 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <DatasetDirectoryProvider>
-        <RouterProvider router={router} />
+        <ImageCaptionProvider>
+          <RouterProvider router={router} />
+        </ImageCaptionProvider>
       </DatasetDirectoryProvider>
     </ThemeProvider>
   </StrictMode>

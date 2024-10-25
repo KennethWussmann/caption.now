@@ -6,21 +6,17 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import { useSortable } from "@dnd-kit/sortable";
-import { CaptionItem } from "../types";
 import clsx from "clsx";
+import { CaptionPart } from "@/lib/types";
+import { useImageCaption } from "@/lib/image-caption-provider";
 
-export const CaptionListItem = ({
-  caption,
-  editing,
-}: {
-  caption: CaptionItem;
-  editing?: boolean;
-}) => {
+export const CaptionListItem = ({ part }: { part: CaptionPart }) => {
+  const { enterEditMode, isEditing } = useImageCaption();
+  const isCurrentItemEditing = isEditing?.id === part.id;
   const {
     attributes,
     listeners,
@@ -28,7 +24,7 @@ export const CaptionListItem = ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: caption.id });
+  } = useSortable({ id: part.id });
   const customTransitions =
     "box-shadow 0.3s ease, margin 0.3s ease, background-color 0.3s ease";
   const finalTransition = transition
@@ -41,7 +37,7 @@ export const CaptionListItem = ({
         "flex justify-between align-middle items-center gap-2 p-1 pl-4 ml-4",
         {
           "border-blue-600 border-2 border-dashed bg-blue-50 dark:bg-blue-600 dark:bg-opacity-40":
-            editing,
+            isCurrentItemEditing,
         }
       )}
       style={{
@@ -56,14 +52,15 @@ export const CaptionListItem = ({
         zIndex: isDragging ? 10 : undefined,
       }}
       ref={setNodeRef}
+      onDoubleClick={() => enterEditMode(part)}
       {...attributes}
       {...listeners}
     >
       <div className="flex flex-row gap-4 items-center">
-        {editing && (
+        {isCurrentItemEditing && (
           <Pencil className="h-5 w-5 text-blue-600 dark:text-blue-200" />
         )}
-        {caption.text}
+        {part.text}
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -71,19 +68,21 @@ export const CaptionListItem = ({
             <EllipsisVerticalIcon className="h-5 w-5" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-30" align="end">
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <Trash />
-              <span>Delete</span>
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Pencil />
-              <span>Edit</span>
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
+        <DropdownMenuContent
+          className="w-30"
+          align="end"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <DropdownMenuItem>
+            <Trash />
+            <span>Delete</span>
+            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => enterEditMode(part)}>
+            <Pencil />
+            <span>Edit</span>
+            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </Card>

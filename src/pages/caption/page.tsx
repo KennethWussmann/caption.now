@@ -1,5 +1,5 @@
 import { CaptionView } from "@/components/caption/caption-view";
-import { ImageListSidebar } from "@/components/sidebar/image-list-sidebar";
+import { ImageListSidebar } from "@/components/sidebar/image-list-sidebar/image-list-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,9 +15,11 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useImageCaption } from "@/lib/image-caption-provider";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function Page() {
+  const { imageFile } = useImageCaption();
   return (
     <SidebarProvider>
       <ImageListSidebar side="left" />
@@ -25,18 +27,22 @@ export default function Page() {
         <header className="flex justify-between items-center h-16 shrink-0 px-4 border-b">
           <div className="flex items-center gap-2 ">
             <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Images</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>cute_cat.jpg</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+            {imageFile && (
+              <>
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                <Breadcrumb>
+                  <BreadcrumbList>
+                    <BreadcrumbItem className="hidden md:block">
+                      <BreadcrumbLink>Images</BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator className="hidden md:block" />
+                    <BreadcrumbItem>
+                      <BreadcrumbPage>{imageFile?.name}</BreadcrumbPage>
+                    </BreadcrumbItem>
+                  </BreadcrumbList>
+                </Breadcrumb>
+              </>
+            )}
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="icon">
