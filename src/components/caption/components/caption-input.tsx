@@ -127,7 +127,7 @@ export const CaptionInput = () => {
             to cancel editing
           </>
         )}
-        {!isEditing && (
+        {!isEditing && sanitizeValue(value).length === 0 && (
           <>
             or <ArrowUp className="h-4 w-4" />
             to edit last caption

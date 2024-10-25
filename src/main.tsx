@@ -22,6 +22,11 @@ const router = createBrowserRouter([
         <CaptionPage />
       </RequireDatasetSelection>
     ),
+    children: [
+      {
+        path: ":filename",
+      },
+    ],
   },
   {
     path: "setup",

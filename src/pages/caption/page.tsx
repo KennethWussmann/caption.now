@@ -15,13 +15,31 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import {
+  useDatasetNavigation,
+  useDatasetNavigationHotkeys,
+} from "@/hooks/use-dataset-navigation";
 import { useImageCaption } from "@/lib/image-caption-provider";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
 
 export default function Page() {
   const { imageFile } = useImageCaption();
+  const { loadNextImage, loadPreviousImage, hasNextImage, hasPreviousImage } =
+    useDatasetNavigation();
+  useDatasetNavigationHotkeys();
+
+  useEffect(() => {
+    // Load the first image if no image is selected
+    if (!imageFile) {
+      loadNextImage();
+    }
+  }, [imageFile, loadNextImage]);
+
   return (
     <SidebarProvider>
+      <Navigate to={`/caption/${imageFile?.name}`} />
       <ImageListSidebar side="left" />
       <SidebarInset>
         <header className="flex justify-between items-center h-16 shrink-0 px-4 border-b">
@@ -45,10 +63,20 @@ export default function Page() {
             )}
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="icon">
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={!hasPreviousImage()}
+              onClick={loadPreviousImage}
+            >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="icon">
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={!hasNextImage()}
+              onClick={loadNextImage}
+            >
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

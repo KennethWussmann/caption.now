@@ -1,12 +1,17 @@
+import * as React from "react";
 import { Badge, SidebarMenuButton, SidebarMenuItem } from "@/components/ui";
 import { useImageCaption } from "@/lib/image-caption-provider";
 import { ImageFile } from "@/lib/types";
 import { Check } from "lucide-react";
 
-export const ImageListItem = ({ image }: { image: ImageFile }) => {
+export const ImageListItem = React.forwardRef<
+  HTMLLIElement,
+  { image: ImageFile }
+>(({ image }, ref) => {
   const { imageFile, setImageFile } = useImageCaption();
+
   return (
-    <SidebarMenuItem>
+    <SidebarMenuItem ref={ref}>
       <SidebarMenuButton
         asChild
         className="h-25 cursor-pointer"
@@ -30,4 +35,4 @@ export const ImageListItem = ({ image }: { image: ImageFile }) => {
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
-};
+});

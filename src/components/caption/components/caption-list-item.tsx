@@ -7,7 +7,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import { useSortable } from "@dnd-kit/sortable";
 import clsx from "clsx";
@@ -15,7 +14,7 @@ import { CaptionPart } from "@/lib/types";
 import { useImageCaption } from "@/lib/image-caption-provider";
 
 export const CaptionListItem = ({ part }: { part: CaptionPart }) => {
-  const { enterEditMode, isEditing } = useImageCaption();
+  const { enterEditMode, isEditing, deletePart } = useImageCaption();
   const isCurrentItemEditing = isEditing?.id === part.id;
   const {
     attributes,
@@ -73,15 +72,13 @@ export const CaptionListItem = ({ part }: { part: CaptionPart }) => {
           align="end"
           onPointerDown={(e) => e.stopPropagation()}
         >
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => deletePart(part.id)}>
             <Trash />
             <span>Delete</span>
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => enterEditMode(part)}>
             <Pencil />
             <span>Edit</span>
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

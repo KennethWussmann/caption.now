@@ -5,7 +5,7 @@ import { useMemo } from "react";
 export const CaptionPreview = () => {
   const { caption } = useImageCaption();
   const text = useMemo(() => {
-    return caption.parts.map((part) => part.text.trim()).join(". ");
+    return caption.parts.map((part) => part.text.trim()).join(". ") + ".";
   }, [caption.parts]);
   const isEmpty = caption.parts.length === 0;
 
