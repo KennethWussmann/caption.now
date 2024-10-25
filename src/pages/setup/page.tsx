@@ -1,4 +1,6 @@
 import { Alert, AlertDescription, AlertTitle, Button } from "@/components/ui";
+import { BackgroundGradient } from "@/components/ui/animation/background-gradient";
+import { BackgroundLines } from "@/components/ui/animation/background-lines";
 import {
   Card,
   CardContent,
@@ -32,11 +34,16 @@ export default function Page() {
     reset,
   } = useDatasetDirectory();
 
+  const isReady = isDirectorySelected && isDirectoryLoaded && !isEmpty;
+
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="mx-auto max-w-sm">
-        {isDirectorySelected && isDirectoryLoaded && !isEmpty ? (
-          <Card className="border-green-100 ">
+    <BackgroundLines
+      className="flex items-center justify-center h-screen"
+      disabled={!isReady}
+    >
+      <div className="mx-auto max-w-sm z-50">
+        {isReady ? (
+          <Card className="bg-transparent backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Let's Go!</CardTitle>
               <CardDescription>
@@ -53,9 +60,15 @@ export default function Page() {
                   <FileText className="h-8 w-8" /> {textFiles.length} Labels
                 </div>
                 <div>
-                  <Button className="w-full mt-4" onClick={() => navigate("/")}>
-                    <Pencil /> Start Labelling
-                  </Button>
+                  <button
+                    className="w-full mt-4 relative inline-flex h-12 overflow-hidden rounded-md p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+                    onClick={() => navigate("/")}
+                  >
+                    <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+                    <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-md bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+                      <Pencil className="mr-2 h-4 w-4" /> Start Labelling
+                    </span>
+                  </button>
                   <Button
                     variant="ghost"
                     size={"sm"}
@@ -69,7 +82,7 @@ export default function Page() {
             </CardContent>
           </Card>
         ) : (
-          <Card>
+          <Card className="bg-transparent backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="text-2xl">Welcome!</CardTitle>
               <CardDescription>
@@ -146,7 +159,7 @@ export default function Page() {
           </Card>
         )}
 
-        <Alert className="mt-4">
+        <Alert className="mt-4 bg-transparent backdrop-blur-sm">
           <Lock className="h-4 w-4" />
           <AlertTitle>Your data belongs to you!</AlertTitle>
           <AlertDescription>
@@ -155,6 +168,6 @@ export default function Page() {
           </AlertDescription>
         </Alert>
       </div>
-    </div>
+    </BackgroundLines>
   );
 }

@@ -14,6 +14,7 @@ import {
 import { CaptionListItem } from "./caption-list-item";
 import { CaptionListFooter } from "./caption-list-footer";
 import { useImageCaption } from "@/lib/image-caption-provider";
+import { AnimatedGroup } from "@/components/ui/animation/animated-group";
 
 export const CaptionList = () => {
   const { caption, handleDragEnd } = useImageCaption();
@@ -40,9 +41,11 @@ export const CaptionList = () => {
             items={caption.parts}
             strategy={verticalListSortingStrategy}
           >
-            {caption.parts.map((item) => (
-              <CaptionListItem key={item.id} part={item} />
-            ))}
+            <AnimatedGroup preset="blur-slide" className="flex flex-col gap-2">
+              {caption.parts.map((item) => (
+                <CaptionListItem key={item.id} part={item} />
+              ))}
+            </AnimatedGroup>
           </SortableContext>
         </DndContext>
       </div>

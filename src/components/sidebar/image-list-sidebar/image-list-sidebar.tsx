@@ -11,6 +11,7 @@ import { AppSidebarHeader } from "../app-sidebar-header";
 import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
 import { ImageListItem } from "./image-list-item";
 import { useImageCaption } from "@/lib/image-caption-provider";
+import { AnimatedGroup } from "@/components/ui/animation/animated-group";
 
 export function ImageListSidebar({
   ...props
@@ -42,13 +43,15 @@ export function ImageListSidebar({
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {imageFiles.map((img) => (
-                <ImageListItem
-                  key={img.name}
-                  image={img}
-                  ref={(el) => (itemRefs.current[img.name] = el)}
-                />
-              ))}
+              <AnimatedGroup preset="blur-slide">
+                {imageFiles.map((img) => (
+                  <ImageListItem
+                    key={img.name}
+                    image={img}
+                    ref={(el) => (itemRefs.current[img.name] = el)}
+                  />
+                ))}
+              </AnimatedGroup>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
