@@ -1,5 +1,4 @@
 import { Alert, AlertDescription, AlertTitle, Button } from "@/components/ui";
-import { BackgroundGradient } from "@/components/ui/animation/background-gradient";
 import { BackgroundLines } from "@/components/ui/animation/background-lines";
 import {
   Card,
@@ -19,6 +18,7 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Page() {
   const navigate = useNavigate();
@@ -60,15 +60,34 @@ export default function Page() {
                   <FileText className="h-8 w-8" /> {textFiles.length} Labels
                 </div>
                 <div>
-                  <button
-                    className="w-full mt-4 relative inline-flex h-12 overflow-hidden rounded-md p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+                  <motion.button
+                    initial={{
+                      scale: 3,
+                      opacity: 0,
+                      filter: "blur(8px)",
+                      y: -50,
+                    }}
+                    animate={{
+                      scale: 1,
+                      opacity: 1,
+                      filter: "blur(0px)",
+                      y: 0,
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 20,
+                      duration: 0.5,
+                      delay: 0.2,
+                    }}
                     onClick={() => navigate("/")}
+                    className="w-full mt-4 relative inline-flex h-12 overflow-hidden rounded-md p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
                   >
                     <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
                     <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-md bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl">
                       <Pencil className="mr-2 h-4 w-4" /> Start Labelling
                     </span>
-                  </button>
+                  </motion.button>
                   <Button
                     variant="ghost"
                     size={"sm"}
