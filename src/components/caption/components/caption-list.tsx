@@ -16,36 +16,34 @@ const CaptionListItem = ({ children }: { children: ReactNode }) => {
   return (
     <Card className="flex justify-between align-middle items-center gap-2 p-1 pl-4">
       {children}
-      <div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <EllipsisVerticalIcon className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-30" align="end">
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Trash />
-                <span>Delete</span>
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Pencil />
-                <span>Edit</span>
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <EllipsisVerticalIcon className="h-5 w-5" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-30" align="end">
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <Trash />
+              <span>Delete</span>
+              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Pencil />
+              <span>Edit</span>
+              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </Card>
   );
 };
 
 export const CaptionList = () => {
   return (
-    <Card className="p-4 border-dashed h-full flex flex-col">
+    <div className="p-4 border-l ml-2 h-full flex flex-col">
       <h1 className="mb-2">Caption</h1>
       <div
         className="flex flex-col overflow-y-auto gap-1 mb-4"
@@ -66,6 +64,6 @@ export const CaptionList = () => {
           </h2>
         </Card>
       </div>
-    </Card>
+    </div>
   );
 };

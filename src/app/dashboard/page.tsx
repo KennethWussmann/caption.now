@@ -22,7 +22,7 @@ export default function Page() {
     <SidebarProvider>
       <ImageListSidebar side="left" />
       <SidebarInset>
-        <header className="flex justify-between items-center h-16 shrink-0 px-4  border-b">
+        <header className="flex justify-between items-center h-16 shrink-0 px-4 border-b">
           <div className="flex items-center gap-2 ">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
