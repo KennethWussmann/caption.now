@@ -116,6 +116,7 @@ export const CaptionInput = () => {
             value={value}
             onChange={(event) => setValue(event.target.value)}
             ref={inputFieldRef}
+            autoFocus
           />
         </div>
       </div>

@@ -91,7 +91,7 @@ export const DatasetDirectoryProvider = ({
         }
       }
 
-      setImageFiles(imageFiles);
+      setImageFiles(imageFiles.sort((a, b) => a.name.localeCompare(b.name)));
       setTextFiles(textFiles);
       setDirectoryLoaded(true);
     },
