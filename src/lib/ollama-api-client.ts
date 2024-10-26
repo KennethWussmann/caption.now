@@ -5,6 +5,14 @@ export const getModels = async () => {
   return models;
 };
 
+export const pullModel = async (model: string) => {
+  const response = await ollama.pull({
+    model: model,
+    stream: false,
+  });
+  return response;
+};
+
 export const generate = async (request: GenerateRequest) => {
   const { response } = await ollama.generate({ ...request, stream: false });
   return response;

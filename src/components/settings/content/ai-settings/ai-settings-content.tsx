@@ -8,17 +8,11 @@ import {
   Tooltip,
   TooltipTrigger,
 } from "@/components/ui";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ServiceStatusBadge } from "@/components/common/service-status-badge";
 import { useOllamaStatus } from "@/hooks/use-ollama-status";
 import { TooltipContent } from "@radix-ui/react-tooltip";
 import { ModelSelector } from "./model-selector";
+import { DownloadRecommendedModel } from "./download-recommended-model";
 
 const AISettingsContent = () => {
   const { status, recheck } = useOllamaStatus();
@@ -69,6 +63,7 @@ const AISettingsContent = () => {
                 The model to use for refining your caption
               </div>
               <ModelSelector />
+              <DownloadRecommendedModel model="mistral-small" />
             </div>
           </TableCell>
         </TableRow>
@@ -80,7 +75,43 @@ const AISettingsContent = () => {
                 This system instruction is given to Ollama to instruct it how to
                 work with your caption parts
               </div>
-              <Textarea rows={10}>
+              <Textarea rows={5}>
+                You are an AI prompt refining assistant. The user is giving you
+                a rough prompt. Sometimes only containing tags, sometimes
+                containing entire sentences. The order of the sentences is
+                important. You are asked to understand and combine the sentences
+                logically and grammatically. You are asked to generate a refined
+                prompt that is more grammatically correct. You shall not add any
+                details that the user didn't mention. You are allowed to add
+                periods where necessary. Only reply with the refined prompt, do
+                not add any additional text.
+              </Textarea>
+            </div>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell colSpan={2}>
+            <div className="flex flex-col gap-2">
+              <div>Vision Model</div>
+              <div className="text-muted-foreground">
+                The model to use for understanding image content
+              </div>
+              <ModelSelector />
+              <DownloadRecommendedModel model="moondream" />
+            </div>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell colSpan={2}>
+            <div className="flex flex-col gap-2">
+              <div>Vision System Prompt</div>
+              <div className="text-muted-foreground">
+                This system instruction is given to Ollama to instruct it to
+                describe a given image and make recommendations for caption
+                parts. The JSON part is highly important, otherwise QuickLabel
+                will not understand the response.
+              </div>
+              <Textarea rows={5}>
                 You are an AI prompt refining assistant. The user is giving you
                 a rough prompt. Sometimes only containing tags, sometimes
                 containing entire sentences. The order of the sentences is

@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/select";
 import { getModels } from "@/lib/ollama-api-client";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 
 export const ModelSelector = () => {
   const { data, isLoading, isError, isLoadingError } = useQuery({
