@@ -9,6 +9,10 @@ import SetupPage from "./pages/setup/page.tsx";
 import { DatasetDirectoryProvider } from "./lib/dataset-directory-provider.tsx";
 import { RequireDatasetSelection } from "./lib/require-dataset-selection.tsx";
 import { ImageCaptionProvider } from "./lib/image-caption-provider.tsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { TooltipProvider } from "./components/ui/tooltip.tsx";
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
@@ -37,11 +41,15 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <DatasetDirectoryProvider>
-        <ImageCaptionProvider>
-          <RouterProvider router={router} />
-        </ImageCaptionProvider>
-      </DatasetDirectoryProvider>
+      <TooltipProvider>
+        <DatasetDirectoryProvider>
+          <ImageCaptionProvider>
+            <QueryClientProvider client={queryClient}>
+              <RouterProvider router={router} />
+            </QueryClientProvider>
+          </ImageCaptionProvider>
+        </DatasetDirectoryProvider>
+      </TooltipProvider>
     </ThemeProvider>
   </StrictMode>
 );
