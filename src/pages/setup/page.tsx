@@ -1,4 +1,10 @@
-import { Alert, AlertDescription, AlertTitle, Button } from "@/components/ui";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  Separator,
+} from "@/components/ui";
 import { BackgroundLines } from "@/components/ui/animation/background-lines";
 import {
   Card,
@@ -7,7 +13,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
+import { settings } from "@/lib/settings";
+import { useAtom } from "jotai/react";
 import {
   FileText,
   FolderOpen,
@@ -17,10 +26,12 @@ import {
   Pencil,
   TriangleAlert,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Page() {
+  const [skipSetupSummary, setSkipSetupSummary] = useAtom(
+    settings.appearance.skipSetupSummary
+  );
   const navigate = useNavigate();
   const {
     supported,
@@ -35,6 +46,10 @@ export default function Page() {
   } = useDatasetDirectory();
 
   const isReady = isDirectorySelected && isDirectoryLoaded && !isEmpty;
+
+  if (skipSetupSummary && isReady) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <BackgroundLines
@@ -60,26 +75,7 @@ export default function Page() {
                   <FileText className="h-8 w-8" /> {textFiles.length} Labels
                 </div>
                 <div>
-                  <motion.button
-                    initial={{
-                      scale: 3,
-                      opacity: 0,
-                      filter: "blur(8px)",
-                      y: -50,
-                    }}
-                    animate={{
-                      scale: 1,
-                      opacity: 1,
-                      filter: "blur(0px)",
-                      y: 0,
-                    }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 500,
-                      damping: 20,
-                      duration: 0.5,
-                      delay: 0.2,
-                    }}
+                  <button
                     onClick={() => navigate("/")}
                     className="w-full mt-4 relative inline-flex h-12 overflow-hidden rounded-md p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
                   >
@@ -87,7 +83,7 @@ export default function Page() {
                     <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-md bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl">
                       <Pencil className="mr-2 h-4 w-4" /> Start Labelling
                     </span>
-                  </motion.button>
+                  </button>
                   <Button
                     variant="ghost"
                     size={"sm"}
@@ -96,6 +92,22 @@ export default function Page() {
                   >
                     Cancel
                   </Button>
+                  <Separator className="my-4" />
+                  <div className="flex gap-2">
+                    <Checkbox
+                      id="skipSetupSummary"
+                      checked={skipSetupSummary}
+                      onCheckedChange={(e) =>
+                        setSkipSetupSummary(typeof e === "boolean" ? e : false)
+                      }
+                    />
+                    <label
+                      htmlFor="skipSetupSummary"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Don't show this summary again
+                    </label>
+                  </div>
                 </div>
               </div>
             </CardContent>

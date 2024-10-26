@@ -8,7 +8,13 @@ import {
 import { getModels } from "@/lib/ollama-api-client";
 import { useQuery } from "@tanstack/react-query";
 
-export const ModelSelector = () => {
+export const ModelSelector = ({
+  model,
+  setModel,
+}: {
+  model: string;
+  setModel: (model: string) => void;
+}) => {
   const { data, isLoading, isError, isLoadingError } = useQuery({
     queryKey: ["models"],
     queryFn: getModels,
@@ -20,6 +26,8 @@ export const ModelSelector = () => {
       disabled={
         !data || data?.length === 0 || isLoading || isError || isLoadingError
       }
+      value={model}
+      onValueChange={setModel}
     >
       <SelectTrigger>
         <SelectValue placeholder="Model" />

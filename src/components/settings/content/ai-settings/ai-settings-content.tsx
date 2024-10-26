@@ -1,21 +1,27 @@
 import { Sparkles } from "lucide-react";
 import { SettingsNavbarItem } from "../../types";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import {
-  Input,
-  Switch,
-  Textarea,
-  Tooltip,
-  TooltipTrigger,
-} from "@/components/ui";
+import { Input, Switch, Textarea } from "@/components/ui";
 import { ServiceStatusBadge } from "@/components/common/service-status-badge";
 import { useOllamaStatus } from "@/hooks/use-ollama-status";
-import { TooltipContent } from "@radix-ui/react-tooltip";
 import { ModelSelector } from "./model-selector";
 import { DownloadRecommendedModel } from "./download-recommended-model";
+import { settings } from "@/lib/settings";
+import { useAtom } from "jotai/react";
 
 const AISettingsContent = () => {
   const { status, recheck } = useOllamaStatus();
+  const [ollamaEnabled, setOllamaEnabled] = useAtom(settings.ai.ollamaEnabled);
+  const [ollamaUrl, setOllamaUrl] = useAtom(settings.ai.ollamaUrl);
+  const [captionModel, setCaptionModel] = useAtom(settings.ai.caption.model);
+  const [captionSystemPrompt, setCaptionSystemPrompt] = useAtom(
+    settings.ai.caption.systemPrompt
+  );
+  const [visionSystemPrompt, setVisionSystemPrompt] = useAtom(
+    settings.ai.vision.systemPrompt
+  );
+  const [visionModel, setVisionModel] = useAtom(settings.ai.vision.model);
+
   return (
     <Table>
       <TableBody>
@@ -30,28 +36,34 @@ const AISettingsContent = () => {
             </div>
           </TableCell>
           <TableCell className="text-right">
-            <Switch />
+            <Switch
+              checked={ollamaEnabled}
+              onCheckedChange={setOllamaEnabled}
+            />
           </TableCell>
         </TableRow>
         <TableRow>
           <TableCell colSpan={2}>
             <div className="flex flex-col gap-2 items-start">
               <div className="flex flex-row gap-4">
-                <div>Ollama URL</div>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <ServiceStatusBadge status={status} onClick={recheck} />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Click to refresh</p>
-                  </TooltipContent>
-                </Tooltip>
+                <span>Ollama URL</span>
+                <ServiceStatusBadge status={status} onClick={recheck} />
               </div>
               <div className="text-muted-foreground">
-                Where to reach Ollama. Ideally locally, because your prompt will
-                be shared with the destination server.
+                Where to reach Ollama. Ideally locally, because{" "}
+                <b>
+                  your captions and images will be shared with the destination
+                  server
+                </b>
+                .
               </div>
-              <Input type="text" value="http://localhost:12345"></Input>
+              <Input
+                type="text"
+                value={ollamaUrl}
+                onChange={(e) => {
+                  setOllamaUrl(e.target.value);
+                }}
+              ></Input>
             </div>
           </TableCell>
         </TableRow>
@@ -62,8 +74,10 @@ const AISettingsContent = () => {
               <div className="text-muted-foreground">
                 The model to use for refining your caption
               </div>
-              <ModelSelector />
-              <DownloadRecommendedModel model="mistral-small" />
+              <ModelSelector model={captionModel} setModel={setCaptionModel} />
+              <DownloadRecommendedModel
+                model={settings.ai.caption._recommendedModel}
+              />
             </div>
           </TableCell>
         </TableRow>
@@ -75,16 +89,11 @@ const AISettingsContent = () => {
                 This system instruction is given to Ollama to instruct it how to
                 work with your caption parts
               </div>
-              <Textarea rows={5}>
-                You are an AI prompt refining assistant. The user is giving you
-                a rough prompt. Sometimes only containing tags, sometimes
-                containing entire sentences. The order of the sentences is
-                important. You are asked to understand and combine the sentences
-                logically and grammatically. You are asked to generate a refined
-                prompt that is more grammatically correct. You shall not add any
-                details that the user didn't mention. You are allowed to add
-                periods where necessary. Only reply with the refined prompt, do
-                not add any additional text.
+              <Textarea
+                rows={5}
+                onChange={(e) => setCaptionSystemPrompt(e.target.value)}
+              >
+                {captionSystemPrompt}
               </Textarea>
             </div>
           </TableCell>
@@ -96,8 +105,10 @@ const AISettingsContent = () => {
               <div className="text-muted-foreground">
                 The model to use for understanding image content
               </div>
-              <ModelSelector />
-              <DownloadRecommendedModel model="moondream" />
+              <ModelSelector model={visionModel} setModel={setVisionModel} />
+              <DownloadRecommendedModel
+                model={settings.ai.vision._recommendedModel}
+              />
             </div>
           </TableCell>
         </TableRow>
@@ -111,16 +122,11 @@ const AISettingsContent = () => {
                 parts. The JSON part is highly important, otherwise QuickLabel
                 will not understand the response.
               </div>
-              <Textarea rows={5}>
-                You are an AI prompt refining assistant. The user is giving you
-                a rough prompt. Sometimes only containing tags, sometimes
-                containing entire sentences. The order of the sentences is
-                important. You are asked to understand and combine the sentences
-                logically and grammatically. You are asked to generate a refined
-                prompt that is more grammatically correct. You shall not add any
-                details that the user didn't mention. You are allowed to add
-                periods where necessary. Only reply with the refined prompt, do
-                not add any additional text.
+              <Textarea
+                rows={5}
+                onChange={(e) => setVisionSystemPrompt(e.target.value)}
+              >
+                {visionSystemPrompt}
               </Textarea>
             </div>
           </TableCell>

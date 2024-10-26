@@ -14,8 +14,9 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarHeader,
+  SidebarInset,
 } from "@/components/ui";
-import { Cog } from "lucide-react";
+import { Cog, X } from "lucide-react";
 import { useState } from "react";
 import { navbarItems } from "./content";
 
@@ -26,11 +27,15 @@ export const SettingsDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="outline">
           <Cog />
+          Settings
         </Button>
       </DialogTrigger>
-      <DialogContent className="overflow-hidden p-0 md:max-h-[500px] md:max-w-[700px] lg:max-w-[1300px] lg:max-h-[1000px]">
+      <DialogContent
+        className="overflow-hidden p-0 md:max-h-[500px] md:max-w-[700px] lg:max-w-[1300px] lg:max-h-[1000px]"
+        hideClose
+      >
         <DialogTitle className="sr-only">Settings</DialogTitle>
         <DialogDescription className="sr-only">
           Customize your settings here.
@@ -64,11 +69,21 @@ export const SettingsDialog = () => {
               </SidebarGroup>
             </SidebarContent>
           </Sidebar>
-          <main className="flex h-full flex-1 flex-col overflow-hidden">
-            <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12"></header>
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0">
-              {activeNavbarItem.content}
-            </div>
+          <main className="flex flex-1 flex-col">
+            <header className="flex py-2 pl-4 pr-2 items-center justify-between border-b">
+              <div className="flex gap-2 font-bold">
+                <activeNavbarItem.icon />
+                <span className="">{activeNavbarItem.name}</span>
+              </div>
+              <Button
+                variant={"ghost"}
+                size={"icon"}
+                onClick={() => setOpen(false)}
+              >
+                <X className="h-20 w-20" />
+              </Button>
+            </header>
+            {activeNavbarItem.content}
           </main>
         </SidebarProvider>
       </DialogContent>
