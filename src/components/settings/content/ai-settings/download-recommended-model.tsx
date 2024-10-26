@@ -63,7 +63,7 @@ export const DownloadRecommendedModel = ({ model }: { model: string }) => {
     return (
       <div className="flex gap-2 items-center">
         <AlertTriangle className="h-4 w-4" />
-        <span className="text-red-500">
+        <span className="text-destructive">
           Something went wrong while downloading the model.
         </span>
       </div>
@@ -75,7 +75,7 @@ export const DownloadRecommendedModel = ({ model }: { model: string }) => {
   }
 
   return (
-    <div className="text-red-500">
+    <div className="text-destructive">
       Our recommended model <span className="font-bold">"{model}"</span> was not
       found. Would you like to download and install it automatically?{" "}
       <span

@@ -26,7 +26,7 @@ export const settings = {
       ),
     },
     vision: {
-      _recommendedModel: "llava",
+      _recommendedModel: "cheese",
       model: atomWithStorage("settings.ai.vision.model", "llava:latest"),
       systemPrompt: atomWithStorage("settings.ai.vision.systemPrompt", "TODO"),
     },

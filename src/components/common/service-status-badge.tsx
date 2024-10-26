@@ -25,8 +25,7 @@ const variants: Record<Status, Variant> = {
     text: "Online",
   },
   offline: {
-    className:
-      "bg-red-200 dark:bg-red-600 hover:bg-red-300 hover:dark:bg-red-400",
+    className: "bg-destructive hover:bg-red-300 hover:dark:bg-red-400",
     icon: X,
     text: "Offline",
   },

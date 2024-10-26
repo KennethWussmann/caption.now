@@ -40,7 +40,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+    <ThemeProvider>
       <TooltipProvider>
         <DatasetDirectoryProvider>
           <ImageCaptionProvider>

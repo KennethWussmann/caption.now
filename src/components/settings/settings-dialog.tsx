@@ -14,7 +14,6 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarHeader,
-  SidebarInset,
 } from "@/components/ui";
 import { Cog, X } from "lucide-react";
 import { useState } from "react";
@@ -27,7 +26,7 @@ export const SettingsDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="w-full">
           <Cog />
           Settings
         </Button>
