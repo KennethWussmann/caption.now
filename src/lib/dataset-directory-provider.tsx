@@ -14,6 +14,8 @@ type DatasetDirectoryContextType = {
   isDirectorySelected: boolean;
   imageFiles: ImageFile[];
   textFiles: TextFile[];
+  failedImageFiles: number;
+  failedTextFiles: number;
   isDirectoryLoaded: boolean;
   isAccessDenied: boolean;
   isEmpty: boolean;
@@ -45,7 +47,8 @@ export const DatasetDirectoryProvider = ({
   const [isDirectorySelected, setIsDirectorySelected] = useState(false);
   const [isDirectoryLoaded, setDirectoryLoaded] = useState(false);
   const [imageFiles, setImageFiles] = useState<ImageFile[]>([]);
-  const [textFiles, setTextFiles] = useState<TextFile[]>([]);
+  const [failedImageFiles, setFailedImageFiles] = useState(0);
+  const [failedTextFiles, setFailedTextFiles] = useState(0);
   const [directoryHandle, setDirectoryHandle] =
     useState<FileSystemDirectoryHandle | null>(null);
   const supported = "showDirectoryPicker" in window;
@@ -54,7 +57,8 @@ export const DatasetDirectoryProvider = ({
     setIsDirectorySelected(false);
     setDirectoryLoaded(false);
     setImageFiles([]);
-    setTextFiles([]);
+    setFailedImageFiles(0);
+    setFailedTextFiles(0);
     setDirectoryHandle(null);
     setAccessDenied(false);
   }, []);
@@ -63,25 +67,32 @@ export const DatasetDirectoryProvider = ({
     async (handle: FileSystemDirectoryHandle) => {
       setDirectoryLoaded(false);
       setImageFiles([]);
-      setTextFiles([]);
+      setFailedImageFiles(0);
+      setFailedTextFiles(0);
 
       const imageFiles: ImageFile[] = [];
-      const textFiles: TextFile[] = [];
+      const textFilesMap: Map<string, TextFile> = new Map();
+
+      let failedImagesCount = 0;
+      let orphanTextFilesCount = 0;
 
       for await (const entry of handle.values()) {
         if (entry.kind === "file") {
           const file = await entry.getFile();
           const fileType = file.type;
+          const fileName = file.name;
 
-          if (fileType.startsWith("image/")) {
+          if (
+            fileType.startsWith("image/") &&
+            /\.(jpg|jpeg|png)$/i.test(fileName)
+          ) {
             const src = URL.createObjectURL(file);
 
-            // Convert file to base64 without prefix
             const base64 = await new Promise<string>((resolve, reject) => {
               const reader = new FileReader();
               reader.onload = () => {
                 const result = (reader.result as string) || "";
-                resolve(result.split(",")[1]); // Remove prefix
+                resolve(result.split(",")[1]);
               };
               reader.onerror = reject;
               reader.readAsDataURL(file);
@@ -93,19 +104,36 @@ export const DatasetDirectoryProvider = ({
               src,
               base64,
             });
-          } else if (fileType === "text/plain") {
+          } else if (fileType === "text/plain" && /\.txt$/i.test(fileName)) {
             const content = await file.text();
-            textFiles.push({
+            textFilesMap.set(fileName.replace(/\.txt$/i, ""), {
               name: file.name,
               type: fileType,
               content,
             });
+          } else if (fileType.startsWith("image/")) {
+            failedImagesCount++;
           }
         }
       }
 
-      setImageFiles(imageFiles.sort((a, b) => a.name.localeCompare(b.name)));
-      setTextFiles(textFiles);
+      const finalImageFiles = imageFiles.map((imageFile) => {
+        const baseName = imageFile.name.replace(/\.(jpg|jpeg|png)$/i, "");
+        const captionFile = textFilesMap.get(baseName);
+        if (captionFile) {
+          textFilesMap.delete(baseName); // matched, so remove from map
+        }
+        return {
+          ...imageFile,
+          captionFile,
+        };
+      });
+
+      orphanTextFilesCount = textFilesMap.size;
+
+      setImageFiles(finalImageFiles);
+      setFailedImageFiles(failedImagesCount);
+      setFailedTextFiles(orphanTextFilesCount);
       setDirectoryLoaded(true);
     },
     []
@@ -167,12 +195,11 @@ export const DatasetDirectoryProvider = ({
 
         const src = URL.createObjectURL(file);
 
-        // Convert file to base64 without prefix
         const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => {
             const result = (reader.result as string) || "";
-            resolve(result.split(",")[1]); // Remove prefix
+            resolve(result.split(",")[1]);
           };
           reader.onerror = reject;
           reader.readAsDataURL(file);
@@ -192,7 +219,6 @@ export const DatasetDirectoryProvider = ({
     [directoryHandle]
   );
 
-  // Effect to monitor permission status
   useEffect(() => {
     const checkPermission = async () => {
       if (!directoryHandle) return;
@@ -217,7 +243,11 @@ export const DatasetDirectoryProvider = ({
     isDirectorySelected,
     isDirectoryLoaded,
     imageFiles,
-    textFiles,
+    textFiles: imageFiles
+      .map((image) => image.captionFile)
+      .filter((text): text is TextFile => !!text),
+    failedImageFiles,
+    failedTextFiles,
     isAccessDenied,
     isEmpty: imageFiles.length === 0,
     reset: resetState,

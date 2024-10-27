@@ -6,6 +6,7 @@ export type DirectoryFile = {
 export type ImageFile = DirectoryFile & {
   src: string;
   base64: string;
+  captionFile?: TextFile;
 };
 
 export type TextFile = DirectoryFile & {

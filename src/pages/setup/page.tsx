@@ -18,9 +18,11 @@ import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
 import { settings } from "@/lib/settings";
 import { useAtom } from "jotai/react";
 import {
+  FileQuestion,
   FileText,
   FolderOpen,
   Image,
+  ImageOff,
   LoaderCircle,
   Lock,
   Pencil,
@@ -42,6 +44,8 @@ export default function Page() {
     isAccessDenied,
     imageFiles,
     textFiles,
+    failedImageFiles,
+    failedTextFiles,
     reset,
   } = useDatasetDirectory();
 
@@ -69,11 +73,44 @@ export default function Page() {
             <CardContent>
               <div className="flex gap-4 flex-col">
                 <div className="flex gap-2 items-center">
-                  <Image className="h-8 w-8" /> {imageFiles.length} Images
+                  <Image className="h-8 w-8" /> {imageFiles.length} Image
+                  {imageFiles.length !== 1 && "s"} with {textFiles.length} label
+                  {textFiles.length !== 1 && "s"}
                 </div>
-                <div className="flex gap-2 items-center">
-                  <FileText className="h-8 w-8" /> {textFiles.length} Labels
-                </div>
+                {failedImageFiles > 0 && (
+                  <>
+                    <Separator />
+                    <div className="flex gap-2 items-center">
+                      <ImageOff className="h-8 w-8" />
+                      <div>
+                        <div className="text-destructive">
+                          {failedImageFiles} Unsupported image
+                          {failedImageFiles !== 1 && "s"}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Only JPEG, JPG and PNG are supported
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+                {failedTextFiles > 0 && (
+                  <>
+                    <Separator />
+                    <div className="flex gap-2 items-center">
+                      <FileQuestion className="h-8 w-8" />
+                      <div>
+                        <div className="text-destructive">
+                          {failedTextFiles} Label{failedTextFiles !== 1 && "s"}{" "}
+                          failed to load
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          They are not named after an image
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
                 <div>
                   <button
                     onClick={() => navigate("/")}
