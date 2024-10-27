@@ -7,6 +7,9 @@ import React, {
 } from "react";
 import { Caption, CaptionPart, ImageFile } from "@/lib/types";
 import { arrayMove } from "@dnd-kit/sortable";
+import { O } from "ollama/dist/shared/ollama.51f6cea9.mjs";
+import { useAtom } from "jotai/react";
+import { settings } from "./settings";
 
 // Define the context value type
 interface ImageCaptionContextType {
@@ -22,6 +25,7 @@ interface ImageCaptionContextType {
   deletePart: (partId: string) => void;
   cancelEditMode: () => void;
   isEditing: CaptionPart | null;
+  isDirty: boolean;
 }
 
 // Create the context
@@ -37,11 +41,13 @@ interface ImageCaptionProviderProps {
 export const ImageCaptionProvider: React.FC<ImageCaptionProviderProps> = ({
   children,
 }) => {
+  const [isDirty, setDirty] = useState(false);
   const [imageFile, setImageFile] = useState<ImageFile | null>(null);
   const [caption, setCaption] = useState<Caption>({
     parts: [],
   });
   const [editingPart, setEditingPart] = useState<CaptionPart | null>(null);
+  const [separator] = useAtom(settings.caption.separator);
 
   // Function to add a part to the caption parts array
   const addPart = (part: CaptionPart) => {
@@ -49,6 +55,7 @@ export const ImageCaptionProvider: React.FC<ImageCaptionProviderProps> = ({
       ...prevCaption,
       parts: [...prevCaption.parts, part],
     }));
+    setDirty(true);
   };
 
   // Function to handle drag and drop reordering
@@ -77,6 +84,7 @@ export const ImageCaptionProvider: React.FC<ImageCaptionProviderProps> = ({
         parts: updatedParts,
       };
     });
+    setDirty(true);
   };
 
   // Function to enter edit mode with a specific part
@@ -99,6 +107,7 @@ export const ImageCaptionProvider: React.FC<ImageCaptionProviderProps> = ({
       updatedParts[index] = part;
 
       setEditingPart(null);
+      setDirty(true);
 
       return {
         ...prevCaption,
@@ -116,6 +125,7 @@ export const ImageCaptionProvider: React.FC<ImageCaptionProviderProps> = ({
       const updatedParts = prevCaption.parts.filter((item) => item.id !== id);
 
       setEditingPart(null);
+      setDirty(true);
 
       return {
         ...prevCaption,
@@ -127,11 +137,28 @@ export const ImageCaptionProvider: React.FC<ImageCaptionProviderProps> = ({
   const resetEditor = () => {
     setCaption({ parts: [] });
     setEditingPart(null);
+    setDirty(false);
   };
 
   useEffect(() => {
     resetEditor();
   }, [imageFile]);
+
+  useEffect(() => {
+    setCaption({
+      parts: (
+        imageFile?.captionFile?.content
+          ?.split(separator)
+          ?.map((part) => part.trim()) ?? []
+      )
+        .filter((part) => part.length > 0)
+        .map((text, index) => ({
+          id: index.toString(),
+          text,
+          order: index,
+        })),
+    });
+  }, [imageFile, separator]);
 
   // Context value to be provided
   const value: ImageCaptionContextType = {
@@ -146,6 +173,7 @@ export const ImageCaptionProvider: React.FC<ImageCaptionProviderProps> = ({
     updatePart,
     deletePart,
     isEditing: editingPart,
+    isDirty,
   };
 
   return (

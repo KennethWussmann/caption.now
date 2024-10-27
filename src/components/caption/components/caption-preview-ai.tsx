@@ -1,12 +1,24 @@
 import { Card } from "@/components/ui";
 import { useCaptionRefiner } from "@/hooks/ai/use-caption-refiner";
+import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
 import { useImageCaption } from "@/lib/image-caption-provider";
 import { LoaderCircle, RefreshCw } from "lucide-react";
+import { useEffect } from "react";
 
 export const CaptionPreviewAI = () => {
-  const { captionSuggestion, isLoading, refetch } = useCaptionRefiner();
-  const { caption } = useImageCaption();
+  const { caption, imageFile, isDirty } = useImageCaption();
+  const { captionSuggestion, isLoading, refetch } = useCaptionRefiner({
+    skip: !isDirty,
+  });
+  const { writeCaption } = useDatasetDirectory();
   const isEmpty = caption.parts.length === 0;
+
+  useEffect(() => {
+    if (!imageFile || !captionSuggestion || captionSuggestion.length < 3) {
+      return;
+    }
+    writeCaption(captionSuggestion, imageFile);
+  }, [captionSuggestion, imageFile, writeCaption]);
 
   return (
     <div className="my-2 py-2">

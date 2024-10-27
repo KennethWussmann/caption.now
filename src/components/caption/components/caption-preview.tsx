@@ -1,22 +1,35 @@
 import { Card } from "@/components/ui";
+import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
 import { useImageCaption } from "@/lib/image-caption-provider";
 import { settings } from "@/lib/settings";
 import { useAtom } from "jotai/react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 export const CaptionPreview = () => {
-  const { caption } = useImageCaption();
+  const { caption, imageFile } = useImageCaption();
+  const { writeCaption } = useDatasetDirectory();
   const [separator] = useAtom(settings.caption.separator);
   const [endWithSeparator] = useAtom(settings.caption.endWithSeparator);
-  const text = useMemo(
-    () =>
-      (
-        caption.parts.map((part) => part.text.trim()).join(separator) +
-        (endWithSeparator ? separator : "")
-      ).trim(),
-    [caption.parts, endWithSeparator, separator]
-  );
+  const text = useMemo(() => {
+    let joined = caption.parts
+      .map((part) => part.text.trim())
+      .join(separator)
+      .trim();
+
+    if (endWithSeparator && !joined.endsWith(separator.trim())) {
+      joined += separator;
+    }
+
+    return joined;
+  }, [caption.parts, endWithSeparator, separator]);
   const isEmpty = caption.parts.length === 0;
+
+  useEffect(() => {
+    if (!imageFile || text.length < 3) {
+      return;
+    }
+    writeCaption(text, imageFile);
+  }, [text, imageFile, writeCaption]);
 
   return (
     <div className="my-2 py-2">

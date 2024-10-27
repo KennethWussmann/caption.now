@@ -6,7 +6,13 @@ import { useImageCaption } from "@/lib/image-caption-provider";
 import { useQuery } from "@tanstack/react-query";
 import { chat } from "@/lib/ollama-api-client";
 
-export const useCaptionRefiner = () => {
+export const useCaptionRefiner = ({
+  initialValue,
+  skip,
+}: {
+  initialValue?: string | null;
+  skip?: boolean;
+} = {}) => {
   const [captionModel] = useAtom(settings.ai.caption.model);
   const [userPromptTemplate] = useAtom(settings.ai.caption.userPrompt);
   const { isOnline } = useOllamaStatus();
@@ -15,7 +21,7 @@ export const useCaptionRefiner = () => {
     return caption.parts.map((part) => part.text.trim()).join(". ") + ".";
   }, [caption.parts]);
   const [captionSuggestion, setCaptionSuggestion] = useState<string | null>(
-    null
+    initialValue ?? null
   );
 
   const isEmpty = caption.parts.length === 0;
@@ -26,7 +32,7 @@ export const useCaptionRefiner = () => {
     isRefetching,
     refetch,
   } = useQuery({
-    enabled: isOnline || !isEmpty,
+    enabled: isOnline && !isEmpty && !skip,
     queryKey: ["caption", text],
     queryFn: () =>
       chat({

@@ -22,6 +22,7 @@ type DatasetDirectoryContextType = {
   reset: () => void;
   writeTextFile: (fileName: string, content: string) => Promise<void>;
   loadImage: (path: string) => Promise<ImageFile | null>;
+  writeCaption: (caption: string, image: ImageFile) => Promise<void>;
 };
 
 const DatasetDirectoryContext = createContext<
@@ -219,6 +220,38 @@ export const DatasetDirectoryProvider = ({
     [directoryHandle]
   );
 
+  const writeCaption = useCallback(
+    async (caption: string, image: ImageFile) => {
+      if (!directoryHandle) {
+        throw new Error("No directory selected");
+      }
+
+      const baseName = image.name.replace(/\.(jpg|jpeg|png)$/i, "");
+      const fileName = `${baseName}.txt`;
+
+      try {
+        await writeTextFile(fileName, caption);
+        const updatedImageFile = {
+          ...image,
+          captionFile: {
+            name: fileName,
+            type: "text/plain",
+            content: caption,
+          },
+        };
+        setImageFiles((prev) =>
+          prev.map((file) =>
+            file.name === image.name ? updatedImageFile : file
+          )
+        );
+      } catch (err) {
+        console.error("Error setting caption:", err);
+        throw new Error("Failed to set caption");
+      }
+    },
+    [directoryHandle, writeTextFile]
+  );
+
   useEffect(() => {
     const checkPermission = async () => {
       if (!directoryHandle) return;
@@ -253,6 +286,7 @@ export const DatasetDirectoryProvider = ({
     reset: resetState,
     writeTextFile,
     loadImage,
+    writeCaption,
   };
 
   return (
