@@ -2,9 +2,9 @@ import { atomWithStorage } from "jotai/utils";
 import { Atom } from "jotai/vanilla";
 import { z } from "zod";
 
-export const atomWithZod = <T extends z.Schema, V>(
+export const atomWithZod = <V, T extends z.Schema<V>>(
   storageKey: string,
-  initialValue: V,
+  initialValue: z.infer<T>,
   schema: T
 ) => {
   const theAtom: Atom<z.infer<typeof schema>> = atomWithStorage(
