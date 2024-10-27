@@ -19,7 +19,6 @@ import { settings } from "@/lib/settings";
 import { useAtom } from "jotai/react";
 import {
   FileQuestion,
-  FileText,
   FolderOpen,
   Image,
   ImageOff,
