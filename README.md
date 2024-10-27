@@ -22,6 +22,6 @@ caption.now is designed to work offline, meaning you can disconnect from the int
 1. Open caption.now [here](https://caption.now).
 2. Start captioning! No installation required.
 
-If you prefer, you can also clone this repository to run caption.now locally or deploy it on your own web server.
+If you prefer, you can also [host caption.now yourself](./docs/ollama.md#error-on-captionnow-saying-something-about-browser-security-policies) or [run it locally](./docs#moderate-run-locally).
 
 For AI-assisted captioning, you may want to install Ollama, which is available for all operating systems and allows you to run popular open-source language and vision models entirely offline.
