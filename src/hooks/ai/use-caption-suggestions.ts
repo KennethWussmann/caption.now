@@ -20,6 +20,7 @@ export const useCaptionSuggestions = () => {
     return caption.parts.map((part) => part.text.trim()).join(". ") + ".";
   }, [caption.parts]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isDebounced, setDebounced] = useState(true);
 
   useHotkeys("ctrl+1", () => applySuggestionKeyboardShortcut(0), {
     enableOnFormTags: ["INPUT"],
@@ -55,7 +56,7 @@ export const useCaptionSuggestions = () => {
     isRefetching,
     refetch,
   } = useQuery({
-    enabled: isOnline && !!imageFile?.base64,
+    enabled: isOnline && !!imageFile?.base64 && !isDebounced,
     queryKey: ["vision", imageFile?.base64 ?? "", text],
     queryFn: () =>
       chat({
@@ -106,6 +107,17 @@ export const useCaptionSuggestions = () => {
   useEffect(() => {
     setSuggestions([]);
   }, [imageFile]);
+
+  useEffect(() => {
+    setDebounced(true);
+    const timeout = setTimeout(() => {
+      setDebounced(false);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [imageFile, setDebounced]);
 
   return {
     suggestions,

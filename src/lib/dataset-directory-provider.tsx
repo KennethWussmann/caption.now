@@ -225,18 +225,18 @@ export const DatasetDirectoryProvider = ({
       if (!directoryHandle) {
         throw new Error("No directory selected");
       }
-
+      const trimmedCaption = caption.trim();
       const baseName = image.name.replace(/\.(jpg|jpeg|png)$/i, "");
       const fileName = `${baseName}.txt`;
 
       try {
-        await writeTextFile(fileName, caption);
+        await writeTextFile(fileName, trimmedCaption);
         const updatedImageFile = {
           ...image,
           captionFile: {
             name: fileName,
             type: "text/plain",
-            content: caption,
+            content: trimmedCaption,
           },
         };
         setImageFiles((prev) =>
@@ -244,9 +244,8 @@ export const DatasetDirectoryProvider = ({
             file.name === image.name ? updatedImageFile : file
           )
         );
-      } catch (err) {
-        console.error("Error setting caption:", err);
-        throw new Error("Failed to set caption");
+      } catch {
+        //
       }
     },
     [directoryHandle, writeTextFile]

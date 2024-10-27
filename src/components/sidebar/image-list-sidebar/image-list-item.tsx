@@ -27,10 +27,12 @@ export const ImageListItem = React.forwardRef<
           />
           <div className="flex flex-col gap-1 items-start">
             {truncateFilename(image.name, 20)}
-            <Badge variant="secondary" className="flex gap-1">
-              <Check className="h-5 w-5" />
-              Done
-            </Badge>
+            {image?.captionFile && image.captionFile.content.length > 0 && (
+              <Badge variant="secondary" className="flex gap-1">
+                <Check className="h-5 w-5" />
+                Done
+              </Badge>
+            )}
           </div>
         </div>
       </SidebarMenuButton>

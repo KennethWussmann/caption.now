@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { Caption, CaptionPart, ImageFile } from "@/lib/types";
 import { arrayMove } from "@dnd-kit/sortable";
-import { O } from "ollama/dist/shared/ollama.51f6cea9.mjs";
 import { useAtom } from "jotai/react";
 import { settings } from "./settings";
 

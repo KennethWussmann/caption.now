@@ -72,7 +72,7 @@ export default function Page() {
             <Button
               variant="outline"
               size="icon"
-              disabled={!hasPreviousImage()}
+              disabled={!hasPreviousImage}
               onClick={loadPreviousImage}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -80,7 +80,7 @@ export default function Page() {
             <Button
               variant="outline"
               size="icon"
-              disabled={!hasNextImage()}
+              disabled={!hasNextImage}
               onClick={loadNextImage}
             >
               <ChevronRight className="h-4 w-4" />

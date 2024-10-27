@@ -13,6 +13,10 @@ export const settings = {
       "settings.appearance.skipSetupSummary",
       false
     ),
+    hideDoneImages: atomWithStorage(
+      "settings.appearance.hideDoneImages",
+      false
+    ),
   },
   caption: {
     strategy: atomWithZod(

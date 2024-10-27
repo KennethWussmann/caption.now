@@ -1,53 +1,79 @@
 import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
 import { useImageCaption } from "@/lib/image-caption-provider";
+import { settings } from "@/lib/settings";
+import { useAtom } from "jotai/react";
+import { useCallback, useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 export const useDatasetNavigation = () => {
   const { imageFile, setImageFile } = useImageCaption();
   const { imageFiles } = useDatasetDirectory();
+  const [hideDone] = useAtom(settings.appearance.hideDoneImages);
 
-  const hasNextImage = () => {
-    if (imageFiles.length === 0) {
+  const [hasNextImage, setHasNextImage] = useState(false);
+  const [hasPreviousImage, setHasPreviousImage] = useState(false);
+
+  const filteredImageFiles = imageFiles.filter((image) =>
+    hideDone
+      ? !image.captionFile || image.captionFile.content.length === 0
+      : true
+  );
+
+  const getHasNextImage = useCallback(() => {
+    if (filteredImageFiles.length === 0) {
       return false;
     }
     if (!imageFile) {
-      return imageFiles.length > 0;
+      return filteredImageFiles.length > 0;
     }
-    const currentIndex = imageFiles.indexOf(imageFile);
-    return currentIndex < imageFiles.length - 1;
-  };
+    const currentIndex = filteredImageFiles.findIndex(
+      (file) => imageFile.name === file.name
+    );
+    return currentIndex < filteredImageFiles.length - 1;
+  }, [filteredImageFiles, imageFile]);
 
-  const hasPreviousImage = () => {
-    if (!imageFile || imageFiles.length === 0) {
+  const getHasPreviousImage = useCallback(() => {
+    if (!imageFile || filteredImageFiles.length === 0) {
       return false;
     }
-    const currentIndex = imageFiles.indexOf(imageFile);
+    const currentIndex = filteredImageFiles.findIndex(
+      (file) => imageFile.name === file.name
+    );
     return currentIndex > 0;
-  };
+  }, [filteredImageFiles, imageFile]);
 
   const loadNextImage = () => {
-    if (!hasNextImage()) {
+    if (!getHasNextImage()) {
       return;
     }
     if (!imageFile) {
-      setImageFile(imageFiles[0]);
+      setImageFile(filteredImageFiles[0]);
       return;
     }
-    const currentIndex = imageFiles.indexOf(imageFile);
-    if (currentIndex < imageFiles.length - 1) {
-      setImageFile(imageFiles[currentIndex + 1]);
+    const currentIndex = filteredImageFiles.findIndex(
+      (file) => imageFile.name === file.name
+    );
+    if (currentIndex < filteredImageFiles.length - 1) {
+      setImageFile(filteredImageFiles[currentIndex + 1]);
     }
   };
 
   const loadPreviousImage = () => {
-    if (!hasPreviousImage() || !imageFile) {
+    if (!getHasPreviousImage() || !imageFile) {
       return;
     }
-    const currentIndex = imageFiles.indexOf(imageFile);
+    const currentIndex = filteredImageFiles.findIndex(
+      (file) => imageFile.name === file.name
+    );
     if (currentIndex > 0) {
-      setImageFile(imageFiles[currentIndex - 1]);
+      setImageFile(filteredImageFiles[currentIndex - 1]);
     }
   };
+
+  useEffect(() => {
+    setHasNextImage(getHasNextImage());
+    setHasPreviousImage(getHasPreviousImage());
+  }, [imageFile, filteredImageFiles, getHasNextImage, getHasPreviousImage]);
 
   return {
     hasNextImage,

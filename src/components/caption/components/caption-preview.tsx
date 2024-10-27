@@ -3,33 +3,32 @@ import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
 import { useImageCaption } from "@/lib/image-caption-provider";
 import { settings } from "@/lib/settings";
 import { useAtom } from "jotai/react";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 
 export const CaptionPreview = () => {
   const { caption, imageFile } = useImageCaption();
   const { writeCaption } = useDatasetDirectory();
   const [separator] = useAtom(settings.caption.separator);
   const [endWithSeparator] = useAtom(settings.caption.endWithSeparator);
-  const text = useMemo(() => {
-    let joined = caption.parts
-      .map((part) => part.text.trim())
-      .join(separator)
-      .trim();
 
-    if (endWithSeparator && !joined.endsWith(separator.trim())) {
-      joined += separator;
-    }
+  let finalText = caption.parts
+    .map((part) => part.text.trim())
+    .join(separator)
+    .trim();
 
-    return joined;
-  }, [caption.parts, endWithSeparator, separator]);
+  if (endWithSeparator && !finalText.endsWith(separator.trim())) {
+    finalText += separator;
+  }
+
   const isEmpty = caption.parts.length === 0;
 
   useEffect(() => {
-    if (!imageFile || text.length < 3) {
+    if (!imageFile || finalText.length < 3) {
       return;
     }
-    writeCaption(text, imageFile);
-  }, [text, imageFile, writeCaption]);
+    writeCaption(finalText, imageFile);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finalText, writeCaption]);
 
   return (
     <div className="my-2 py-2">
@@ -43,7 +42,7 @@ export const CaptionPreview = () => {
         </Card>
       )}
 
-      {!isEmpty && <Card className="p-1 px-2">{text}</Card>}
+      {!isEmpty && <Card className="p-1 px-2">{finalText}</Card>}
     </div>
   );
 };
