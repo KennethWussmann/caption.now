@@ -10,6 +10,9 @@ const AppearanceSettingsContent = () => {
   const [skipSetupSummary, setSkipSetupSummary] = useAtom(
     settings.appearance.skipSetupSummary
   );
+  const [disableAnimations, setDisableAnimations] = useAtom(
+    settings.appearance.disableAnimations
+  );
   return (
     <Table>
       <TableBody>
@@ -33,6 +36,15 @@ const AppearanceSettingsContent = () => {
             <Switch
               checked={skipSetupSummary}
               onCheckedChange={setSkipSetupSummary}
+            />
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Disable animations</TableCell>
+          <TableCell className="text-right">
+            <Switch
+              checked={disableAnimations}
+              onCheckedChange={setDisableAnimations}
             />
           </TableCell>
         </TableRow>

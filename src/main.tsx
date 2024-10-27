@@ -15,6 +15,7 @@ import { TooltipProvider } from "./components/ui/tooltip.tsx";
 import { Toaster } from "@/components/ui/toaster";
 import { PWAPrompt } from "./components/common/pwa-prompt.tsx";
 import { OllamaModelDownloadProvider } from "./lib/ollama-model-download-provider.tsx";
+import { DisableAnimations } from "./lib/disable-animations.tsx";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ createRoot(document.getElementById("root")!).render(
                 <RouterProvider router={router} />
                 <Toaster />
                 <PWAPrompt />
+                <DisableAnimations />
               </OllamaModelDownloadProvider>
             </QueryClientProvider>
           </ImageCaptionProvider>

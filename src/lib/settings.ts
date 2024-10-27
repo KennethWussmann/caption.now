@@ -17,6 +17,10 @@ export const settings = {
       "settings.appearance.hideDoneImages",
       false
     ),
+    disableAnimations: atomWithStorage(
+      "settings.appearance.disableAnimations",
+      false
+    ),
   },
   caption: {
     strategy: atomWithZod(
