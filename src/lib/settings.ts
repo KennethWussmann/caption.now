@@ -1,6 +1,7 @@
 import { atomWithStorage } from "jotai/utils";
 
 export const settings = {
+  onboardingCompleted: atomWithStorage("settings.onboardingCompleted", false),
   appearance: {
     theme: atomWithStorage("settings.appearance.theme", "system"),
     skipSetupSummary: atomWithStorage(
@@ -9,7 +10,7 @@ export const settings = {
     ),
   },
   ai: {
-    ollamaEnabled: atomWithStorage("settings.ai.ollamaEnabled", true),
+    ollamaEnabled: atomWithStorage("settings.ai.ollamaEnabled", false),
     ollamaUrl: atomWithStorage(
       "settings.ai.ollamaUrl",
       "http://127.0.0.1:11434"
@@ -20,15 +21,24 @@ export const settings = {
         "settings.ai.caption.model",
         "mistral-small:latest"
       ),
-      systemPrompt: atomWithStorage(
-        "settings.ai.caption.systemPrompt",
-        'You are an AI prompt refining assistant. The user is giving you a rough prompt. Sometimes only containing tags, sometimes containing entire sentences. The order of the sentences is important. You are asked to understand and combine the sentences logically and grammatically. You are asked to generate a refined prompt that is more grammatically correct. You shall not add any details that the user didn\'t mention. Write the prompt mainly in sentences that always describe one subject or aspect. Start with the medium, rough description of the subjects, more detailed description of the subjects, situation and how they interact and end the prompt with the background, style or atmosphere of the image. Phrase it like an AI image prompt, but leave out starting phrases like "Generate", "Imagine". If a word in the users message starts with "en:", you are asked to translate the word from which ever language it might be into english. Generally, use simple everyday language that everyone would understand. Only reply with the refined prompt, do not add any additional text.'
+      userPrompt: atomWithStorage(
+        "settings.ai.caption.userPrompt",
+        `You are an AI prompt refining assistant. I'm giving you a rough prompt. Sometimes only containing tags, sometimes containing entire sentences. The order of the sentences is important. You are asked to understand and combine the sentences logically and grammatically. You are asked to generate a refined prompt that is more grammatically correct. You shall not add any details that I didn't mention. Write the prompt mainly in sentences that always describe one subject or aspect. Start with the medium, rough description of the subjects, more detailed description of the subjects, situation and how they interact and end the prompt with the background, style or atmosphere of the image. Phrase it like an AI image prompt, but leave out starting phrases like "Generate", "Imagine". If a word in my prompt starts with "en:", you are asked to translate the word from which ever language it might be into English and integrate it seamlessly into the sentence. Generally, use simple everyday language that everyone would understand. Only reply with the refined prompt, do not add any additional text.
+        
+        My prompt: %text%`
       ),
     },
     vision: {
-      _recommendedModel: "cheese",
+      _recommendedModel: "llava",
       model: atomWithStorage("settings.ai.vision.model", "llava:latest"),
-      systemPrompt: atomWithStorage("settings.ai.vision.systemPrompt", "TODO"),
+      userPrompt: atomWithStorage(
+        "settings.ai.vision.userPrompt",
+        `You are an AI Image Captioning Assistant. Your role consists of analyzing images and generating captions for them. The captions should be short and precise in everyday language. You are working together with me, so I may also give you clues about what I see on the image. Use the clues to refine what you see. Take my clues into account. You don't write a full caption for the image, you just offer me some suggestions for phrases and sentences that you think should be part of the caption. Prioritze new ideas higher than aspects that are already covered in my clues. Your suggestions should capture different aspects of the image, don't include similar suggestions multiple times. Don't only focus on the center subject. Also consider the background and other objects in the image. Describe how the objects interact with each other.
+        
+        Please generate between 3 and 5 suggestions for the image. Reply in a JSON top-level array of strings. Your reply must be a valid JSON array of strings.
+
+        My clues: %text%`
+      ),
     },
   },
 };

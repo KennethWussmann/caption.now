@@ -1,4 +1,6 @@
 import { CaptionView } from "@/components/caption/caption-view";
+import { OllamaStatusNotification } from "@/components/common/ollama-status-notification";
+import { OnboardingDialog } from "@/components/onboarding/onboarding-dialog";
 import { ImageListSidebar } from "@/components/sidebar/image-list-sidebar/image-list-sidebar";
 import {
   Breadcrumb,
@@ -39,6 +41,8 @@ export default function Page() {
 
   return (
     <SidebarProvider>
+      <OnboardingDialog />
+      <OllamaStatusNotification />
       <Navigate to={`/caption/${imageFile?.name}`} />
       <ImageListSidebar side="left" />
       <SidebarInset>

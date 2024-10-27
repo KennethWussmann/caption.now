@@ -75,13 +75,26 @@ export const DatasetDirectoryProvider = ({
 
           if (fileType.startsWith("image/")) {
             const src = URL.createObjectURL(file);
+
+            // Convert file to base64 without prefix
+            const base64 = await new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                const result = (reader.result as string) || "";
+                resolve(result.split(",")[1]); // Remove prefix
+              };
+              reader.onerror = reject;
+              reader.readAsDataURL(file);
+            });
+
             imageFiles.push({
               name: file.name,
               type: fileType,
               src,
+              base64,
             });
           } else if (fileType === "text/plain") {
-            const content = await file.text(); // Read file as text
+            const content = await file.text();
             textFiles.push({
               name: file.name,
               type: fileType,
@@ -154,10 +167,22 @@ export const DatasetDirectoryProvider = ({
 
         const src = URL.createObjectURL(file);
 
+        // Convert file to base64 without prefix
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = (reader.result as string) || "";
+            resolve(result.split(",")[1]); // Remove prefix
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
         return {
           name: file.name,
           type: file.type,
           src,
+          base64,
         };
       } catch (err) {
         console.error("Error loading image:", err);

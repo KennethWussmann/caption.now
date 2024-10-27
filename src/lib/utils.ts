@@ -27,3 +27,11 @@ export const truncateFilename = (
 
   return `${startPart}...${endPart}${extension}`;
 };
+
+export const tryJSONParse = (input: string) => {
+  try {
+    return JSON.parse(input);
+  } catch {
+    return null;
+  }
+};

@@ -6,11 +6,13 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CaptionPage from "./pages/caption/page.tsx";
 import HomePage from "./pages/home/page.tsx";
 import SetupPage from "./pages/setup/page.tsx";
+import PlaygroundPage from "./pages/playground/page.tsx";
 import { DatasetDirectoryProvider } from "./lib/dataset-directory-provider.tsx";
 import { RequireDatasetSelection } from "./lib/require-dataset-selection.tsx";
 import { ImageCaptionProvider } from "./lib/image-caption-provider.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "./components/ui/tooltip.tsx";
+import { Toaster } from "@/components/ui/toaster";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +38,10 @@ const router = createBrowserRouter([
     path: "setup",
     element: <SetupPage />,
   },
+  {
+    path: "playground",
+    element: <PlaygroundPage />,
+  },
 ]);
 
 createRoot(document.getElementById("root")!).render(
@@ -46,6 +52,7 @@ createRoot(document.getElementById("root")!).render(
           <ImageCaptionProvider>
             <QueryClientProvider client={queryClient}>
               <RouterProvider router={router} />
+              <Toaster />
             </QueryClientProvider>
           </ImageCaptionProvider>
         </DatasetDirectoryProvider>

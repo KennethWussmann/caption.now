@@ -1,4 +1,8 @@
-import ollama, { GenerateRequest } from "ollama/browser";
+import ollama, {
+  ChatRequest,
+  ChatResponse,
+  GenerateRequest,
+} from "ollama/browser";
 
 export const getModels = async () => {
   const { models } = await ollama.list();
@@ -16,6 +20,11 @@ export const pullModel = async (model: string) => {
 export const generate = async (request: GenerateRequest) => {
   const { response } = await ollama.generate({ ...request, stream: false });
   return response;
+};
+
+export const chat = async (request: ChatRequest) => {
+  const { message } = await ollama.chat({ ...request, stream: false });
+  return message.content;
 };
 
 export const isOllamaOnline = async () => {

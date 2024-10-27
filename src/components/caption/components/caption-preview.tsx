@@ -9,13 +9,19 @@ export const CaptionPreview = () => {
   }, [caption.parts]);
   const isEmpty = caption.parts.length === 0;
 
-  if (isEmpty) {
-    return (
-      <Card className="p-1 px-2 italic text-muted-foreground text-center">
-        No caption
-      </Card>
-    );
-  }
+  return (
+    <div className="my-2 py-2">
+      <div className="flex flex-row gap-2 mb-2 font-semibold items-center">
+        Preview
+      </div>
 
-  return <Card className="p-1 px-2 max-h-60 overflow-y-scroll">{text}</Card>;
+      {isEmpty && (
+        <Card className="p-1 px-2 italic text-muted-foreground text-center">
+          No caption
+        </Card>
+      )}
+
+      {!isEmpty && <Card className="p-1 px-2">{text}</Card>}
+    </div>
+  );
 };

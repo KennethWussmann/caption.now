@@ -44,7 +44,7 @@ export const CaptionList = () => {
 
   return (
     <div className="border-l ml-2 h-full flex flex-col">
-      <h1 className="mb-2 ml-4">Caption</h1>
+      <h1 className="mb-2 ml-4 font-semibold">Caption Parts</h1>
       <div
         className="flex flex-col overflow-y-auto gap-1 pb-4"
         style={{ flex: "1 1 0", minHeight: 0 }}

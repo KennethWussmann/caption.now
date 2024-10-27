@@ -1,13 +1,17 @@
-import { useOllamaStatus } from "@/hooks/use-ollama-status";
 import { CaptionPreviewAI } from "./caption-preview-ai";
 import { CaptionPreview } from "./caption-preview";
+import { useAtom } from "jotai/react";
+import { settings } from "@/lib/settings";
+import { CaptionSuggestionsAI } from "./caption-suggestions-ai";
+import { useOllamaStatus } from "@/hooks/use-ollama-status";
 
 export const CaptionListFooter = () => {
+  const [isOllamaEnabled] = useAtom(settings.ai.ollamaEnabled);
   const { isOnline } = useOllamaStatus();
   return (
     <div>
-      <h1 className="mb-2 mt-2">Preview</h1>
-      {isOnline ? <CaptionPreviewAI /> : <CaptionPreview />}
+      {isOllamaEnabled && isOnline && <CaptionSuggestionsAI />}
+      {isOllamaEnabled && isOnline ? <CaptionPreviewAI /> : <CaptionPreview />}
     </div>
   );
 };
