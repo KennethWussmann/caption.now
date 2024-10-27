@@ -1,50 +1,27 @@
-# React + TypeScript + Vite
+# QuickLabel
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A privacy-first, offline-capable image captioning web app that keeps your data on your device.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Detailed Captions, Locally**: Describe your images with precision and ease.
+- **Optimized Workflow**: Use hotkeys and AI assistance to speed up the captioning process.
+- **Privacy-Focused, Offline First**: QuickLabel is a web app with no backend. All images and captions stay on your computer, ensuring complete control over your data.
+- **Optional Local AI Integration**: Connect with [Ollama](https://ollama.com/) for AI-powered captioning. Ollama runs locally on your device, keeping everything private and offline.
 
-## Expanding the ESLint configuration
+### Motivation
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Creating detailed image captions is essential for AI training and data preparation. While several server-based solutions like LabelStudio offer similar capabilities, they often require a hosted server, may store data externally.
 
-- Configure the top-level `parserOptions` property like this:
+QuickLabel is built with privacy and ease-of-use in mind, offering a lightweight, offline-first alternative. Since QuickLabel runs entirely on your device, there’s no server communication or data upload. Even with the AI integration, using Ollama for captioning assistance, everything remains local — you run Ollama on your device, maintaining complete privacy.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+QuickLabel is designed to work offline, meaning you can disconnect from the internet after opening it, and continue captioning without interruptions. You can also return to QuickLabel anytime to resume your work offline.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Getting Started
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+1. Open QuickLabel [here](#).
+2. Start captioning! No installation required.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+If you prefer, you can also clone this repository to run QuickLabel locally or deploy it on your own web server.
+
+For AI-assisted captioning, you may want to install Ollama, which is available for all operating systems and allows you to run popular open-source language and vision models entirely offline.

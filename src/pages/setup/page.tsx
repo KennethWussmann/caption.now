@@ -65,8 +65,8 @@ export default function Page() {
             <CardHeader>
               <CardTitle>Let's Go!</CardTitle>
               <CardDescription>
-                Your dataset was loaded successfully, start labelling your
-                images now.
+                Your dataset was loaded successfully, start labeling your images
+                now.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -153,7 +153,7 @@ export default function Page() {
             <CardHeader>
               <CardTitle className="text-2xl">Welcome!</CardTitle>
               <CardDescription>
-                To start labelling your images, select a directory from your
+                To start labeling your images, select a directory from your
                 computer that contains all images.
               </CardDescription>
             </CardHeader>

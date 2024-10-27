@@ -1,0 +1,61 @@
+name: release-docker-latest
+
+on:
+  push:
+    tags:
+      - "*"
+
+concurrency: release-docker-latest
+
+env:
+  FORCE_COLOR: 1
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: [self-hosted, arm64, cb]
+            arch: arm64
+          - runner: ubuntu-latest
+            arch: amd64
+    permissions:
+      packages: write
+      contents: read
+    outputs:
+      tag: ${{ steps.vars.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get version
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+      - uses: ./.github/actions/docker-publish
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          tags: ghcr.io/kennethwussmann/quick-label:${{ matrix.arch }}-${{ steps.vars.outputs.tag }}
+          build-args: VERSION=${{ steps.vars.outputs.tag }}
+
+  create-and-push-manifest:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Login to GitHub Packages Docker Registry
+        uses: docker/login-action@v2
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+      - name: Create and push Docker manifest
+        run: |
+          docker manifest create ghcr.io/kennethwussmann/quick-label:${{ needs.build.outputs.tag }} \
+            --amend ghcr.io/kennethwussmann/quick-label:amd64-${{ needs.build.outputs.tag }} \
+            --amend ghcr.io/kennethwussmann/quick-label:arm64-${{ needs.build.outputs.tag }}
+          docker manifest push ghcr.io/kennethwussmann/quick-label:${{ needs.build.outputs.tag }}
+          docker manifest create ghcr.io/kennethwussmann/quick-label:latest \
+            --amend ghcr.io/kennethwussmann/quick-label:amd64-${{ needs.build.outputs.tag }} \
+            --amend ghcr.io/kennethwussmann/quick-label:arm64-${{ needs.build.outputs.tag }}
+          docker manifest push ghcr.io/kennethwussmann/quick-label:latest
