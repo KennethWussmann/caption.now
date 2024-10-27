@@ -25,7 +25,7 @@ export const useOllamaStatus = (): StatusResponse => {
     setOnline(await isOllamaOnline());
     setTimeout(() => {
       setLoading(false);
-    }, 10000);
+    }, 1000);
   }, [isOllamaEnabled]);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export const useOllamaStatus = (): StatusResponse => {
     recheck();
     const interval = setInterval(() => {
       recheck();
-    }, 10000);
+    }, 30000);
     return () => {
       clearInterval(interval);
     };
