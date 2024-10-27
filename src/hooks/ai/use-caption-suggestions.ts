@@ -7,6 +7,7 @@ import { useOllamaStatus } from "../use-ollama-status";
 import { useImageCaption } from "@/lib/image-caption-provider";
 import { useQuery } from "@tanstack/react-query";
 import { chat } from "@/lib/ollama-api-client";
+import { useHotkeys } from "react-hotkeys-hook";
 
 const suggestionSchema = z.array(z.string());
 
@@ -14,11 +15,39 @@ export const useCaptionSuggestions = () => {
   const [visionModel] = useAtom(settings.ai.vision.model);
   const [userPromptTemplate] = useAtom(settings.ai.vision.userPrompt);
   const { isOnline } = useOllamaStatus();
-  const { imageFile, caption } = useImageCaption();
+  const { imageFile, caption, addPart } = useImageCaption();
   const text = useMemo(() => {
     return caption.parts.map((part) => part.text.trim()).join(". ") + ".";
   }, [caption.parts]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+
+  useHotkeys("ctrl+1", () => applySuggestionKeyboardShortcut(0), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys("ctrl+2", () => applySuggestionKeyboardShortcut(1), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys("ctrl+3", () => applySuggestionKeyboardShortcut(2), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys("ctrl+4", () => applySuggestionKeyboardShortcut(3), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys("ctrl+5", () => applySuggestionKeyboardShortcut(4), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys("ctrl+6", () => applySuggestionKeyboardShortcut(5), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys("ctrl+7", () => applySuggestionKeyboardShortcut(6), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys("ctrl+8", () => applySuggestionKeyboardShortcut(7), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys("ctrl+9", () => applySuggestionKeyboardShortcut(8), {
+    enableOnFormTags: ["INPUT"],
+  });
 
   const {
     data: aiSuggestions,
@@ -46,6 +75,20 @@ export const useCaptionSuggestions = () => {
     setSuggestions((prev) => prev.filter((s) => s !== suggestion));
   };
 
+  const applySuggestion = (suggestion: string) => {
+    addPart({
+      id: Math.random().toString(),
+      text: suggestion,
+    });
+    removeSuggestion(suggestion);
+  };
+
+  const applySuggestionKeyboardShortcut = (index: number) => {
+    if (index >= 0 && index < suggestions.length) {
+      applySuggestion(suggestions[index]);
+    }
+  };
+
   useEffect(() => {
     const rawResponse = aiSuggestions
       ?.replace("```json", "")
@@ -69,5 +112,6 @@ export const useCaptionSuggestions = () => {
     isLoading: isLoading || isRefetching,
     removeSuggestion,
     refetch,
+    applySuggestion,
   };
 };

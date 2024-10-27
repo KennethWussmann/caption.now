@@ -1,12 +1,10 @@
 import { Card } from "@/components/ui";
 import { AnimatedGroup } from "@/components/ui/animation/animated-group";
 import { useCaptionSuggestions } from "@/hooks/ai/use-caption-suggestions";
-import { useImageCaption } from "@/lib/image-caption-provider";
 import { LoaderCircle, RefreshCw } from "lucide-react";
 
 export const CaptionSuggestionsAI = () => {
-  const { addPart } = useImageCaption();
-  const { suggestions, removeSuggestion, isLoading, refetch } =
+  const { suggestions, isLoading, refetch, applySuggestion } =
     useCaptionSuggestions();
 
   return (
@@ -32,11 +30,7 @@ export const CaptionSuggestionsAI = () => {
               key={text}
               className="p-2 px-4 hover:bg-muted cursor-pointer"
               onClick={() => {
-                removeSuggestion(text);
-                addPart({
-                  id: Math.random().toString(),
-                  text,
-                });
+                applySuggestion(text);
               }}
             >
               {text}
