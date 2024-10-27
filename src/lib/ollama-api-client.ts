@@ -1,16 +1,19 @@
 import { ChatRequest, GenerateRequest, Ollama } from "ollama/browser";
 import { settings, settingsStore } from "./settings";
 
-export const getClient = () => {
+const getOllamaUrl = () => {
   const localStorageHost = localStorage.getItem("settings.ai.ollamaUrl");
   const host = localStorageHost
     ? JSON.parse(localStorageHost)
     : settingsStore.get(settings.ai.ollamaUrl);
 
-  return new Ollama({
-    host,
-  });
+  return host;
 };
+
+export const getClient = () =>
+  new Ollama({
+    host: getOllamaUrl(),
+  });
 
 export const getModels = async () => {
   const { models } = await getClient().list();
@@ -40,9 +43,13 @@ export const chat = async (request: ChatRequest) => {
 
 export const isOllamaOnline = async () => {
   try {
-    await getModels();
-    return true;
+    const response = await fetch(getOllamaUrl());
+    const text = await response.text();
+    if (response.ok && text.includes("Ollama")) {
+      return true;
+    }
   } catch {
-    return false;
+    //
   }
+  return false;
 };
