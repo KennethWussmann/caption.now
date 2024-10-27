@@ -13,6 +13,7 @@ import { ImageCaptionProvider } from "./lib/image-caption-provider.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "./components/ui/tooltip.tsx";
 import { Toaster } from "@/components/ui/toaster";
+import { PWAPrompt } from "./components/common/pwa-prompt.tsx";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ createRoot(document.getElementById("root")!).render(
             <QueryClientProvider client={queryClient}>
               <RouterProvider router={router} />
               <Toaster />
+              <PWAPrompt />
             </QueryClientProvider>
           </ImageCaptionProvider>
         </DatasetDirectoryProvider>

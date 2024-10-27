@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui";
 import { useToast } from "@/hooks/use-toast";
+import { RefreshCw } from "lucide-react";
 
 export default function Page() {
   const { toast } = useToast();
@@ -8,6 +9,13 @@ export default function Page() {
     const result = toast({
       title: "Hello world",
       description: "This is a toast",
+      duration: Infinity,
+      action: (
+        <Button>
+          <RefreshCw />
+          Refresh
+        </Button>
+      ),
     });
     console.log("Toast triggered", result);
   };
