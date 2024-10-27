@@ -18,7 +18,8 @@ export const CaptionPreviewAI = () => {
       return;
     }
     writeCaption(captionSuggestion, imageFile);
-  }, [captionSuggestion, imageFile, writeCaption]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [captionSuggestion, writeCaption]);
 
   return (
     <div className="my-2 py-2">
