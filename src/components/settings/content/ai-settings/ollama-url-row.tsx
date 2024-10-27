@@ -41,7 +41,7 @@ export const OllamaUrlRow = () => {
               constellation, if it is served on localhost. Alternatively, you
               can serve Ollama via HTTPS. <br />
               <a
-                href="https://github.com/KennethWussmann/caption.now/tree/main/docs/ollama.md"
+                href="https://github.com/KennethWussmann/caption.now/blob/main/docs/ollama.md#error-on-captionnow-saying-something-about-browser-security-policies"
                 target="_blank"
                 className="text-blue-500 hover:underline"
               >
