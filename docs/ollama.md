@@ -14,6 +14,25 @@ But it's very simple, download, install and run and you should be good to go.
 3. Enable Ollama
 4. Enter the URL of your Ollama server. Default `http://127.0.0.1:11434`
 
+## Customizing AI output
+
+You can adjust the prompts that caption.now is sending to Ollama. This allows for endless possibilities and basically any captioning style you can describe in words.
+
+For example, caption.now has a small gimmick in the default prompt:
+
+```
+[...]
+If a word in my prompt starts with "en:", you are asked to translate the word from which ever language it might be into English and integrate it seamlessly into the sentence.
+[...]
+```
+
+Suddenly, caption.now has an integrated translator.
+
+To change the prompts:
+
+1. Go to the settings in caption.now
+2. Select the "AI" tab
+
 ## FAQ
 
 ### Do I need a server for Ollama?
