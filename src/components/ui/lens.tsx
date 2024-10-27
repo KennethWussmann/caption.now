@@ -13,6 +13,7 @@ interface LensProps {
     x: number;
     y: number;
   };
+  disabled?: boolean;
   isStatic?: boolean;
   isFocusing?: () => void;
   hovering?: boolean;
@@ -27,6 +28,7 @@ export const Lens: React.FC<LensProps> = ({
   position = { x: 200, y: 150 },
   hovering,
   setHovering,
+  disabled = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -44,6 +46,10 @@ export const Lens: React.FC<LensProps> = ({
     const y = e.clientY - rect.top;
     setMousePosition({ x, y });
   };
+
+  if (disabled) {
+    return <>{children}</>;
+  }
 
   return (
     <div

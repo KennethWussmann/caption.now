@@ -1,4 +1,5 @@
 import { CaptionView } from "@/components/caption/caption-view";
+import { LensSettings } from "@/components/caption/lens/lens-settings";
 import { OllamaStatusNotification } from "@/components/common/ollama-status-notification";
 import { OnboardingDialog } from "@/components/onboarding/onboarding-dialog";
 import { ImageListSidebar } from "@/components/sidebar/image-list-sidebar/image-list-sidebar";
@@ -67,6 +68,7 @@ export default function Page() {
             )}
           </div>
           <div className="flex gap-2">
+            <LensSettings />
             <Button
               variant="outline"
               size="icon"

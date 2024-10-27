@@ -9,6 +9,13 @@ export const settings = {
       false
     ),
   },
+  tools: {
+    lens: {
+      enabled: atomWithStorage("settings.tools.lens.enabled", true),
+      zoomFactor: atomWithStorage("settings.tools.lens.zoomFactor", 3),
+      size: atomWithStorage("settings.tools.lens.size", 300),
+    }
+  },
   ai: {
     ollamaEnabled: atomWithStorage("settings.ai.ollamaEnabled", false),
     ollamaUrl: atomWithStorage(
