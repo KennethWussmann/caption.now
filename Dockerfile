@@ -11,7 +11,7 @@ COPY . .
 RUN pnpm build
 
 FROM nginx:alpine AS serve
-LABEL org.opencontainers.image.source https://github.com/KennethWussmann/quick-label
+LABEL org.opencontainers.image.source https://github.com/KennethWussmann/caption.now
 
 COPY --from=build /app/dist /usr/share/nginx/html
 

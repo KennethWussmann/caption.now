@@ -27,8 +27,8 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: "QuickLabel",
-        short_name: "QuickLabel",
+        name: "caption.now",
+        short_name: "caption.now",
         theme_color: "#ffffff",
         icons: [
           {

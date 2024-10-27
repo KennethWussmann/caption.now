@@ -2,6 +2,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { Button } from "../ui";
 import { RefreshCw } from "lucide-react";
+import { productName } from "@/lib/constants";
 
 export const PWAPrompt = () => {
   const { toast } = useToast();
@@ -21,7 +22,7 @@ export const PWAPrompt = () => {
       console.error("Ofline ready");
       toast({
         title: "Work offline",
-        description: "QuickLabel is ready to work offline",
+        description: `${productName} is ready to work offline`,
         duration: 5000,
       });
     },
@@ -29,7 +30,7 @@ export const PWAPrompt = () => {
       console.error("New update available. Refresh to update.");
       toast({
         title: "Update available",
-        description: "A new version of QuickLabel is available",
+        description: `A new version of ${productName} is available`,
         duration: Infinity,
         action: (
           <Button

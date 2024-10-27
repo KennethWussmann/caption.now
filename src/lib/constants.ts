@@ -1,1 +1,1 @@
-export const productName = "QuickLabel";
+export const productName = "caption.now";

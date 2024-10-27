@@ -33,7 +33,7 @@ jobs:
       - uses: ./.github/actions/docker-publish
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-          tags: ghcr.io/kennethwussmann/quick-label:${{ matrix.arch }}-${{ steps.vars.outputs.tag }}
+          tags: ghcr.io/kennethwussmann/caption-now:${{ matrix.arch }}-${{ steps.vars.outputs.tag }}
           build-args: VERSION=${{ steps.vars.outputs.tag }}
 
   create-and-push-manifest:
@@ -51,11 +51,11 @@ jobs:
           registry: ghcr.io
       - name: Create and push Docker manifest
         run: |
-          docker manifest create ghcr.io/kennethwussmann/quick-label:${{ needs.build.outputs.tag }} \
-            --amend ghcr.io/kennethwussmann/quick-label:amd64-${{ needs.build.outputs.tag }} \
-            --amend ghcr.io/kennethwussmann/quick-label:arm64-${{ needs.build.outputs.tag }}
-          docker manifest push ghcr.io/kennethwussmann/quick-label:${{ needs.build.outputs.tag }}
-          docker manifest create ghcr.io/kennethwussmann/quick-label:latest \
-            --amend ghcr.io/kennethwussmann/quick-label:amd64-${{ needs.build.outputs.tag }} \
-            --amend ghcr.io/kennethwussmann/quick-label:arm64-${{ needs.build.outputs.tag }}
-          docker manifest push ghcr.io/kennethwussmann/quick-label:latest
+          docker manifest create ghcr.io/kennethwussmann/caption-now:${{ needs.build.outputs.tag }} \
+            --amend ghcr.io/kennethwussmann/caption-now:amd64-${{ needs.build.outputs.tag }} \
+            --amend ghcr.io/kennethwussmann/caption-now:arm64-${{ needs.build.outputs.tag }}
+          docker manifest push ghcr.io/kennethwussmann/caption-now:${{ needs.build.outputs.tag }}
+          docker manifest create ghcr.io/kennethwussmann/caption-now:latest \
+            --amend ghcr.io/kennethwussmann/caption-now:amd64-${{ needs.build.outputs.tag }} \
+            --amend ghcr.io/kennethwussmann/caption-now:arm64-${{ needs.build.outputs.tag }}
+          docker manifest push ghcr.io/kennethwussmann/caption-now:latest

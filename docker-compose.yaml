@@ -1,5 +1,5 @@
 services:
-  quicklabel:
+  caption-now:
     build: .
     ports:
       - "8080:80"
