@@ -7,11 +7,16 @@ import { useOllamaStatus } from "@/hooks/use-ollama-status";
 
 export const CaptionListFooter = () => {
   const [isOllamaEnabled] = useAtom(settings.ai.ollamaEnabled);
+  const [strategy] = useAtom(settings.caption.strategy);
   const { isOnline } = useOllamaStatus();
   return (
     <div>
       {isOllamaEnabled && isOnline && <CaptionSuggestionsAI />}
-      {isOllamaEnabled && isOnline ? <CaptionPreviewAI /> : <CaptionPreview />}
+      {isOllamaEnabled && isOnline && strategy === "ai" ? (
+        <CaptionPreviewAI />
+      ) : (
+        <CaptionPreview />
+      )}
     </div>
   );
 };

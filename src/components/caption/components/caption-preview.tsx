@@ -1,12 +1,21 @@
 import { Card } from "@/components/ui";
 import { useImageCaption } from "@/lib/image-caption-provider";
+import { settings } from "@/lib/settings";
+import { useAtom } from "jotai/react";
 import { useMemo } from "react";
 
 export const CaptionPreview = () => {
   const { caption } = useImageCaption();
-  const text = useMemo(() => {
-    return caption.parts.map((part) => part.text.trim()).join(". ") + ".";
-  }, [caption.parts]);
+  const [separator] = useAtom(settings.caption.separator);
+  const [endWithSeparator] = useAtom(settings.caption.endWithSeparator);
+  const text = useMemo(
+    () =>
+      (
+        caption.parts.map((part) => part.text.trim()).join(separator) +
+        (endWithSeparator ? separator : "")
+      ).trim(),
+    [caption.parts, endWithSeparator, separator]
+  );
   const isEmpty = caption.parts.length === 0;
 
   return (

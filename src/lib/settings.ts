@@ -1,5 +1,7 @@
 import { atomWithStorage } from "jotai/utils";
 import { createStore } from "jotai/vanilla";
+import { atomWithZod } from "./zod-atom";
+import { z } from "zod";
 
 export const settingsStore = createStore();
 
@@ -10,6 +12,18 @@ export const settings = {
     skipSetupSummary: atomWithStorage(
       "settings.appearance.skipSetupSummary",
       false
+    ),
+  },
+  caption: {
+    strategy: atomWithZod(
+      "settings.tools.caption.strategy",
+      "ai",
+      z.union([z.literal("ai"), z.literal("separator")])
+    ),
+    separator: atomWithStorage("settings.tools.caption.separator", ". "),
+    endWithSeparator: atomWithStorage(
+      "settings.tools.caption.endWithSeparator",
+      true
     ),
   },
   tools: {
