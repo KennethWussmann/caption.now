@@ -53,3 +53,33 @@ export const isOllamaOnline = async () => {
   }
   return false;
 };
+
+export const isOllamaReachable = (targetUrl: string): boolean => {
+  try {
+    const currentUrl = window.location.href;
+    const currentOrigin = new URL(currentUrl);
+    const targetOrigin = new URL(targetUrl);
+
+    const isCurrentHttps = currentOrigin.protocol === "https:";
+
+    const isTargetHttp = targetOrigin.protocol === "http:";
+
+    const isLocalhost =
+      targetOrigin.hostname === "localhost" ||
+      targetOrigin.hostname === "127.0.0.1";
+
+    if (isCurrentHttps && isTargetHttp && !isLocalhost) {
+      return false;
+    }
+
+    const isSameOrigin = currentOrigin.origin === targetOrigin.origin;
+    if (!isSameOrigin) {
+      const isTargetCorsSafe = isLocalhost || isTargetHttp;
+      return isTargetCorsSafe;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+};
