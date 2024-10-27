@@ -43,7 +43,11 @@ export const LensSettings = () => {
                 />
               </TableCell>
             </TableRow>
-            <TableRow className={clsx({ "opacity-10": !lensEnabled })}>
+            <TableRow
+              className={clsx({
+                "opacity-20 pointer-events-none select-none": !lensEnabled,
+              })}
+            >
               <TableCell>
                 <div className="flex justify-between">
                   Size <Badge>{size}</Badge>
@@ -60,7 +64,11 @@ export const LensSettings = () => {
                 />
               </TableCell>
             </TableRow>
-            <TableRow className={clsx({ "opacity-10": !lensEnabled })}>
+            <TableRow
+              className={clsx({
+                "opacity-20 pointer-events-none select-none": !lensEnabled,
+              })}
+            >
               <TableCell>
                 <div className="flex justify-between">
                   Zoom <Badge>{zoomFactor}</Badge>

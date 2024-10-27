@@ -25,7 +25,7 @@ export const useOllamaStatus = (): StatusResponse => {
     setOnline(await isOllamaOnline());
     setTimeout(() => {
       setLoading(false);
-    }, 1000);
+    }, 10000);
   }, [isOllamaEnabled]);
 
   useEffect(() => {

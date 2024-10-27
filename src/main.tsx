@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "./components/ui/tooltip.tsx";
 import { Toaster } from "@/components/ui/toaster";
 import { PWAPrompt } from "./components/common/pwa-prompt.tsx";
+import { OllamaModelDownloadProvider } from "./lib/ollama-model-download-provider.tsx";
 
 const queryClient = new QueryClient();
 
@@ -52,9 +53,11 @@ createRoot(document.getElementById("root")!).render(
         <DatasetDirectoryProvider>
           <ImageCaptionProvider>
             <QueryClientProvider client={queryClient}>
-              <RouterProvider router={router} />
-              <Toaster />
-              <PWAPrompt />
+              <OllamaModelDownloadProvider>
+                <RouterProvider router={router} />
+                <Toaster />
+                <PWAPrompt />
+              </OllamaModelDownloadProvider>
             </QueryClientProvider>
           </ImageCaptionProvider>
         </DatasetDirectoryProvider>
