@@ -46,7 +46,7 @@ export const useCaptionRefiner = () => {
       return;
     }
     setCaptionSuggestion(aiResponse);
-  }, [aiResponse]);
+  }, [aiResponse, caption.parts.length]);
 
   useEffect(() => {
     setCaptionSuggestion(null);
