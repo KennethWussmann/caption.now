@@ -16,6 +16,7 @@ jobs:
       - uses: ./.github/actions/pnpm-install
       - run: pnpm lint
       - run: pnpm build
+      - run: cp ./dist/index.html ./dist/404.html
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
