@@ -1,4 +1,7 @@
 import { atomWithStorage } from "jotai/utils";
+import { createStore } from "jotai/vanilla";
+
+export const settingsStore = createStore();
 
 export const settings = {
   onboardingCompleted: atomWithStorage("settings.onboardingCompleted", false),
@@ -14,7 +17,7 @@ export const settings = {
       enabled: atomWithStorage("settings.tools.lens.enabled", true),
       zoomFactor: atomWithStorage("settings.tools.lens.zoomFactor", 3),
       size: atomWithStorage("settings.tools.lens.size", 300),
-    }
+    },
   },
   ai: {
     ollamaEnabled: atomWithStorage("settings.ai.ollamaEnabled", false),

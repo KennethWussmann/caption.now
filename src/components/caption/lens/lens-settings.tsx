@@ -28,7 +28,7 @@ export const LensSettings = () => {
           <ZoomIn className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="mr-28 w-[400px]">
+      <PopoverContent className="w-[400px]" align="end">
         <Table>
           <TableCaption>
             Hover over the image to see a magnified view
