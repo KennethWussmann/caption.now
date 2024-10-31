@@ -35,3 +35,23 @@ export const tryJSONParse = (input: string) => {
     return null;
   }
 };
+
+export const deleteAllIndexedDBs = async () => {
+  const databases = await indexedDB.databases();
+
+  const deletePromises = databases.map(
+    (db) =>
+      new Promise<void>((resolve, reject) => {
+        const request = indexedDB.deleteDatabase(db.name!);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      })
+  );
+
+  try {
+    await Promise.all(deletePromises);
+    console.log("All IndexedDB databases deleted successfully.");
+  } catch (error) {
+    console.error("Error deleting databases:", error);
+  }
+};

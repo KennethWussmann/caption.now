@@ -23,6 +23,7 @@ type DatasetDirectoryContextType = {
   writeTextFile: (fileName: string, content: string) => Promise<void>;
   loadImage: (path: string) => Promise<ImageFile | null>;
   writeCaption: (caption: string, image: ImageFile) => Promise<void>;
+  directoryHandle: FileSystemDirectoryHandle | null;
 };
 
 const DatasetDirectoryContext = createContext<
@@ -159,13 +160,25 @@ export const DatasetDirectoryProvider = ({
   }, [supported, loadDirectory, resetState]);
 
   const writeTextFile = useCallback(
-    async (fileName: string, content: string) => {
+    async (filePath: string, content: string) => {
       if (!directoryHandle) {
         throw new Error("No directory selected");
       }
 
       try {
-        const fileHandle = await directoryHandle.getFileHandle(fileName, {
+        const parts = filePath.split("/");
+        const fileName = parts.pop() as string; // Extract the file name
+        let currentDirectory = directoryHandle;
+
+        // Create each directory in the path if it doesn’t exist
+        for (const part of parts) {
+          currentDirectory = await currentDirectory.getDirectoryHandle(part, {
+            create: true,
+          });
+        }
+
+        // Now create the file in the final directory
+        const fileHandle = await currentDirectory.getFileHandle(fileName, {
           create: true,
         });
         const writable = await fileHandle.createWritable();
@@ -286,6 +299,7 @@ export const DatasetDirectoryProvider = ({
     writeTextFile,
     loadImage,
     writeCaption,
+    directoryHandle,
   };
 
   return (
