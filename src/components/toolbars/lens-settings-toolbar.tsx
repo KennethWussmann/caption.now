@@ -17,7 +17,7 @@ import clsx from "clsx";
 import { useAtom } from "jotai/react";
 import { ZoomIn } from "lucide-react";
 
-export const LensSettings = () => {
+export const LensSettingsToolbar = () => {
   const [lensEnabled, setLensEnabled] = useAtom(settings.tools.lens.enabled);
   const [zoomFactor, setZoomFactor] = useAtom(settings.tools.lens.zoomFactor);
   const [size, setSize] = useAtom(settings.tools.lens.size);
