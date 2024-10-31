@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import {
+  addRxPlugin,
   createRxDatabase,
   ExtractDocumentTypeFromTypedRxJsonSchema,
   RxDatabase,
@@ -18,6 +19,8 @@ import { RxCollection } from "rxdb";
 import { useDatasetDirectory } from "./dataset-directory-provider";
 import { Provider } from "rxdb-hooks";
 import { deleteAllIndexedDBs } from "./utils";
+import { RxDBJsonDumpPlugin } from "rxdb/plugins/json-dump";
+addRxPlugin(RxDBJsonDumpPlugin);
 
 const imageSchemaLiteral = {
   version: 0,
@@ -101,23 +104,17 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
         images: { schema: imageSchema },
       });
 
-      // Load each collection's backup if available
-      for (const collectionKey of Object.keys(collections)) {
-        const backupFile = await captionNowDir.getFileHandle(
-          `${collectionKey}.json`,
-          { create: true }
-        );
-        const file = await backupFile.getFile();
-        const text = await file.text();
-
-        if (text) {
-          console.log(`Removed existing data from ${collectionKey}`);
+      const backupFileHandle = await captionNowDir.getFileHandle(
+        `database.json`,
+        {
+          create: true,
         }
+      );
+      const backupFile = await backupFileHandle.getFile();
+      const backupFileText = await backupFile.text();
 
-        const collectionData = text ? JSON.parse(text) : [];
-        const collection: RxCollection =
-          db.collections[collectionKey as keyof DatabaseCollections];
-        await collection.bulkInsert(collectionData);
+      if (backupFileText) {
+        await db.importJSON(JSON.parse(backupFileText));
       }
 
       setDatabase(db);
@@ -131,20 +128,10 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
 
   const saveDatabaseBackup = useCallback(async () => {
     if (!database || !directoryHandle) return;
-
-    try {
-      for (const collectionKey of Object.keys(collections)) {
-        const collection =
-          database.collections[collectionKey as keyof DatabaseCollections];
-        const data = await collection.find().exec();
-        const jsonData = JSON.stringify(data);
-
-        await writeTextFile(`.caption-now/${collectionKey}.json`, jsonData);
-      }
-      console.log("Saved all collections to file system");
-    } catch (error) {
-      console.error("Error saving database backup:", error);
-    }
+    await writeTextFile(
+      `.caption-now/database.json`,
+      JSON.stringify(await database.exportJSON())
+    );
   }, [database, directoryHandle, writeTextFile]);
 
   useEffect(() => {
