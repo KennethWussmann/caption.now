@@ -13,10 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
-import { settings } from "@/lib/settings";
-import { useAtom } from "jotai/react";
 import {
   FileQuestion,
   FolderOpen,
@@ -25,15 +22,13 @@ import {
   LoaderCircle,
   Lock,
   Pencil,
+  Tags,
   TriangleAlert,
 } from "lucide-react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { ActionItem } from "./action-item";
+import { ActionSelector } from "./action-selector";
 
 export default function Page() {
-  const [skipSetupSummary, setSkipSetupSummary] = useAtom(
-    settings.appearance.skipSetupSummary
-  );
-  const navigate = useNavigate();
   const {
     supported,
     openDirectoryPicker,
@@ -50,23 +45,19 @@ export default function Page() {
 
   const isReady = isDirectorySelected && isDirectoryLoaded && !isEmpty;
 
-  if (skipSetupSummary && isReady) {
-    return <Navigate to="/" />;
-  }
-
   return (
     <BackgroundLines
       className="flex items-center justify-center h-screen"
       disabled={!isReady}
     >
-      <div className="mx-auto max-w-sm z-50">
+      <div className="mx-auto max-w-md z-50">
         {isReady ? (
           <Card className="bg-transparent backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Let's Go!</CardTitle>
               <CardDescription>
-                Your dataset was loaded successfully, start labeling your images
-                now.
+                Your dataset was loaded successfully. You can start working with
+                your images now.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -111,40 +102,29 @@ export default function Page() {
                   </>
                 )}
                 <div>
-                  <button
-                    onClick={() => navigate("/")}
-                    className="w-full mt-4 relative inline-flex h-12 overflow-hidden rounded-md p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
-                  >
-                    <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-                    <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-md bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl">
-                      <Pencil className="mr-2 h-4 w-4" /> Start Labelling
-                    </span>
-                  </button>
-                  <Button
-                    variant="ghost"
-                    size={"sm"}
-                    className="w-full mt-4"
-                    onClick={reset}
-                  >
-                    Cancel
-                  </Button>
-                  <Separator className="my-4" />
-                  <div className="flex gap-2">
-                    <Checkbox
-                      id="skipSetupSummary"
-                      checked={skipSetupSummary}
-                      onCheckedChange={(e) =>
-                        setSkipSetupSummary(typeof e === "boolean" ? e : false)
-                      }
+                  <p className="mt-6 mb-4 text-center font-semibold">
+                    What do you want to do?
+                  </p>
+                  <ActionSelector>
+                    <ActionItem
+                      icon={Pencil}
+                      href="/caption"
+                      title="Caption"
+                      description="Write detailed captions for your images with the help of AI"
                     />
-                    <label
-                      htmlFor="skipSetupSummary"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Don't show this summary again
-                    </label>
-                  </div>
+                    <ActionItem
+                      icon={Tags}
+                      href="/sort"
+                      title="Sort"
+                      description="Pre-screen your dataset, sort images into categories and export them into new datasets"
+                      disabled
+                    />
+                  </ActionSelector>
                 </div>
+                <Separator />
+                <Button variant="ghost" className="w-full" onClick={reset}>
+                  Cancel
+                </Button>
               </div>
             </CardContent>
           </Card>

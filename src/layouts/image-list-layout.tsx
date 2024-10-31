@@ -22,7 +22,6 @@ import {
 } from "@/hooks/use-dataset-navigation";
 import { useImageCaption } from "@/lib/image-caption-provider";
 import { useEffect } from "react";
-import { Navigate } from "react-router-dom";
 
 type ImageListLayoutProps = {
   children: ReactNode;
@@ -50,7 +49,6 @@ export const ImageListLayout = ({
     <SidebarProvider>
       <OnboardingDialog />
       <OllamaStatusNotification />
-      <Navigate to={`/caption/${imageFile?.name}`} />
       <ImageListSidebar side="left" />
       <SidebarInset>
         <header className="flex justify-between items-center h-16 shrink-0 px-4 border-b">

@@ -4,6 +4,7 @@ import "./index.css";
 import { ThemeProvider } from "./components/theme/theme-provider.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CaptionPage from "./pages/caption/page.tsx";
+import SortPage from "./pages/sort/page.tsx";
 import HomePage from "./pages/home/page.tsx";
 import SetupPage from "./pages/setup/page.tsx";
 import PlaygroundPage from "./pages/playground/page.tsx";
@@ -29,6 +30,19 @@ const router = createBrowserRouter([
     element: (
       <RequireDatasetSelection>
         <CaptionPage />
+      </RequireDatasetSelection>
+    ),
+    children: [
+      {
+        path: ":filename",
+      },
+    ],
+  },
+  {
+    path: "sort",
+    element: (
+      <RequireDatasetSelection>
+        <SortPage />
       </RequireDatasetSelection>
     ),
     children: [

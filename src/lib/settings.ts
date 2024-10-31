@@ -9,10 +9,6 @@ export const settings = {
   onboardingCompleted: atomWithStorage("settings.onboardingCompleted", false),
   appearance: {
     theme: atomWithStorage("settings.appearance.theme", "system"),
-    skipSetupSummary: atomWithStorage(
-      "settings.appearance.skipSetupSummary",
-      false
-    ),
     hideDoneImages: atomWithStorage(
       "settings.appearance.hideDoneImages",
       false

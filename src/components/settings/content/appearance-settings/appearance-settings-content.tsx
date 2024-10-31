@@ -7,9 +7,6 @@ import { settings } from "@/lib/settings";
 import { ThemeSelector } from "../../../theme/theme-selector";
 
 const AppearanceSettingsContent = () => {
-  const [skipSetupSummary, setSkipSetupSummary] = useAtom(
-    settings.appearance.skipSetupSummary
-  );
   const [disableAnimations, setDisableAnimations] = useAtom(
     settings.appearance.disableAnimations
   );
@@ -20,23 +17,6 @@ const AppearanceSettingsContent = () => {
           <TableCell>Theme</TableCell>
           <TableCell className="text-right">
             <ThemeSelector />
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>
-            <div className="flex flex-col gap-2">
-              <div>Skip dataset summary</div>
-              <div className="text-muted-foreground">
-                After selecting your dataset directory, skip the summary that
-                shows the number of images and existing captions.
-              </div>
-            </div>
-          </TableCell>
-          <TableCell className="text-right">
-            <Switch
-              checked={skipSetupSummary}
-              onCheckedChange={setSkipSetupSummary}
-            />
           </TableCell>
         </TableRow>
         <TableRow>
