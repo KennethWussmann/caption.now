@@ -1,6 +1,7 @@
 import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
+import { DatabaseProvider } from "./database-provider";
 
 export const RequireDatasetSelection = ({
   children,
@@ -12,5 +13,5 @@ export const RequireDatasetSelection = ({
   if (!isDirectoryLoaded || !isDirectorySelected || isEmpty || isAccessDenied) {
     return <Navigate to="/setup" />;
   }
-  return children;
+  return <DatabaseProvider>{children}</DatabaseProvider>;
 };

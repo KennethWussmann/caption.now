@@ -20,6 +20,7 @@ import { useDatasetDirectory } from "./dataset-directory-provider";
 import { Provider } from "rxdb-hooks";
 import { deleteAllIndexedDBs } from "./utils";
 import { RxDBJsonDumpPlugin } from "rxdb/plugins/json-dump";
+import { ImageFile } from "./types";
 addRxPlugin(RxDBJsonDumpPlugin);
 
 const imageSchemaLiteral = {
@@ -33,9 +34,21 @@ const imageSchemaLiteral = {
   properties: {
     id: { type: "string" },
     filename: { type: "string" },
-    tags: { type: "array", items: { type: "string" } },
+    tags: { type: "array", default: [], items: { type: "string" } },
+    captionParts: {
+      type: "array",
+      default: [],
+      items: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          text: { type: "string" },
+          index: { type: "number" },
+        },
+      },
+    },
   },
-  required: ["id", "filename", "tags"],
+  required: ["id", "filename"],
 } as const;
 const imageSchemaTyped = toTypedRxJsonSchema(imageSchemaLiteral);
 
@@ -60,6 +73,8 @@ type DatabaseContextType = {
   database: Database | null;
   saveDatabaseBackup: () => Promise<void>;
   isLoading: boolean;
+  isSaving: boolean;
+  importImages: (images: ImageFile[]) => void;
 };
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(
@@ -78,13 +93,31 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
     useDatasetDirectory();
   const [database, setDatabase] = useState<Database | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setSaving] = useState(false);
+
+  const saveDatabaseBackup = useCallback(
+    async (localDb?: Database) => {
+      const db = localDb ?? database;
+      if (!db || !directoryHandle) {
+        return;
+      }
+      setSaving(true);
+      await writeTextFile(
+        `.caption-now/database.json`,
+        JSON.stringify(await db.exportJSON())
+      );
+      setSaving(false);
+    },
+    [database, directoryHandle, writeTextFile]
+  );
 
   const initializeDatabase = useCallback(async () => {
-    if (!directoryHandle || !isDirectoryLoaded || database) return;
+    if (!directoryHandle || !isDirectoryLoaded || database) {
+      return;
+    }
+    setIsLoading(true);
 
     await deleteAllIndexedDBs();
-
-    setIsLoading(true);
 
     try {
       const captionNowDir = await directoryHandle.getDirectoryHandle(
@@ -119,20 +152,30 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
 
       setDatabase(db);
       console.log("Database initialized with collections");
+      db.images.insert$.subscribe(() => {
+        saveDatabaseBackup(db);
+      });
+      db.images.remove$.subscribe(() => {
+        saveDatabaseBackup(db);
+      });
+      db.images.update$.subscribe(() => {
+        saveDatabaseBackup(db);
+      });
     } catch (error) {
       console.error("Error initializing database:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [directoryHandle, isDirectoryLoaded, database]);
+  }, [directoryHandle, isDirectoryLoaded, database, saveDatabaseBackup]);
 
-  const saveDatabaseBackup = useCallback(async () => {
-    if (!database || !directoryHandle) return;
-    await writeTextFile(
-      `.caption-now/database.json`,
-      JSON.stringify(await database.exportJSON())
+  const importImages = (images: ImageFile[]) => {
+    if (!database) {
+      return;
+    }
+    database.images.bulkInsert(
+      images.map((image) => ({ id: image.name, filename: image.name }))
     );
-  }, [database, directoryHandle, writeTextFile]);
+  };
 
   useEffect(() => {
     initializeDatabase();
@@ -144,7 +187,13 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [database]);
 
-  const value = { database, isLoading, saveDatabaseBackup };
+  const value = {
+    database,
+    isLoading,
+    saveDatabaseBackup,
+    isSaving,
+    importImages,
+  };
 
   return (
     <DatabaseContext.Provider value={value}>

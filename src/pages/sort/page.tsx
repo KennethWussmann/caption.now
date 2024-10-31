@@ -4,7 +4,6 @@ import { Button } from "@/components/ui";
 import { ImageListLayout } from "@/layouts/image-list-layout";
 import {
   collections,
-  DatabaseProvider,
   ImageDoc,
   ImageDocUpsert,
   useDatabase,
@@ -25,7 +24,7 @@ const DatabaseTest = () => {
     <ul>
       {result.map((doc) => (
         <li key={doc.id}>
-          {doc.filename} ({doc.tags.join(", ")})
+          {doc.filename} ({doc.tags?.join(", ")})
         </li>
       ))}
     </ul>
@@ -50,7 +49,7 @@ const AddItem = () => {
 };
 
 const SaveDatabase = () => {
-  const { saveDatabaseBackup } = useDatabase();
+  const { saveDatabaseBackup, isSaving } = useDatabase();
 
   return (
     <Button
@@ -58,19 +57,17 @@ const SaveDatabase = () => {
         saveDatabaseBackup();
       }}
     >
-      Save Database
+      {isSaving ? "Saving..." : "Save Database"}
     </Button>
   );
 };
 
 export default function Page() {
   return (
-    <DatabaseProvider>
-      <ImageListLayout toolbars={[LensSettingsToolbar, ImageNavigationToolbar]}>
-        <DatabaseTest />
-        <AddItem />
-        <SaveDatabase />
-      </ImageListLayout>
-    </DatabaseProvider>
+    <ImageListLayout toolbars={[LensSettingsToolbar, ImageNavigationToolbar]}>
+      <DatabaseTest />
+      <AddItem />
+      <SaveDatabase />
+    </ImageListLayout>
   );
 }

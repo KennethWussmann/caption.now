@@ -22,6 +22,8 @@ import {
 } from "@/hooks/use-dataset-navigation";
 import { useImageCaption } from "@/lib/image-caption-provider";
 import { useEffect } from "react";
+import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
+import { useDatabase } from "@/lib/database-provider";
 
 type ImageListLayoutProps = {
   children: ReactNode;
@@ -35,8 +37,15 @@ export const ImageListLayout = ({
   autoLoadFirstImage = true,
 }: ImageListLayoutProps) => {
   const { imageFile } = useImageCaption();
+  const { imageFiles } = useDatasetDirectory();
+  const { importImages } = useDatabase();
   const { loadNextImage } = useDatasetNavigation();
   useDatasetNavigationHotkeys();
+
+  useEffect(() => {
+    importImages(imageFiles);
+    console.log("Images imported into database");
+  }, [imageFiles, importImages]);
 
   useEffect(() => {
     // Load the first image if no image is selected

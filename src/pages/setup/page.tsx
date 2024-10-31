@@ -20,13 +20,15 @@ import {
   Image,
   ImageOff,
   LoaderCircle,
-  Lock,
   Pencil,
   Tags,
   TriangleAlert,
 } from "lucide-react";
 import { ActionItem } from "./action-item";
 import { ActionSelector } from "./action-selector";
+import { DataPrivacyAlert } from "./data-privacy-alert";
+import { AutoSaveAlert } from "./auto-save-alert";
+import { AnimatePresence } from "framer-motion";
 
 export default function Page() {
   const {
@@ -205,14 +207,9 @@ export default function Page() {
           </Card>
         )}
 
-        <Alert className="mt-4 bg-transparent backdrop-blur-sm">
-          <Lock className="h-4 w-4" />
-          <AlertTitle>Your data belongs to you!</AlertTitle>
-          <AlertDescription>
-            This app works entirely offline! At no point will your data leave
-            your computer. You could disconnect from the internet now.
-          </AlertDescription>
-        </Alert>
+        <AnimatePresence>
+          {isReady ? <AutoSaveAlert /> : <DataPrivacyAlert />}
+        </AnimatePresence>
       </div>
     </BackgroundLines>
   );
