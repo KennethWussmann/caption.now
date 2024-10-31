@@ -1,10 +1,10 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../ui";
-import { useDatasetNavigation } from "@/hooks/use-dataset-navigation";
+import { useImageNavigation } from "@/hooks/provider/image-navigation-provider";
 
 export const ImageNavigationToolbar = () => {
   const { loadNextImage, loadPreviousImage, hasNextImage, hasPreviousImage } =
-    useDatasetNavigation();
+    useImageNavigation();
 
   return (
     <>

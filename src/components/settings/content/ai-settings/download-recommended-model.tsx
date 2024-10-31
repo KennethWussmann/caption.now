@@ -5,7 +5,7 @@ import { getModels } from "@/lib/ollama-api-client";
 import {
   useOllamaModelDownloader,
   useOllamaModelDownloadProgress,
-} from "@/lib/ollama-model-download-provider";
+} from "@/hooks/provider/ollama-model-download-provider";
 import { useQuery } from "@tanstack/react-query";
 import { Check, LoaderCircle } from "lucide-react";
 

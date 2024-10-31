@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
+import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
 import {
   FileQuestion,
   FolderOpen,

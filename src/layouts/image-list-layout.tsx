@@ -17,13 +17,11 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import {
-  useDatasetNavigation,
-  useDatasetNavigationHotkeys,
-} from "@/hooks/use-dataset-navigation";
-import { useImageCaption } from "@/lib/image-caption-provider";
+} from "@/hooks/provider/image-navigation-provider";
 import { useEffect } from "react";
-import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
-import { useDatabase } from "@/lib/database-provider";
+import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
+import { useDatabase } from "@/lib/database/database-provider";
+import { useImageNavigation, useImageNavigationHotkeys } from "../hooks/provider/image-navigation-provider";
 
 type ImageListLayoutProps = {
   children: ReactNode;
@@ -36,11 +34,10 @@ export const ImageListLayout = ({
   toolbars = [],
   autoLoadFirstImage = true,
 }: ImageListLayoutProps) => {
-  const { imageFile } = useImageCaption();
   const { imageFiles } = useDatasetDirectory();
   const { importImages } = useDatabase();
-  const { loadNextImage } = useDatasetNavigation();
-  useDatasetNavigationHotkeys();
+  const { currentImage, loadNextImage } = useImageNavigation();
+  useImageNavigationHotkeys();
 
   useEffect(() => {
     importImages(imageFiles);
@@ -49,10 +46,10 @@ export const ImageListLayout = ({
 
   useEffect(() => {
     // Load the first image if no image is selected
-    if (!imageFile && autoLoadFirstImage) {
+    if (!currentImage && autoLoadFirstImage) {
       loadNextImage();
     }
-  }, [imageFile, loadNextImage, autoLoadFirstImage]);
+  }, [currentImage, loadNextImage, autoLoadFirstImage]);
 
   return (
     <SidebarProvider>
@@ -63,7 +60,7 @@ export const ImageListLayout = ({
         <header className="flex justify-between items-center h-16 shrink-0 px-4 border-b">
           <div className="flex items-center gap-2 ">
             <SidebarTrigger className="-ml-1" />
-            {imageFile && (
+            {currentImage && (
               <>
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 <Breadcrumb>
@@ -73,7 +70,7 @@ export const ImageListLayout = ({
                     </BreadcrumbItem>
                     <BreadcrumbSeparator className="hidden md:block" />
                     <BreadcrumbItem>
-                      <BreadcrumbPage>{imageFile?.name}</BreadcrumbPage>
+                      <BreadcrumbPage>{currentImage.filename}</BreadcrumbPage>
                     </BreadcrumbItem>
                   </BreadcrumbList>
                 </Breadcrumb>

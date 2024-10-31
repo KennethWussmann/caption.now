@@ -4,10 +4,8 @@ import { Button } from "@/components/ui";
 import { ImageListLayout } from "@/layouts/image-list-layout";
 import {
   collections,
-  ImageDoc,
-  ImageDocUpsert,
   useDatabase,
-} from "@/lib/database-provider";
+} from "@/lib/database/database-provider";
 import { useRxCollection, useRxData } from "rxdb-hooks";
 
 const DatabaseTest = () => {

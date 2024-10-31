@@ -8,7 +8,7 @@ import React, {
 import { Caption, CaptionPart, ImageFile } from "@/lib/types";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useAtom } from "jotai/react";
-import { settings } from "./settings";
+import { settings } from "../../lib/settings";
 
 // Define the context value type
 interface ImageCaptionContextType {

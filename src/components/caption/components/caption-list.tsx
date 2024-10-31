@@ -13,7 +13,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CaptionListItem } from "./caption-list-item";
 import { CaptionListFooter } from "./caption-list-footer";
-import { useImageCaption } from "@/lib/image-caption-provider";
+import { useImageCaption } from "@/hooks/provider/image-caption-provider";
 import { AnimatedGroup } from "@/components/ui/animation/animated-group";
 import { useEffect, useRef } from "react";
 

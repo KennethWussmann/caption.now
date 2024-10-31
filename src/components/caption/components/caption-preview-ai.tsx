@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui";
 import { useCaptionRefiner } from "@/hooks/ai/use-caption-refiner";
-import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
-import { useImageCaption } from "@/lib/image-caption-provider";
+import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
+import { useImageCaption } from "@/hooks/provider/image-caption-provider";
 import { LoaderCircle, RefreshCw } from "lucide-react";
 import { useEffect } from "react";
 

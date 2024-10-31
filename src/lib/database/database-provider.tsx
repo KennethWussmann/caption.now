@@ -6,59 +6,19 @@ import {
   useEffect,
   useState,
 } from "react";
-import {
-  addRxPlugin,
-  createRxDatabase,
-  ExtractDocumentTypeFromTypedRxJsonSchema,
-  RxDatabase,
-  RxJsonSchema,
-  toTypedRxJsonSchema,
-} from "rxdb";
+import { addRxPlugin, createRxDatabase, RxDatabase } from "rxdb";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
-import { RxCollection } from "rxdb";
-import { useDatasetDirectory } from "./dataset-directory-provider";
+import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
 import { Provider } from "rxdb-hooks";
-import { deleteAllIndexedDBs } from "./utils";
+import { deleteAllIndexedDBs } from "../utils";
 import { RxDBJsonDumpPlugin } from "rxdb/plugins/json-dump";
-import { ImageFile } from "./types";
+import { ImageFile } from "../types";
+import {
+  ImageCollection,
+  imageDocMethods,
+  imageSchema,
+} from "./image-collection";
 addRxPlugin(RxDBJsonDumpPlugin);
-
-const imageSchemaLiteral = {
-  version: 0,
-  type: "object",
-  primaryKey: {
-    key: "id",
-    fields: ["filename"],
-    separator: "|",
-  },
-  properties: {
-    id: { type: "string" },
-    filename: { type: "string" },
-    tags: { type: "array", default: [], items: { type: "string" } },
-    captionParts: {
-      type: "array",
-      default: [],
-      items: {
-        type: "object",
-        properties: {
-          id: { type: "string" },
-          text: { type: "string" },
-          index: { type: "number" },
-        },
-      },
-    },
-  },
-  required: ["id", "filename"],
-} as const;
-const imageSchemaTyped = toTypedRxJsonSchema(imageSchemaLiteral);
-
-export type ImageDoc = ExtractDocumentTypeFromTypedRxJsonSchema<
-  typeof imageSchemaTyped
->;
-export type ImageDocUpsert = Omit<ImageDoc, "id">;
-const imageSchema: RxJsonSchema<ImageDoc> = imageSchemaTyped;
-
-export type ImageCollection = RxCollection<ImageDoc>;
 
 export type DatabaseCollections = {
   images: ImageCollection;
@@ -134,7 +94,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
       });
 
       await db.addCollections({
-        images: { schema: imageSchema },
+        images: { schema: imageSchema, methods: imageDocMethods },
       });
 
       const backupFileHandle = await captionNowDir.getFileHandle(

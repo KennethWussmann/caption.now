@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { useImageCaption } from "@/lib/image-caption-provider";
+import { useImageCaption } from "@/hooks/provider/image-caption-provider";
 import { CaptionPart } from "@/lib/types";
 import clsx from "clsx";
 import { ArrowUp, Pencil, X } from "lucide-react";

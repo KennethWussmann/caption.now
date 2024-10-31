@@ -4,7 +4,7 @@ import { useAtom } from "jotai/react";
 import { settings } from "@/lib/settings";
 import { CaptionSuggestionsAI } from "./caption-suggestions-ai";
 import { useOllamaStatus } from "@/hooks/use-ollama-status";
-import { useImageCaption } from "@/lib/image-caption-provider";
+import { useImageCaption } from "@/hooks/provider/image-caption-provider";
 
 export const CaptionListFooter = () => {
   const [isOllamaEnabled] = useAtom(settings.ai.ollamaEnabled);

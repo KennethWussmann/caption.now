@@ -1,9 +1,12 @@
+import { ImageSkeleton } from "@/components/common/image-skeleton";
 import { Lens } from "@/components/ui/lens";
+import { useImageSrc } from "@/hooks/use-image-src";
+import { ImageDocument } from "@/lib/database/image-collection";
 import { settings } from "@/lib/settings";
-import { ImageFile } from "@/lib/types";
 import { useAtom } from "jotai/react";
 
-export const ImageViewer = ({ image }: { image: ImageFile }) => {
+export const ImageViewer = ({ image }: { image: ImageDocument }) => {
+  const src = useImageSrc(image);
   const [lensEnabled] = useAtom(settings.tools.lens.enabled);
   const [zoomFactor] = useAtom(settings.tools.lens.zoomFactor);
   const [size] = useAtom(settings.tools.lens.size);
@@ -11,10 +14,10 @@ export const ImageViewer = ({ image }: { image: ImageFile }) => {
   return (
     <div className="relative w-full h-full max-h-full flex justify-center items-center p-2">
       <Lens zoomFactor={zoomFactor} lensSize={size} disabled={!lensEnabled}>
-        <img
-          src={image.src}
+        <ImageSkeleton
+          src={src}
           className="max-w-full max-h-[calc(100vh-250px)] object-contain"
-          alt={image.name}
+          alt={image.filename}
         />
       </Lens>
     </div>

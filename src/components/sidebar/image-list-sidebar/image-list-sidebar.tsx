@@ -8,19 +8,19 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { AppSidebarHeader } from "../app-sidebar-header";
-import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
 import { ImageListItem } from "./image-list-item";
-import { useImageCaption } from "@/lib/image-caption-provider";
 import { AnimatedGroup } from "@/components/ui/animation/animated-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAtom } from "jotai/react";
 import { settings } from "@/lib/settings";
+import { useImageNavigation } from "@/hooks/provider/image-navigation-provider";
+import { useImages } from "@/hooks/use-images";
 
 export function ImageListSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const { imageFile } = useImageCaption();
-  const { imageFiles } = useDatasetDirectory();
+  const { currentImage } = useImageNavigation();
+  const { images } = useImages();
   const [hideDone, setHideDone] = useAtom(settings.appearance.hideDoneImages);
 
   // Ref to store references to each image item
@@ -28,13 +28,13 @@ export function ImageListSidebar({
 
   // Effect to scroll the active image into view when it changes
   React.useEffect(() => {
-    if (imageFile && itemRefs.current[imageFile.name]) {
-      itemRefs.current[imageFile.name]?.scrollIntoView({
+    if (currentImage && itemRefs.current[currentImage.filename]) {
+      itemRefs.current[currentImage.filename]?.scrollIntoView({
         behavior: "smooth",
         block: "nearest",
       });
     }
-  }, [imageFile]);
+  }, [currentImage]);
 
   return (
     <Sidebar {...props}>
@@ -63,18 +63,12 @@ export function ImageListSidebar({
           <SidebarGroupContent>
             <SidebarMenu>
               <AnimatedGroup preset="blur-slide">
-                {imageFiles
-                  .filter((image) =>
-                    hideDone
-                      ? !image.captionFile ||
-                        image.captionFile.content.length === 0
-                      : true
-                  )
-                  .map((img) => (
+                {images
+                  .map((image) => (
                     <ImageListItem
-                      key={img.name}
-                      image={img}
-                      ref={(el) => (itemRefs.current[img.name] = el)}
+                      key={image.id}
+                      image={image}
+                      ref={(el) => (itemRefs.current[image.filename] = el)}
                     />
                   ))}
               </AnimatedGroup>

@@ -11,7 +11,7 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import clsx from "clsx";
 import { CaptionPart } from "@/lib/types";
-import { useImageCaption } from "@/lib/image-caption-provider";
+import { useImageCaption } from "@/hooks/provider/image-caption-provider";
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { motion } from "framer-motion";
 

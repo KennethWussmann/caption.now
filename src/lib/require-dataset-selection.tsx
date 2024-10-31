@@ -1,7 +1,7 @@
-import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
+import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
-import { DatabaseProvider } from "./database-provider";
+import { DatabaseProvider } from "./database/database-provider";
 
 export const RequireDatasetSelection = ({
   children,

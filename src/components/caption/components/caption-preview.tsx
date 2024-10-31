@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui";
-import { useDatasetDirectory } from "@/lib/dataset-directory-provider";
-import { useImageCaption } from "@/lib/image-caption-provider";
+import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
+import { useImageCaption } from "@/hooks/provider/image-caption-provider";
 import { settings } from "@/lib/settings";
 import { useAtom } from "jotai/react";
 import { useEffect } from "react";

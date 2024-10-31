@@ -8,16 +8,17 @@ import SortPage from "./pages/sort/page.tsx";
 import HomePage from "./pages/home/page.tsx";
 import SetupPage from "./pages/setup/page.tsx";
 import PlaygroundPage from "./pages/playground/page.tsx";
-import { DatasetDirectoryProvider } from "./lib/dataset-directory-provider.tsx";
+import { DatasetDirectoryProvider } from "./hooks/provider/dataset-directory-provider.tsx";
 import { RequireDatasetSelection } from "./lib/require-dataset-selection.tsx";
-import { ImageCaptionProvider } from "./lib/image-caption-provider.tsx";
+import { ImageCaptionProvider } from "./hooks/provider/image-caption-provider.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "./components/ui/tooltip.tsx";
 import { Toaster } from "@/components/ui/toaster";
 import { PWAPrompt } from "./components/common/pwa-prompt.tsx";
-import { OllamaModelDownloadProvider } from "./lib/ollama-model-download-provider.tsx";
+import { OllamaModelDownloadProvider } from "./hooks/provider/ollama-model-download-provider.tsx";
 import { DisableAnimations } from "./lib/disable-animations.tsx";
-import { PreventCloseProvider } from "./lib/prevent-close-provider.tsx";
+import { PreventCloseProvider } from "./hooks/provider/prevent-close-provider.tsx";
+import { ImageNavigationProvider } from "./hooks/provider/image-navigation-provider.tsx";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +31,9 @@ const router = createBrowserRouter([
     path: "caption",
     element: (
       <RequireDatasetSelection>
-        <CaptionPage />
+        <ImageNavigationProvider>
+          <CaptionPage />
+        </ImageNavigationProvider>
       </RequireDatasetSelection>
     ),
     children: [
@@ -43,7 +46,9 @@ const router = createBrowserRouter([
     path: "sort",
     element: (
       <RequireDatasetSelection>
-        <SortPage />
+        <ImageNavigationProvider>
+          <SortPage />
+        </ImageNavigationProvider>
       </RequireDatasetSelection>
     ),
     children: [

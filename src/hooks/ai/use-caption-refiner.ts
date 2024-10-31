@@ -2,7 +2,7 @@ import { settings } from "@/lib/settings";
 import { useAtom } from "jotai/react";
 import { useEffect, useMemo, useState } from "react";
 import { useOllamaStatus } from "../use-ollama-status";
-import { useImageCaption } from "@/lib/image-caption-provider";
+import { useImageCaption } from "@/hooks/provider/image-caption-provider";
 import { useQuery } from "@tanstack/react-query";
 import { chat } from "@/lib/ollama-api-client";
 
