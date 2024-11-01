@@ -29,6 +29,9 @@ import { ActionSelector } from "./action-selector";
 import { DataPrivacyAlert } from "./data-privacy-alert";
 import { AutoSaveAlert } from "./auto-save-alert";
 import { AnimatePresence } from "framer-motion";
+import { useImageImporter } from "@/hooks/use-image-importer";
+import { useEffect } from "react";
+import { useDatabase } from "@/lib/database/database-provider";
 
 export default function Page() {
   const {
@@ -44,8 +47,18 @@ export default function Page() {
     failedTextFiles,
     reset,
   } = useDatasetDirectory();
+  const { isInitialized } = useDatabase()
+  const { importImages, imported } = useImageImporter()
 
-  const isReady = isDirectorySelected && isDirectoryLoaded && !isEmpty;
+  const isReady = isDirectorySelected && isDirectoryLoaded && !isEmpty && imported && isInitialized;
+  const isLoading = isDirectorySelected && !isDirectoryLoaded && !imported && !isInitialized;
+
+  useEffect(() => {
+    if (!isInitialized) {
+      return;
+    }
+    importImages(imageFiles);
+  }, [isInitialized, importImages, imageFiles]);
 
   return (
     <BackgroundLines
@@ -193,7 +206,7 @@ export default function Page() {
                 </>
               )}
 
-              {isDirectorySelected && !isDirectoryLoaded && (
+              {isLoading && (
                 <Alert className="border-blue-500">
                   <LoaderCircle className="h-4 w-4 animate-spin" />
                   <AlertTitle>Loading Dataset</AlertTitle>

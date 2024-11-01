@@ -4,21 +4,26 @@ import { useAtom } from "jotai/react";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { useOllamaStatus } from "../use-ollama-status";
-import { useImageCaption } from "@/hooks/provider/image-caption-provider";
 import { useQuery } from "@tanstack/react-query";
 import { chat } from "@/lib/ollama-api-client";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useCaptionEditor } from "../provider/caption-editor-provider";
+import { useImageNavigation } from "../provider/image-navigation-provider";
+import { useImageBase64 } from "../use-image-base64";
 
 const suggestionSchema = z.array(z.string());
 
 export const useCaptionSuggestions = () => {
+  const [separator] = useAtom(settings.caption.separator);
   const [visionModel] = useAtom(settings.ai.vision.model);
   const [userPromptTemplate] = useAtom(settings.ai.vision.userPrompt);
   const { isOnline } = useOllamaStatus();
-  const { imageFile, caption, addPart } = useImageCaption();
+  const { parts, addPart } = useCaptionEditor();
+  const {currentImage} = useImageNavigation()
+  const currentImageAsBase64 = useImageBase64(currentImage)
   const text = useMemo(() => {
-    return caption.parts.map((part) => part.text.trim()).join(". ") + ".";
-  }, [caption.parts]);
+    return parts.map((part) => part.text.trim()).join(separator);
+  }, [parts, separator]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isDebounced, setDebounced] = useState(true);
 
@@ -56,8 +61,8 @@ export const useCaptionSuggestions = () => {
     isRefetching,
     refetch,
   } = useQuery({
-    enabled: isOnline && !!imageFile?.base64 && !isDebounced,
-    queryKey: ["vision", imageFile?.base64 ?? "", text],
+    enabled: isOnline && !!currentImageAsBase64 && !isDebounced,
+    queryKey: ["vision", currentImageAsBase64 ?? "", text],
     queryFn: () =>
       chat({
         model: visionModel,
@@ -65,7 +70,7 @@ export const useCaptionSuggestions = () => {
           {
             role: "user",
             content: userPromptTemplate.replace("%text%", text),
-            images: [imageFile?.base64 ?? ""],
+            images: [currentImageAsBase64 ?? ""],
           },
         ],
       }),
@@ -77,10 +82,7 @@ export const useCaptionSuggestions = () => {
   };
 
   const applySuggestion = (suggestion: string) => {
-    addPart({
-      id: Math.random().toString(),
-      text: suggestion,
-    });
+    addPart(suggestion);
     removeSuggestion(suggestion);
   };
 
@@ -106,7 +108,7 @@ export const useCaptionSuggestions = () => {
 
   useEffect(() => {
     setSuggestions([]);
-  }, [imageFile]);
+  }, [currentImage]);
 
   useEffect(() => {
     setDebounced(true);
@@ -117,7 +119,7 @@ export const useCaptionSuggestions = () => {
     return () => {
       clearTimeout(timeout);
     };
-  }, [imageFile, setDebounced]);
+  }, [currentImage, setDebounced]);
 
   return {
     suggestions,

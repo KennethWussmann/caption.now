@@ -9,10 +9,8 @@ import {
 import { addRxPlugin, createRxDatabase, RxDatabase } from "rxdb";
 import { getRxStorageDexie } from "rxdb/plugins/storage-dexie";
 import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
-import { Provider } from "rxdb-hooks";
 import { deleteAllIndexedDBs } from "../utils";
 import { RxDBJsonDumpPlugin } from "rxdb/plugins/json-dump";
-import { ImageFile } from "../types";
 import {
   ImageCollection,
   imageDocMethods,
@@ -34,7 +32,7 @@ type DatabaseContextType = {
   saveDatabaseBackup: () => Promise<void>;
   isLoading: boolean;
   isSaving: boolean;
-  importImages: (images: ImageFile[]) => void;
+  isInitialized: boolean;
 };
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(
@@ -53,6 +51,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
     useDatasetDirectory();
   const [database, setDatabase] = useState<Database | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setInitialized] = useState(false);
   const [isSaving, setSaving] = useState(false);
 
   const saveDatabaseBackup = useCallback(
@@ -72,7 +71,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const initializeDatabase = useCallback(async () => {
-    if (!directoryHandle || !isDirectoryLoaded || database) {
+    if (!directoryHandle || !isDirectoryLoaded || database || isInitialized) {
       return;
     }
     setIsLoading(true);
@@ -111,6 +110,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
       }
 
       setDatabase(db);
+      setInitialized(true);
       console.log("Database initialized with collections");
       db.images.insert$.subscribe(() => {
         saveDatabaseBackup(db);
@@ -126,16 +126,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [directoryHandle, isDirectoryLoaded, database, saveDatabaseBackup]);
-
-  const importImages = (images: ImageFile[]) => {
-    if (!database) {
-      return;
-    }
-    database.images.bulkInsert(
-      images.map((image) => ({ id: image.name, filename: image.name }))
-    );
-  };
+  }, [directoryHandle, isDirectoryLoaded, database, saveDatabaseBackup, isInitialized]);
 
   useEffect(() => {
     initializeDatabase();
@@ -152,14 +143,12 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
     isLoading,
     saveDatabaseBackup,
     isSaving,
-    importImages,
+    isInitialized,
   };
 
   return (
     <DatabaseContext.Provider value={value}>
-      {value.database && (
-        <Provider db={value.database ?? undefined}>{children}</Provider>
-      )}
+      {children}
     </DatabaseContext.Provider>
   );
 };

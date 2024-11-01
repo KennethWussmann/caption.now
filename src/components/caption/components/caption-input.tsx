@@ -1,12 +1,11 @@
 import { Input } from "@/components/ui/input";
-import { useImageCaption } from "@/hooks/provider/image-caption-provider";
-import { CaptionPart } from "@/lib/types";
+import { useCaptionEditor } from "@/hooks/provider/caption-editor-provider";
 import clsx from "clsx";
 import { ArrowUp, Pencil, X } from "lucide-react";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
 
 export const EditBanner = ({ onCancel }: { onCancel?: VoidFunction }) => {
-  const { isEditing, cancelEditMode } = useImageCaption();
+  const { isEditing, cancelEditMode } = useCaptionEditor();
 
   const stopEditing = () => {
     onCancel?.();
@@ -37,8 +36,8 @@ export const CaptionInput = () => {
     enterEditMode,
     cancelEditMode,
     deletePart,
-    caption,
-  } = useImageCaption();
+    parts,
+  } = useCaptionEditor();
   const inputFieldRef = useRef<HTMLInputElement>(null);
 
   const sanitizeValue = (value: string) => value.trim().replace(".", "");
@@ -61,20 +60,16 @@ export const CaptionInput = () => {
       if (sanitizedValue === "") {
         return;
       }
-      const part: CaptionPart = {
-        id: Math.random().toString(),
-        text: sanitizedValue,
-      };
-      addPart(part);
+      addPart(sanitizedValue);
     }
     setValue("");
   };
 
   const onEditLast = () => {
-    if (isEditing || value.trim() !== "" || caption.parts.length === 0) {
+    if (isEditing || value.trim() !== "" || parts.length === 0) {
       return;
     }
-    enterEditMode(caption.parts[caption.parts.length - 1]);
+    enterEditMode(parts[parts.length - 1]);
   };
 
   const onCancelEditing = () => {

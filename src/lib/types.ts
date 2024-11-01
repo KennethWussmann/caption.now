@@ -15,6 +15,7 @@ export type TextFile = DirectoryFile & {
 
 export type CaptionPart = {
   id: string;
+  index: number;
   text: string;
 };
 

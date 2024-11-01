@@ -6,7 +6,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { ImageFile, TextFile } from "./types";
+import { ImageFile, TextFile } from "@/lib/types";
 
 type DatasetDirectoryContextType = {
   supported: boolean;

@@ -40,7 +40,7 @@ export function ImageListSidebar({
     <Sidebar {...props}>
       <AppSidebarHeader>
         <div className="flex items-center justify-between text-muted-foreground text-sm font-semibold ml-2 mt-2">
-          Images
+          Images ({images.length})
           <div className="flex items-center gap-2">
             <Checkbox
               id="hideDone"

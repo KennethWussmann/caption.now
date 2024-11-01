@@ -18,38 +18,20 @@ import {
 } from "@/components/ui/sidebar";
 import {
 } from "@/hooks/provider/image-navigation-provider";
-import { useEffect } from "react";
-import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
-import { useDatabase } from "@/lib/database/database-provider";
 import { useImageNavigation, useImageNavigationHotkeys } from "../hooks/provider/image-navigation-provider";
+import { NoImageSelected } from "@/components/common/no-image-selected";
 
 type ImageListLayoutProps = {
   children: ReactNode;
   toolbars?: FC[];
-  autoLoadFirstImage?: boolean;
 };
 
 export const ImageListLayout = ({
   children,
   toolbars = [],
-  autoLoadFirstImage = true,
 }: ImageListLayoutProps) => {
-  const { imageFiles } = useDatasetDirectory();
-  const { importImages } = useDatabase();
-  const { currentImage, loadNextImage } = useImageNavigation();
+  const { currentImage } = useImageNavigation();
   useImageNavigationHotkeys();
-
-  useEffect(() => {
-    importImages(imageFiles);
-    console.log("Images imported into database");
-  }, [imageFiles, importImages]);
-
-  useEffect(() => {
-    // Load the first image if no image is selected
-    if (!currentImage && autoLoadFirstImage) {
-      loadNextImage();
-    }
-  }, [currentImage, loadNextImage, autoLoadFirstImage]);
 
   return (
     <SidebarProvider>
@@ -85,7 +67,8 @@ export const ImageListLayout = ({
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 h-[calc(100vh-4rem)]">
-          {children}
+          {!currentImage && (<NoImageSelected />)}
+          {currentImage && children}
         </div>
       </SidebarInset>
     </SidebarProvider>

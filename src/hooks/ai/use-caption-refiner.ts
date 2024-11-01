@@ -2,9 +2,10 @@ import { settings } from "@/lib/settings";
 import { useAtom } from "jotai/react";
 import { useEffect, useMemo, useState } from "react";
 import { useOllamaStatus } from "../use-ollama-status";
-import { useImageCaption } from "@/hooks/provider/image-caption-provider";
 import { useQuery } from "@tanstack/react-query";
 import { chat } from "@/lib/ollama-api-client";
+import { useCaptionEditor } from "../provider/caption-editor-provider";
+import { useImageNavigation } from "../provider/image-navigation-provider";
 
 export const useCaptionRefiner = ({
   initialValue,
@@ -13,18 +14,20 @@ export const useCaptionRefiner = ({
   initialValue?: string | null;
   skip?: boolean;
 } = {}) => {
+  const [separator] = useAtom(settings.caption.separator);
   const [captionModel] = useAtom(settings.ai.caption.model);
   const [userPromptTemplate] = useAtom(settings.ai.caption.userPrompt);
   const { isOnline } = useOllamaStatus();
-  const { imageFile, caption } = useImageCaption();
+  const { parts } = useCaptionEditor();
+  const { currentImage } = useImageNavigation()
   const text = useMemo(() => {
-    return caption.parts.map((part) => part.text.trim()).join(". ") + ".";
-  }, [caption.parts]);
+    return parts.map((part) => part.text.trim()).join(separator);
+  }, [parts, separator]);
   const [captionSuggestion, setCaptionSuggestion] = useState<string | null>(
     initialValue ?? null
   );
 
-  const isEmpty = caption.parts.length === 0;
+  const isEmpty = parts.length === 0;
 
   const {
     data: aiResponse,
@@ -48,21 +51,21 @@ export const useCaptionRefiner = ({
   });
 
   useEffect(() => {
-    if (!aiResponse || aiResponse.length < 3 || caption.parts.length === 0) {
+    if (!aiResponse || aiResponse.length < 3 || parts.length === 0) {
       return;
     }
     setCaptionSuggestion(aiResponse);
-  }, [aiResponse, caption.parts.length]);
+  }, [aiResponse, parts.length]);
 
   useEffect(() => {
     setCaptionSuggestion(null);
-  }, [imageFile]);
+  }, [currentImage]);
 
   return {
     captionSuggestion,
     isLoading: isLoading || isRefetching,
     refetch: () => {
-      if (caption.parts.length === 0) {
+      if (parts.length === 0) {
         return;
       }
       refetch();

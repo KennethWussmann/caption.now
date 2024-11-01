@@ -1,17 +1,14 @@
 import { Card } from "@/components/ui";
-import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
-import { useImageCaption } from "@/hooks/provider/image-caption-provider";
+import { useCaptionEditor } from "@/hooks/provider/caption-editor-provider";
 import { settings } from "@/lib/settings";
 import { useAtom } from "jotai/react";
-import { useEffect } from "react";
 
 export const CaptionPreview = () => {
-  const { caption, imageFile } = useImageCaption();
-  const { writeCaption } = useDatasetDirectory();
+  const { parts } = useCaptionEditor();
   const [separator] = useAtom(settings.caption.separator);
   const [endWithSeparator] = useAtom(settings.caption.endWithSeparator);
 
-  let finalText = caption.parts
+  let finalText = parts
     .map((part) => part.text.trim())
     .join(separator)
     .trim();
@@ -20,15 +17,16 @@ export const CaptionPreview = () => {
     finalText += separator;
   }
 
-  const isEmpty = caption.parts.length === 0;
+  const isEmpty = parts.length === 0;
 
-  useEffect(() => {
-    if (!imageFile || finalText.length < 3) {
-      return;
-    }
-    writeCaption(finalText, imageFile);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [finalText, writeCaption]);
+  // TODO: Dont write caption to file, but to the database and then export from there to file
+  // useEffect(() => {
+  //   if (!imageFile || finalText.length < 3) {
+  //     return;
+  //   }
+  //   writeCaption(finalText, imageFile);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [finalText, writeCaption]);
 
   return (
     <div className="my-2 py-2">

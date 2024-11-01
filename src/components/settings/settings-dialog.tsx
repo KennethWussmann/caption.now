@@ -18,10 +18,12 @@ import {
 import { Cog, X } from "lucide-react";
 import { useState } from "react";
 import { navbarItems } from "./content";
+import { useHotkeys } from "react-hotkeys-hook";
 
 export const SettingsDialog = () => {
   const [open, setOpen] = useState(false);
   const [activeNavbarItem, setActiveNavbarItem] = useState(navbarItems[0]);
+  useHotkeys("mod+shift+p", () => setOpen(open => !open), { enableOnFormTags: ["INPUT"] });
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

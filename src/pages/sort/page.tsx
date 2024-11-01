@@ -6,6 +6,7 @@ import {
   collections,
   useDatabase,
 } from "@/lib/database/database-provider";
+import { uuid } from "@/lib/utils";
 import { useRxCollection, useRxData } from "rxdb-hooks";
 
 const DatabaseTest = () => {
@@ -36,7 +37,7 @@ const AddItem = () => {
     <Button
       onClick={() => {
         collection?.insert({
-          filename: `test.png${Math.random()}`,
+          filename: `test_${uuid()}.png`,
           tags: ["test"],
         });
       }}

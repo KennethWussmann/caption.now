@@ -56,7 +56,6 @@ export const usePreventClose = (
     );
   }
 
-  // Set initial value for unsavedWork
   useEffect(() => {
     context.setUnsavedWork(initialValue);
   }, [context, initialValue]);

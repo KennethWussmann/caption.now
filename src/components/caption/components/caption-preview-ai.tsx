@@ -1,25 +1,23 @@
 import { Card } from "@/components/ui";
 import { useCaptionRefiner } from "@/hooks/ai/use-caption-refiner";
-import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
-import { useImageCaption } from "@/hooks/provider/image-caption-provider";
+import { useCaptionEditor } from "@/hooks/provider/caption-editor-provider";
 import { LoaderCircle, RefreshCw } from "lucide-react";
-import { useEffect } from "react";
 
 export const CaptionPreviewAI = () => {
-  const { caption, imageFile, isDirty } = useImageCaption();
+  const { parts, isDirty } = useCaptionEditor();
   const { captionSuggestion, isLoading, refetch } = useCaptionRefiner({
     skip: !isDirty,
   });
-  const { writeCaption } = useDatasetDirectory();
-  const isEmpty = caption.parts.length === 0;
+  const isEmpty = parts.length === 0;
 
-  useEffect(() => {
-    if (!imageFile || !captionSuggestion || captionSuggestion.length < 3) {
-      return;
-    }
-    writeCaption(captionSuggestion, imageFile);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [captionSuggestion, writeCaption]);
+  // TODO: Dont write caption to file, but to the database and then export from there to file
+  // useEffect(() => {
+  //   if (!imageFile || !captionSuggestion || captionSuggestion.length < 3) {
+  //     return;
+  //   }
+  //   writeCaption(captionSuggestion, imageFile);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [captionSuggestion, writeCaption]);
 
   return (
     <div className="my-2 py-2">

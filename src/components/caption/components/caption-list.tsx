@@ -13,12 +13,14 @@ import {
 } from "@dnd-kit/sortable";
 import { CaptionListItem } from "./caption-list-item";
 import { CaptionListFooter } from "./caption-list-footer";
-import { useImageCaption } from "@/hooks/provider/image-caption-provider";
 import { AnimatedGroup } from "@/components/ui/animation/animated-group";
 import { useEffect, useRef } from "react";
+import { useCaptionEditor } from "@/hooks/provider/caption-editor-provider";
+import { Button } from "@/components/ui";
+import { Trash } from "lucide-react";
 
 export const CaptionList = () => {
-  const { caption, handleDragEnd } = useImageCaption();
+  const { parts, handleDragEnd, clearParts } = useCaptionEditor();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -29,22 +31,25 @@ export const CaptionList = () => {
   const lastLength = useRef(0);
 
   useEffect(() => {
-    const lastPart = caption.parts[caption.parts.length - 1];
-    if (caption.parts.length === lastLength.current) {
+    const lastPart = parts[parts.length - 1];
+    if (parts.length === lastLength.current) {
       return;
     }
-    if (caption.parts.length > 0 && lastPart && partRefs.current[lastPart.id]) {
+    if (parts.length > 0 && lastPart && partRefs.current[lastPart.id]) {
       partRefs.current[lastPart.id]?.scrollIntoView({
         behavior: "smooth",
         block: "nearest",
       });
-      lastLength.current = caption.parts.length;
+      lastLength.current = parts.length;
     }
-  }, [caption.parts]);
+  }, [parts]);
 
   return (
     <div className="border-l ml-2 h-full flex flex-col">
-      <h1 className="mb-2 ml-4 font-semibold">Caption Parts</h1>
+      <div className="flex flex-row gap-2 justify-between items-center mb-2">
+        <h1 className="ml-4 font-semibold">Caption Parts </h1>
+        <Button variant={"ghost"} size={"icon"} onClick={clearParts}><Trash /></Button>
+      </div>
       <div
         className="flex flex-col overflow-y-auto gap-1 pb-4"
         style={{ flex: "1 1 0", minHeight: 0 }}
@@ -55,11 +60,11 @@ export const CaptionList = () => {
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={caption.parts}
+            items={parts}
             strategy={verticalListSortingStrategy}
           >
             <AnimatedGroup preset="blur-slide" className="flex flex-col gap-2">
-              {caption.parts.map((item) => (
+              {parts.map((item) => (
                 <CaptionListItem
                   key={item.id}
                   part={item}

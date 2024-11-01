@@ -10,7 +10,6 @@ import SetupPage from "./pages/setup/page.tsx";
 import PlaygroundPage from "./pages/playground/page.tsx";
 import { DatasetDirectoryProvider } from "./hooks/provider/dataset-directory-provider.tsx";
 import { RequireDatasetSelection } from "./lib/require-dataset-selection.tsx";
-import { ImageCaptionProvider } from "./hooks/provider/image-caption-provider.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "./components/ui/tooltip.tsx";
 import { Toaster } from "@/components/ui/toaster";
@@ -19,6 +18,7 @@ import { OllamaModelDownloadProvider } from "./hooks/provider/ollama-model-downl
 import { DisableAnimations } from "./lib/disable-animations.tsx";
 import { PreventCloseProvider } from "./hooks/provider/prevent-close-provider.tsx";
 import { ImageNavigationProvider } from "./hooks/provider/image-navigation-provider.tsx";
+import { DatabaseProvider } from "./lib/database/database-provider.tsx";
 
 const queryClient = new QueryClient();
 
@@ -72,7 +72,7 @@ createRoot(document.getElementById("root")!).render(
     <ThemeProvider>
       <TooltipProvider>
         <DatasetDirectoryProvider>
-          <ImageCaptionProvider>
+          <DatabaseProvider>
             <QueryClientProvider client={queryClient}>
               <OllamaModelDownloadProvider>
                 <PreventCloseProvider>
@@ -83,7 +83,7 @@ createRoot(document.getElementById("root")!).render(
                 </PreventCloseProvider>
               </OllamaModelDownloadProvider>
             </QueryClientProvider>
-          </ImageCaptionProvider>
+          </DatabaseProvider>
         </DatasetDirectoryProvider>
       </TooltipProvider>
     </ThemeProvider>

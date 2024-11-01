@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import { ImageDocument } from "@/lib/database/image-collection";
 import { useImages } from "../use-images";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useDatabase } from "@/lib/database/database-provider";
 
 interface ImageNavigationContextType {
   currentImage?: ImageDocument;
@@ -15,7 +16,9 @@ interface ImageNavigationContextType {
 const ImageNavigationContext = createContext<ImageNavigationContextType | undefined>(undefined);
 
 export const ImageNavigationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { database } = useDatabase();
   const { images } = useImages();
+  const [currentImageId, setCurrentImageId] = useState<string>();
   const [currentImage, setCurrentImage] = useState<ImageDocument>();
   const [hasNextImage, setHasNextImage] = useState(false);
   const [hasPreviousImage, setHasPreviousImage] = useState(false);
@@ -24,60 +27,77 @@ export const ImageNavigationProvider: React.FC<{ children: React.ReactNode }> = 
     if (images.length === 0) {
       return false;
     }
-    if (!currentImage) {
+    if (!currentImageId) {
       return images.length > 0;
     }
     const currentIndex = images.findIndex(
-      (file) => currentImage.filename === file.filename
+      (file) => currentImageId === file.id
     );
     return currentIndex < images.length - 1;
-  }, [images, currentImage]);
+  }, [images, currentImageId]);
 
   const getHasPreviousImage = useCallback(() => {
-    if (!currentImage || images.length === 0) {
+    if (!currentImageId || images.length === 0) {
       return false;
     }
     const currentIndex = images.findIndex(
-      (file) => currentImage.filename === file.filename
+      (file) => currentImageId === file.id
     );
     return currentIndex > 0;
-  }, [images, currentImage]);
+  }, [images, currentImageId]);
 
   const loadNextImage = useCallback(() => {
     if (!getHasNextImage()) return;
-    if (!currentImage) {
-      setCurrentImage(images[0]);
+    if (!currentImageId) {
+      setCurrentImageId(images[0].id);
       return;
     }
     const currentIndex = images.findIndex(
-      (file) => currentImage.filename === file.filename
+      (file) => currentImageId === file.id
     );
     if (currentIndex < images.length - 1) {
-      setCurrentImage(images[currentIndex + 1]);
+      setCurrentImageId(images[currentIndex + 1].id);
     }
-  }, [getHasNextImage, images, currentImage]);
+  }, [getHasNextImage, images, currentImageId]);
 
   const loadPreviousImage = useCallback(() => {
-    if (!getHasPreviousImage() || !currentImage) return;
+    if (!getHasPreviousImage() || !currentImageId) return;
     const currentIndex = images.findIndex(
-      (file) => currentImage.filename === file.filename
+      (file) => currentImageId === file.id
     );
     if (currentIndex > 0) {
-      setCurrentImage(images[currentIndex - 1]);
+      setCurrentImageId(images[currentIndex - 1].id);
     }
-  }, [getHasPreviousImage, images, currentImage]);
+  }, [getHasPreviousImage, images, currentImageId]);
 
   const selectImage = useCallback((filename: string) => {
     const image = images.find((image) => image.filename === filename);
     if (image) {
-      setCurrentImage(image);
+      setCurrentImageId(image.id);
     }
   }, [images]);
 
   useEffect(() => {
     setHasNextImage(getHasNextImage());
     setHasPreviousImage(getHasPreviousImage());
-  }, [currentImage, images, getHasNextImage, getHasPreviousImage]);
+  }, [currentImageId, images, getHasNextImage, getHasPreviousImage]);
+
+  useEffect(() => {
+    if (!currentImageId || !database) {
+      return;
+    }
+    const subscription = database.images.findOne(currentImageId).$.subscribe(
+      (doc: ImageDocument | null) => {
+        if (doc) {
+          setCurrentImage(doc);
+        }
+      }
+    );
+    return () => {
+      subscription.unsubscribe();
+    }
+  }, [currentImageId, database]);
+
 
   return (
     <ImageNavigationContext.Provider value={{

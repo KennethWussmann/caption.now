@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+export { v4 as uuid } from "uuid";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -55,3 +56,9 @@ export const deleteAllIndexedDBs = async () => {
     console.error("Error deleting databases:", error);
   }
 };
+
+export const getFilenameWithoutExtension = (filename: string) => {
+  const index = filename.lastIndexOf(".");
+  if (index === -1) return filename;
+  return filename.substring(0, index);
+}
