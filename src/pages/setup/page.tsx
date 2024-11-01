@@ -32,6 +32,7 @@ import { AnimatePresence } from "framer-motion";
 import { useImageImporter } from "@/hooks/use-image-importer";
 import { useEffect } from "react";
 import { useDatabase } from "@/lib/database/database-provider";
+import LogoShadow from "@/assets/logo-shadow.png"
 
 export default function Page() {
   const {
@@ -143,87 +144,89 @@ export default function Page() {
             </CardContent>
           </Card>
         ) : (
-          <Card className="bg-transparent backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-2xl">Welcome!</CardTitle>
-              <CardDescription>
-                To start labeling your images, select a directory from your
-                computer that contains all images.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isAccessDenied && (
-                <Alert variant={"destructive"} className="mb-4">
-                  <TriangleAlert className="h-4 w-4" />
-                  <AlertTitle>Access Denied!</AlertTitle>
-                  <AlertDescription>
-                    Your browser denied access to select a directory. Please
-                    check your browser settings and reload the page.
-                  </AlertDescription>
-                </Alert>
-              )}
+          <>
+            <img src={LogoShadow} alt="Logo" className="w-64 h-6w-64 mx-auto" draggable="false" />
+            <Card className="bg-transparent backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-2xl">Welcome!</CardTitle>
+                <CardDescription>
+                  To start labeling your images, select a directory from your
+                  computer that contains all images.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isAccessDenied && (
+                  <Alert variant={"destructive"} className="mb-4">
+                    <TriangleAlert className="h-4 w-4" />
+                    <AlertTitle>Access Denied!</AlertTitle>
+                    <AlertDescription>
+                      Your browser denied access to select a directory. Please
+                      check your browser settings and reload the page.
+                    </AlertDescription>
+                  </Alert>
+                )}
 
-              {isDirectoryLoaded && isEmpty && (
-                <Alert variant={"destructive"} className="mb-4">
-                  <TriangleAlert className="h-4 w-4" />
-                  <AlertTitle>No images found</AlertTitle>
-                  <AlertDescription>
-                    The directory you selected does not contain any images.
-                    Please select a different directory that contains JPEG, JPG
-                    or PNG files.
-                  </AlertDescription>
-                </Alert>
-              )}
+                {isDirectoryLoaded && isEmpty && (
+                  <Alert variant={"destructive"} className="mb-4">
+                    <TriangleAlert className="h-4 w-4" />
+                    <AlertTitle>No images found</AlertTitle>
+                    <AlertDescription>
+                      The directory you selected does not contain any images.
+                      Please select a different directory that contains JPEG, JPG
+                      or PNG files.
+                    </AlertDescription>
+                  </Alert>
+                )}
 
-              {(!isDirectorySelected || isEmpty) && (
-                <>
-                  {!supported && (
-                    <Alert variant={"destructive"}>
-                      <TriangleAlert className="h-4 w-4" />
-                      <AlertTitle>Unsupported Browser</AlertTitle>
-                      <AlertDescription>
-                        <div className="flex flex-col gap-2">
-                          Your browser does not support the File System Access
-                          API which is required by this app. Please use a
-                          supported chromium-based browser, like Google Chrome,
-                          Edge, Arc or Brave.
-                          <a
-                            className="text-blue-500 hover:underline"
-                            target="_blank"
-                            href="https://caniuse.com/native-filesystem-api"
-                          >
-                            Learn more ...
-                          </a>
-                        </div>
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                  {supported && (
-                    <Button className="w-full" onClick={openDirectoryPicker}>
-                      <FolderOpen /> Select Directory
-                    </Button>
-                  )}
-                </>
-              )}
+                {(!isDirectorySelected || isEmpty) && (
+                  <>
+                    {!supported && (
+                      <Alert variant={"destructive"}>
+                        <TriangleAlert className="h-4 w-4" />
+                        <AlertTitle>Unsupported Browser</AlertTitle>
+                        <AlertDescription>
+                          <div className="flex flex-col gap-2">
+                            Your browser does not support the File System Access
+                            API which is required by this app. Please use a
+                            supported chromium-based browser, like Google Chrome,
+                            Edge, Arc or Brave.
+                            <a
+                              className="text-blue-500 hover:underline"
+                              target="_blank"
+                              href="https://caniuse.com/native-filesystem-api"
+                            >
+                              Learn more ...
+                            </a>
+                          </div>
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                    {supported && (
+                      <Button className="w-full" onClick={openDirectoryPicker}>
+                        <FolderOpen /> Select Directory
+                      </Button>
+                    )}
+                  </>
+                )}
 
-              {isLoading && (
-                <Alert className="border-blue-500">
-                  <LoaderCircle className="h-4 w-4 animate-spin" />
-                  <AlertTitle>Loading Dataset</AlertTitle>
-                  <AlertDescription>
-                    Hang tight! We are loading your dataset. Depending on the
-                    size this might take a while.
-                  </AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
+                {isLoading && (
+                  <Alert className="border-blue-500">
+                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                    <AlertTitle>Loading Dataset</AlertTitle>
+                    <AlertDescription>
+                      Hang tight! We are loading your dataset. Depending on the
+                      size this might take a while.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </CardContent>
+            </Card></>
         )}
 
         <AnimatePresence>
           {isReady ? <AutoSaveAlert /> : <DataPrivacyAlert />}
         </AnimatePresence>
       </div>
-    </BackgroundLines>
+    </BackgroundLines >
   );
 }
