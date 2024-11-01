@@ -13,47 +13,54 @@ import { useImageBase64 } from "../use-image-base64";
 
 const suggestionSchema = z.array(z.string());
 
+const useCaptionSuggestionsShortcuts = (
+  applySuggestion: (index: number) => void
+) => {
+  const [modifier] = useAtom(settings.shortcuts.applySuggestionModifier);
+
+  useHotkeys([modifier, "1"].join("+"), () => applySuggestion(0), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys([modifier, "2"].join("+"), () => applySuggestion(1), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys([modifier, "3"].join("+"), () => applySuggestion(2), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys([modifier, "4"].join("+"), () => applySuggestion(3), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys([modifier, "5"].join("+"), () => applySuggestion(4), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys([modifier, "6"].join("+"), () => applySuggestion(5), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys([modifier, "7"].join("+"), () => applySuggestion(6), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys([modifier, "8"].join("+"), () => applySuggestion(7), {
+    enableOnFormTags: ["INPUT"],
+  });
+  useHotkeys([modifier, "9"].join("+"), () => applySuggestion(8), {
+    enableOnFormTags: ["INPUT"],
+  });
+};
+
 export const useCaptionSuggestions = () => {
   const [separator] = useAtom(settings.caption.separator);
   const [visionModel] = useAtom(settings.ai.vision.model);
   const [userPromptTemplate] = useAtom(settings.ai.vision.userPrompt);
   const { isOnline } = useOllamaStatus();
   const { parts, addPart } = useCaptionEditor();
-  const {currentImage} = useImageNavigation()
-  const currentImageAsBase64 = useImageBase64(currentImage)
+  const { currentImage } = useImageNavigation();
+  const currentImageAsBase64 = useImageBase64(currentImage);
   const text = useMemo(() => {
     return parts.map((part) => part.text.trim()).join(separator);
   }, [parts, separator]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isDebounced, setDebounced] = useState(true);
-
-  useHotkeys("ctrl+1", () => applySuggestionKeyboardShortcut(0), {
-    enableOnFormTags: ["INPUT"],
-  });
-  useHotkeys("ctrl+2", () => applySuggestionKeyboardShortcut(1), {
-    enableOnFormTags: ["INPUT"],
-  });
-  useHotkeys("ctrl+3", () => applySuggestionKeyboardShortcut(2), {
-    enableOnFormTags: ["INPUT"],
-  });
-  useHotkeys("ctrl+4", () => applySuggestionKeyboardShortcut(3), {
-    enableOnFormTags: ["INPUT"],
-  });
-  useHotkeys("ctrl+5", () => applySuggestionKeyboardShortcut(4), {
-    enableOnFormTags: ["INPUT"],
-  });
-  useHotkeys("ctrl+6", () => applySuggestionKeyboardShortcut(5), {
-    enableOnFormTags: ["INPUT"],
-  });
-  useHotkeys("ctrl+7", () => applySuggestionKeyboardShortcut(6), {
-    enableOnFormTags: ["INPUT"],
-  });
-  useHotkeys("ctrl+8", () => applySuggestionKeyboardShortcut(7), {
-    enableOnFormTags: ["INPUT"],
-  });
-  useHotkeys("ctrl+9", () => applySuggestionKeyboardShortcut(8), {
-    enableOnFormTags: ["INPUT"],
-  });
+  useCaptionSuggestionsShortcuts((i) => applySuggestionKeyboardShortcut(i));
 
   const {
     data: aiSuggestions,

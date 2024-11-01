@@ -1,8 +1,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { ImageDocument } from "@/lib/database/image-collection";
 import { useImages } from "../use-images";
-import { useHotkeys } from "react-hotkeys-hook";
 import { useDatabase } from "@/lib/database/database-provider";
+import { useShortcut } from "../use-shortcut";
 
 interface ImageNavigationContextType {
   currentImage?: ImageDocument;
@@ -124,18 +124,6 @@ export const useImageNavigation = (): ImageNavigationContextType => {
 
 export const useImageNavigationHotkeys = () => {
   const { loadNextImage, loadPreviousImage } = useImageNavigation();
-  useHotkeys(
-    "pagedown",
-    () => {
-      loadNextImage();
-    },
-    { enableOnFormTags: ["INPUT"], preventDefault: true }
-  );
-  useHotkeys(
-    "pageup",
-    () => {
-      loadPreviousImage();
-    },
-    { enableOnFormTags: ["INPUT"], preventDefault: true }
-  );
+  useShortcut("previousImage", () => loadPreviousImage());
+  useShortcut("nextImage", () => loadNextImage());
 };

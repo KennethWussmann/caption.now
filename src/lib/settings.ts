@@ -1,5 +1,5 @@
 import { atomWithStorage } from "jotai/utils";
-import { createStore } from "jotai/vanilla";
+import { Atom, createStore, getDefaultStore } from "jotai/vanilla";
 import { atomWithZod } from "./zod-atom";
 import { z } from "zod";
 
@@ -17,6 +17,22 @@ export const settings = {
       "settings.appearance.disableAnimations",
       false
     ),
+  },
+  shortcuts: {
+    openSettings: atomWithStorage(
+      "settings.shortcuts.openSettings",
+      "mod+shift+p"
+    ),
+    applySuggestionModifier: atomWithStorage(
+      "settings.shortcuts.applySuggestionModifier",
+      "mod"
+    ),
+    save: atomWithStorage("settings.shortcuts.save", "mod+s"),
+    previousImage: atomWithStorage(
+      "settings.shortcuts.previousImage",
+      "pageup"
+    ),
+    nextImage: atomWithStorage("settings.shortcuts.previousImage", "pagedown"),
   },
   caption: {
     strategy: atomWithZod(
@@ -69,7 +85,9 @@ export const settings = {
       ),
     },
   },
-};
+} as const;
+
+export type Settings = typeof settings;
 
 export const resetLocalStorage = async () => {
   for (const key in localStorage) {

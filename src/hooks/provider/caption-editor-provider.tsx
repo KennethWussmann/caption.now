@@ -11,11 +11,11 @@ import { useImageNavigation } from "./image-navigation-provider";
 import { useDatabase } from "@/lib/database/database-provider";
 import { useAtom } from "jotai/react";
 import { settings } from "@/lib/settings";
-import { useHotkeys } from "react-hotkeys-hook";
 import { usePreventClose } from "./prevent-close-provider";
 import { uuid } from "@/lib/utils";
 import { usePrevious } from "@uidotdev/usehooks"
 import { useCaptionExporter } from "../use-caption-exporter";
+import { useShortcut } from "../use-shortcut";
 
 interface CaptionEditorContextType {
   parts: CaptionPart[];
@@ -56,9 +56,9 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
 
   useCaptionExporter();
   usePreventClose(isDirty);
-  useHotkeys("mod+s", () => {
+  useShortcut("save", () => {
     save();
-  }, { enableOnFormTags: ["INPUT"] });
+  });
 
   const addPart = (text: string) => {
     setParts((prevParts) => [...prevParts, {
