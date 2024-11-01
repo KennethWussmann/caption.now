@@ -17,6 +17,7 @@ Unlock a new level of image captioning, right from your device! **caption.now** 
 <div align="center" style="margin-top: 50px; margin-bottom: 50px">
 <img src="./docs/assets/cover.jpeg" height="400px"/>
 </div>
+
 ## 🎯 Why Choose caption.now?
 
 Designed for those who value **privacy and efficiency**, caption.now is perfect for AI training, data preparation, and more. Unlike cloud-based tools, **all data remains local** — no server uploads, ensuring **absolute data security**. Plus, with [Ollama](https://ollama.com/), you get the power of local AI support without sacrificing privacy!
