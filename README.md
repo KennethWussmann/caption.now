@@ -1,9 +1,8 @@
 <div align="center">
-  <h1><a href="https://caption.now" target="_blank"><code>caption.now</code></a></h1>
+  <img src="./docs//assets/logo/logo-shadow.png" height="400px">
   <p>
     <strong>Privacy-First Image Captioning, Anytime, Anywhere!</strong>
   </p>
-  <img src="./docs/assets/cover.jpeg"  style="height: 400px"/>
 </div>
 
 Unlock a new level of image captioning, right from your device! **caption.now** offers a private, offline-enabled, and efficient captioning experience with **full control over your data**. No installation, no uploads, just pure, privacy-focused power. 🔐✨
@@ -15,6 +14,9 @@ Unlock a new level of image captioning, right from your device! **caption.now** 
 - **🚫 Privacy-First, Fully Offline**: No backend server or internet dependency — your images stay on your computer, always.
 - **💻 Local AI Integration**: Optional connection with [Ollama](https://ollama.com/) for enhanced AI-driven captions — all processed privately and offline on your device.
 
+<div align="center" style="margin-top: 50px; margin-bottom: 50px">
+<img src="./docs/assets/cover.jpeg" height="400px"/>
+</div>
 ## 🎯 Why Choose caption.now?
 
 Designed for those who value **privacy and efficiency**, caption.now is perfect for AI training, data preparation, and more. Unlike cloud-based tools, **all data remains local** — no server uploads, ensuring **absolute data security**. Plus, with [Ollama](https://ollama.com/), you get the power of local AI support without sacrificing privacy!
