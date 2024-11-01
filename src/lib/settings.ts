@@ -1,5 +1,5 @@
 import { atomWithStorage } from "jotai/utils";
-import { Atom, createStore, getDefaultStore } from "jotai/vanilla";
+import { createStore } from "jotai/vanilla";
 import { atomWithZod } from "./zod-atom";
 import { z } from "zod";
 
