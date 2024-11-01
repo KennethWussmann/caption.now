@@ -87,7 +87,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
       );
 
       const db: Database = await createRxDatabase({
-        name: "caption-now-sorting",
+        name: "caption-now",
         storage: getRxStorageDexie(),
         ignoreDuplicate: true,
       });
