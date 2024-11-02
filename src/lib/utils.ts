@@ -61,4 +61,70 @@ export const getFilenameWithoutExtension = (filename: string) => {
   const index = filename.lastIndexOf(".");
   if (index === -1) return filename;
   return filename.substring(0, index);
-}
+};
+
+export const getPlatform = () => {
+  const userAgent = window.navigator.userAgent;
+  let os: "macOS" | "iOS" | "Windows" | "Android" | "Linux" | null = null;
+
+  const isIOS =
+    /iPad|iPhone|iPod/.test(userAgent) ||
+    (/Mac|Mac OS|MacIntel/gi.test(userAgent) &&
+      (navigator.maxTouchPoints > 1 || "ontouchend" in document));
+
+  if (/Macintosh|macOS|Mac|Mac OS|MacIntel|MacPPC|Mac68K/gi.test(userAgent)) {
+    os = "macOS";
+  } else if (isIOS) {
+    os = "iOS";
+  } else if (/'Win32|Win64|Windows|Windows NT|WinCE/gi.test(userAgent)) {
+    os = "Windows";
+  } else if (/Android/gi.test(userAgent)) {
+    os = "Android";
+  } else if (/Linux/gi.test(userAgent)) {
+    os = "Linux";
+  }
+
+  return os;
+};
+export const isMacOS = () => getPlatform() === "macOS";
+
+export const replaceAll = (
+  str: string,
+  target: string,
+  replacement: string
+): string => {
+  return str.split(target).join(replacement);
+};
+
+export const replaceShortcutSymbols = (
+  shortcut: string | string[] | Set<string>
+): string => {
+  if (shortcut instanceof Set) {
+    shortcut = Array.from(shortcut).join("");
+  }
+  if (Array.isArray(shortcut)) {
+    shortcut = shortcut.join("");
+  }
+  if (isMacOS()) {
+    shortcut = shortcut.replace("meta", "⌘").replace("mod", "⌘");
+  }
+
+  shortcut = replaceAll(shortcut, "+", "");
+  shortcut = shortcut.replace("shift", "⇧");
+  shortcut = shortcut.replace("alt", "⌥");
+  shortcut = shortcut.replace("ctrl", "⌃");
+  shortcut = shortcut.replace("enter", "↩");
+  shortcut = shortcut.replace("space", "␣");
+  shortcut = shortcut.replace("backspace", "⌫");
+  shortcut = shortcut.replace("delete", "⌦");
+  shortcut = shortcut.replace("escape", "⎋");
+  shortcut = shortcut.replace("tab", "⇥");
+  shortcut = shortcut.replace("pageup", "PgUp");
+  shortcut = shortcut.replace("pagedown", "PgDn");
+  shortcut = shortcut.replace("up", "↑");
+  shortcut = shortcut.replace("down", "↓");
+  shortcut = shortcut.replace("left", "←");
+  shortcut = shortcut.replace("right", "→");
+  shortcut = shortcut.replace("comma", ",");
+  return shortcut;
+};

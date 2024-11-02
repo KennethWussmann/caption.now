@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { settings, Settings } from "@/lib/settings";
+import { replaceShortcutSymbols } from "@/lib/utils";
 import clsx from "clsx";
 import { useAtom } from "jotai/react";
 import { useResetAtom } from "jotai/utils";
@@ -71,15 +72,14 @@ export const ShortcutRow = ({ title, description, settingsKey }: ShortcutRowProp
       <TableCell className="text-right flex gap-2 justify-end items-center align-middle">
         <div className={clsx("border rounded-sm h-10 w-full min-w-48 hover:bg-accent font-mono text-lg flex justify-center items-center select-none", { "bg-accent border-2 italic": isRecording })} onClick={() => {
           if (isRecording) {
-            stop();
-            setShortcut(Array.from(keys).join("+"));
+            save();
           } else {
             start();
           }
         }}>
-          {!isRecording && shortcut}
+          {!isRecording && replaceShortcutSymbols(shortcut)}
           {isRecording && Array.from(keys).length === 0 && "Recording..."}
-          {isRecording && keys && Array.from(keys).join("+")}
+          {isRecording && keys && replaceShortcutSymbols(keys)}
         </div>
         {!isRecording && (
           <Button variant="outline" size={"icon"} onClick={reset} className="h-10 w-10">
