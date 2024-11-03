@@ -8,13 +8,13 @@ import React, {
 import { CaptionPart } from "@/lib/types";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useImageNavigation } from "./image-navigation-provider";
-import { useDatabase } from "@/lib/database/database-provider";
 import { useAtom } from "jotai/react";
 import { settings } from "@/lib/settings";
 import { usePreventClose } from "./prevent-close-provider";
 import { uuid } from "@/lib/utils";
 import { usePrevious } from "@uidotdev/usehooks"
 import { useShortcut } from "../use-shortcut";
+import { database } from "@/lib/database/database";
 
 interface CaptionEditorContextType {
   parts: CaptionPart[];
@@ -45,7 +45,6 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
   children,
 }) => {
   const [separator] = useAtom(settings.caption.separator);
-  const { database } = useDatabase();
   const { currentImage } = useImageNavigation();
   const [isDirty, setDirty] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
@@ -143,10 +142,11 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
   }
 
   const save = async (filename?: string) => {
-    if (!database || !currentImage || !isDirty) {
+    if (!currentImage || !isDirty) {
       return
     }
-    await database.images.upsert({
+    await database.images.put({
+      id: filename ?? currentImage.filename,
       filename: filename ?? currentImage.filename,
       caption: parts.map((part) => part.text).join(separator),
       captionParts: parts,

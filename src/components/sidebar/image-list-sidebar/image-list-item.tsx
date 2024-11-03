@@ -2,15 +2,15 @@ import * as React from "react";
 import { Badge, SidebarMenuButton, SidebarMenuItem } from "@/components/ui";
 import { Check } from "lucide-react";
 import { truncateFilename } from "@/lib/utils";
-import { ImageDocument } from "@/lib/database/image-collection";
 import { useImageNavigation } from "@/hooks/provider/image-navigation-provider";
 import { useImageSrc } from "@/hooks/use-image-src";
 import { ImageSkeleton } from "@/components/common/image-skeleton";
 import { useAction } from "@/hooks/use-action";
+import { ImageEntity, isImageDone } from "@/lib/database/image-entity";
 
 export const ImageListItem = React.forwardRef<
   HTMLLIElement,
-  { image: ImageDocument }
+  { image: ImageEntity }
 >(({ image }, ref) => {
   const action = useAction()
   const { selectImage, currentImage } = useImageNavigation();
@@ -32,7 +32,7 @@ export const ImageListItem = React.forwardRef<
           />
           <div className="flex flex-col gap-1 items-start">
             {truncateFilename(image.filename, 20)}
-            {action && image?.isDone(action) && (
+            {action && isImageDone(image, action) && (
               <Badge variant="secondary" className="flex gap-1">
                 <Check className="h-5 w-5" />
                 Done

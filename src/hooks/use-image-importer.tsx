@@ -1,26 +1,27 @@
-import { useDatabase } from "@/lib/database/database-provider";
 import { settings } from "@/lib/settings";
 import { Caption, ImageFile } from "@/lib/types"
 import { useAtom } from "jotai/react";
 import { useDatasetDirectory } from "./provider/dataset-directory-provider";
 import { getFilenameWithoutExtension } from "@/lib/utils";
-import { ImageDocTypeUpsert } from "@/lib/database/image-collection";
 import { useState } from "react";
 import { useImages } from "./use-images";
+import { ImageEntity } from "@/lib/database/image-entity";
+import { database } from "@/lib/database/database";
+import { useDatabase } from "@/lib/database/database-provider";
 
 export const useImageImporter = () => {
+  const { setAutoBackupEnabled } = useDatabase()
   const [separator] = useAtom(settings.caption.separator);
   const { directoryHandle } = useDatasetDirectory();
-  const { database } = useDatabase()
   const { allImages } = useImages()
   const [imported, setImported] = useState(false)
 
   const importImages = (imageFiles: ImageFile[]) => {
-    if (!database || !directoryHandle || imported) {
+    if (!directoryHandle || imported) {
       return
     }
     (async () => {
-      const imageDocs = await Promise.all(imageFiles.map(async (image): Promise<ImageDocTypeUpsert | null> => {
+      const imageDocs = await Promise.all(imageFiles.map(async (image): Promise<ImageEntity | null> => {
         const existingImage = allImages.find(existingImage => existingImage.filename === image.name)
         let caption: Caption | null = null
         try {
@@ -38,16 +39,27 @@ export const useImageImporter = () => {
           // No caption file
         }
 
-        return {
-          ...existingImage,
-          filename: image.name,
-          caption: caption?.preview ?? undefined,
-          captionParts: caption?.parts ?? undefined
+        if (caption) {
+          return {
+            id: image.name,
+            filename: image.name,
+            caption: caption.preview,
+            captionParts: caption.parts
+          }
+        } else if (existingImage) {
+          return existingImage
+        } else {
+          return {
+            id: image.name,
+            filename: image.name,
+          }
         }
       }))
 
-      database.images.bulkUpsert(imageDocs.filter(doc => doc !== null) as ImageDocTypeUpsert[])
+      await database.images.bulkPut(imageDocs.filter(doc => doc !== null))
+
       setImported(true)
+      setAutoBackupEnabled(true)
       console.log("Imported images")
     })()
   }

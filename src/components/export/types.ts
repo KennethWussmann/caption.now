@@ -1,8 +1,8 @@
-import { ImageDocument } from "@/lib/database/image-collection";
+import { ImageEntity } from "@/lib/database/image-entity";
 
 export type ExportType = "caption-txt" | "sort";
 export type ExportItem = {
-  image: ImageDocument;
+  image: ImageEntity;
   directoryHandle: FileSystemDirectoryHandle;
 };
 

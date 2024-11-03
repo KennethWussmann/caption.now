@@ -1,12 +1,12 @@
-import { ImageDocument } from "@/lib/database/image-collection";
 import { useDatasetDirectory } from "./provider/dataset-directory-provider";
 import { useEffect, useState } from "react";
 import { useAtom } from "jotai/react";
 import { settings } from "@/lib/settings";
 import { Caption } from "@/lib/types";
 import { getFilenameWithoutExtension } from "@/lib/utils";
+import { ImageEntity } from "@/lib/database/image-entity";
 
-export const useCaptionFile = (image: ImageDocument | null | undefined) => {
+export const useCaptionFile = (image: ImageEntity | null | undefined) => {
   const [separator] = useAtom(settings.caption.separator);
   const { directoryHandle } = useDatasetDirectory();
   const [caption, setCaption] = useState<Caption | null>(null);

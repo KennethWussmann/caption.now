@@ -30,7 +30,7 @@ export function ImageListSidebar({
   React.useEffect(() => {
     if (currentImage && itemRefs.current[currentImage.filename]) {
       itemRefs.current[currentImage.filename]?.scrollIntoView({
-        behavior: "smooth",
+        behavior: "instant",
         block: "nearest",
       });
     }

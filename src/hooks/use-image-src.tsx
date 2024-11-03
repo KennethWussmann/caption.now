@@ -1,8 +1,8 @@
-import { ImageDocument } from "@/lib/database/image-collection";
 import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
+import { ImageEntity } from "@/lib/database/image-entity";
 import { useEffect, useState } from "react";
 
-export const useImageSrc = (image: ImageDocument) => {
+export const useImageSrc = (image: ImageEntity) => {
   const { directoryHandle } = useDatasetDirectory();
 
   const [src, setSrc] = useState<string | null>(null);

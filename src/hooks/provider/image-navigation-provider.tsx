@@ -1,11 +1,12 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { ImageDocument } from "@/lib/database/image-collection";
 import { useImages } from "../use-images";
-import { useDatabase } from "@/lib/database/database-provider";
 import { useShortcut } from "../use-shortcut";
+import { ImageEntity } from "@/lib/database/image-entity";
+import { useLiveQuery } from "dexie-react-hooks";
+import { database } from "@/lib/database/database";
 
 interface ImageNavigationContextType {
-  currentImage?: ImageDocument;
+  currentImage?: ImageEntity;
   hasNextImage: boolean;
   hasPreviousImage: boolean;
   selectImage: (filename: string) => void;
@@ -16,12 +17,16 @@ interface ImageNavigationContextType {
 const ImageNavigationContext = createContext<ImageNavigationContextType | undefined>(undefined);
 
 export const ImageNavigationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { database } = useDatabase();
   const { images } = useImages();
   const [currentImageId, setCurrentImageId] = useState<string>();
-  const [currentImage, setCurrentImage] = useState<ImageDocument>();
   const [hasNextImage, setHasNextImage] = useState(false);
   const [hasPreviousImage, setHasPreviousImage] = useState(false);
+  const currentImage = useLiveQuery(() => {
+    if (!currentImageId) {
+      return undefined;
+    }
+    return database.images.where("id").equals(currentImageId).limit(1).first();
+  }, [currentImageId]);
 
   const getHasNextImage = useCallback(() => {
     if (images.length === 0) {
@@ -82,21 +87,6 @@ export const ImageNavigationProvider: React.FC<{ children: React.ReactNode }> = 
     setHasPreviousImage(getHasPreviousImage());
   }, [currentImageId, images, getHasNextImage, getHasPreviousImage]);
 
-  useEffect(() => {
-    if (!currentImageId || !database) {
-      return;
-    }
-    const subscription = database.images.findOne(currentImageId).$.subscribe(
-      (doc: ImageDocument | null) => {
-        if (doc) {
-          setCurrentImage(doc);
-        }
-      }
-    );
-    return () => {
-      subscription.unsubscribe();
-    }
-  }, [currentImageId, database]);
 
 
   return (
