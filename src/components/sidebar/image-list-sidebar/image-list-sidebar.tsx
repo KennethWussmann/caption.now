@@ -4,10 +4,10 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarHeader,
   SidebarMenu,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { AppSidebarHeader } from "../app-sidebar-header";
 import { ImageListItem } from "./image-list-item";
 import { AnimatedGroup } from "@/components/ui/animation/animated-group";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,12 +15,13 @@ import { useAtom } from "jotai/react";
 import { settings } from "@/lib/settings";
 import { useImageNavigation } from "@/hooks/provider/image-navigation-provider";
 import { useImages } from "@/hooks/use-images";
+import { Progress } from "@/components/ui/progress";
 
 export function ImageListSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const { currentImage } = useImageNavigation();
-  const { images } = useImages();
+  const { images, allImages, doneImages, donePercentage } = useImages();
   const [hideDone, setHideDone] = useAtom(settings.appearance.hideDoneImages);
 
   // Ref to store references to each image item
@@ -38,9 +39,9 @@ export function ImageListSidebar({
 
   return (
     <Sidebar {...props}>
-      <AppSidebarHeader>
-        <div className="flex items-center justify-between text-muted-foreground text-sm font-semibold ml-2 mt-2">
-          Images ({images.length})
+      <SidebarHeader className="p-4 h-16 border-b flex align-middle justify-center">
+        <div className="flex items-center justify-between text-muted-foreground text-sm font-semibold">
+          Images ({donePercentage}%{` - ${doneImages.length}/${allImages.length}`})
           <div className="flex items-center gap-2">
             <Checkbox
               id="hideDone"
@@ -57,7 +58,8 @@ export function ImageListSidebar({
             </label>
           </div>
         </div>
-      </AppSidebarHeader>
+        {donePercentage > 0 && (<Progress className="h-2" value={donePercentage} />)}
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>

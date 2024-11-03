@@ -13,7 +13,7 @@ export const useImages = () => {
   const doneImages = action && allImages ? allImages.filter(image => isImageDone(image, action)) : []
   const pendingImages = action && allImages ? allImages.filter(image => !isImageDone(image, action)) : []
   const allDone = allImages ? doneImages.length === allImages.length : false
-  const donePercentage = allImages ? allImages.length === 0 ? 0 : doneImages.length / allImages.length * 100 : 0
+  const donePercentage = allImages ? allImages.length === 0 ? 0 : Math.round(doneImages.length / allImages.length * 100) : 0
   const images = hideDone ? pendingImages : allImages
 
   return {
