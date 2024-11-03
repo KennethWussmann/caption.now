@@ -133,7 +133,7 @@ export default function Page() {
                       href="/sort"
                       title="Sort"
                       description="Pre-screen your dataset, sort images into categories and export them into new datasets"
-                      disabled
+                      soon
                     />
                   </ActionSelector>
                 </div>
