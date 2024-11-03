@@ -20,6 +20,8 @@ import {
 } from "@/hooks/provider/image-navigation-provider";
 import { useImageNavigation, useImageNavigationHotkeys } from "../hooks/provider/image-navigation-provider";
 import { NoImageSelected } from "@/components/common/no-image-selected";
+import { SettingsDialog } from "@/components/settings/settings-dialog";
+import { ExportDialog } from "@/components/export/export-dialog";
 
 type ImageListLayoutProps = {
   children: ReactNode;
@@ -39,12 +41,14 @@ export const ImageListLayout = ({
       <OllamaStatusNotification />
       <ImageListSidebar side="left" />
       <SidebarInset>
-        <header className="flex justify-between items-center h-16 shrink-0 px-4 border-b">
-          <div className="flex items-center gap-2 ">
-            <SidebarTrigger className="-ml-1" />
+        <header className="flex justify-between items-center h-16 shrink-0 px-3 border-b w-full">
+          <div className="flex items-center gap-2 flex-1">
+            <div><SidebarTrigger className="h-10 w-10" variant={"outline"} /></div>
+            <div><SettingsDialog /></div>
+            <div><ExportDialog /></div>
             {currentImage && (
               <>
-                <Separator orientation="vertical" className="mr-2 h-4" />
+                <Separator orientation="vertical" className="mx-2 h-10" />
                 <Breadcrumb>
                   <BreadcrumbList>
                     <BreadcrumbItem className="hidden md:block">
