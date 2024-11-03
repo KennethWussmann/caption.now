@@ -1,11 +1,11 @@
 import { ImageSkeleton } from "@/components/common/image-skeleton";
 import { Lens } from "@/components/ui/lens";
 import { useImageSrc } from "@/hooks/use-image-src";
-import { ImageDocument } from "@/lib/database/image-collection";
+import { ImageEntity } from "@/lib/database/image-entity";
 import { settings } from "@/lib/settings";
 import { useAtom } from "jotai/react";
 
-export const ImageViewer = ({ image }: { image: ImageDocument }) => {
+export const ImageViewer = ({ image }: { image: ImageEntity }) => {
   const src = useImageSrc(image);
   const [lensEnabled] = useAtom(settings.tools.lens.enabled);
   const [zoomFactor] = useAtom(settings.tools.lens.zoomFactor);
