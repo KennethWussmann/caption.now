@@ -11,20 +11,37 @@ export const useImages = () => {
   const { database } = useDatabase()
 
   const [images, setImages] = useState<ImageDocument[]>([])
+  const [doneImages, setDoneImages] = useState<ImageDocument[]>([])
+  const [pendingImages, setPendingImages] = useState<ImageDocument[]>([])
+  const [allImages, setAllImages] = useState<ImageDocument[]>([])
+  const [allDone, setAllDone] = useState(false)
+  const [donePercentage, setDonePercentage] = useState(0)
 
   useEffect(() => {
     if (!database || !action) {
       return
     }
     const subscription = database.images.find().$.subscribe(results => {
-      setImages(results.filter(image => hideDone ? !image.isDone(action) : true))
+      const done = results.filter(image => image.isDone(action))
+      const pending = results.filter(image => !image.isDone(action))
+      setDoneImages(done)
+      setPendingImages(pendingImages)
+      setAllImages(results)
+      setImages(hideDone ? pending : results)
+      setAllDone(done.length === results.length)
+      setDonePercentage(results.length === 0 ? 0 : done.length / results.length * 100)
     })
     return () => {
       subscription.unsubscribe()
     }
-  }, [hideDone, database, action])
+  }, [hideDone, database, action, pendingImages])
 
   return {
-    images
+    images,
+    doneImages,
+    pendingImages,
+    allImages,
+    allDone,
+    donePercentage
   };
 };

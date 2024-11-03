@@ -14,7 +14,6 @@ import { settings } from "@/lib/settings";
 import { usePreventClose } from "./prevent-close-provider";
 import { uuid } from "@/lib/utils";
 import { usePrevious } from "@uidotdev/usehooks"
-import { useCaptionExporter } from "../use-caption-exporter";
 import { useShortcut } from "../use-shortcut";
 
 interface CaptionEditorContextType {
@@ -54,7 +53,6 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
   const [editingPart, setEditingPart] = useState<CaptionPart | null>(null);
   const previousImage = usePrevious(currentImage);
 
-  useCaptionExporter();
   usePreventClose(isDirty);
   useShortcut("save", () => {
     save();

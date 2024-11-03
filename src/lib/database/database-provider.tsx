@@ -30,6 +30,7 @@ export const collections = {
 type DatabaseContextType = {
   database: Database | null;
   saveDatabaseBackup: () => Promise<void>;
+  deleteDatabaseBackup: () => Promise<void>;
   isLoading: boolean;
   isSaving: boolean;
   isInitialized: boolean;
@@ -128,6 +129,13 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [directoryHandle, isDirectoryLoaded, database, saveDatabaseBackup, isInitialized]);
 
+  const deleteDatabaseBackup = async () => {
+    if (!directoryHandle) {
+      return;
+    }
+    await directoryHandle.removeEntry(`.caption-now`, { recursive: true });
+  }
+
   useEffect(() => {
     initializeDatabase();
   }, [initializeDatabase]);
@@ -141,9 +149,10 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
   const value = {
     database,
     isLoading,
-    saveDatabaseBackup,
     isSaving,
     isInitialized,
+    saveDatabaseBackup,
+    deleteDatabaseBackup,
   };
 
   return (

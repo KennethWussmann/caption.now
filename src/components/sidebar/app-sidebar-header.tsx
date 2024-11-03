@@ -1,3 +1,4 @@
+import { ExportDialog } from "../export/export-dialog";
 import { SettingsDialog } from "../settings/settings-dialog";
 import { SidebarHeader } from "../ui/sidebar";
 import { ReactNode } from "react";
@@ -7,6 +8,7 @@ export const AppSidebarHeader = ({ children }: { children?: ReactNode }) => {
     <SidebarHeader>
       <div className="flex gap-2  h-12 p-2">
         <SettingsDialog />
+        <ExportDialog />
       </div>
       {children}
     </SidebarHeader>

@@ -13,6 +13,7 @@ const ShortcutsSettingsContent = () => {
         <ShortcutRow settingsKey="save" title="Save" description={`${productName} saves automatically when necessary, but sometimes it just feels satisfying to mash that Save button.`} />
         <ShortcutRow settingsKey="previousImage" title="Previous image" description="Load the previous image from the image sidebar" />
         <ShortcutRow settingsKey="nextImage" title="Next image" description="Load the next image from the image sidebar" />
+        <ShortcutRow settingsKey="startExport" title="Start export" description="Immediately starts a new export" />
       </TableBody>
     </Table >
   );

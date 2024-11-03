@@ -29,10 +29,14 @@ export const settings = {
     ),
     save: atomWithStorage("settings.shortcuts.save", "mod+s"),
     previousImage: atomWithStorage(
-      "settings.shortcuts.previousImage",
+    "settings.shortcuts.previousImage",
       "pageup"
     ),
     nextImage: atomWithStorage("settings.shortcuts.previousImage", "pagedown"),
+    startExport: atomWithStorage(
+      "settings.shortcuts.startExport",
+      "mod+shift+s"
+    ),
   },
   caption: {
     strategy: atomWithZod(

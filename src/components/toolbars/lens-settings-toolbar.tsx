@@ -23,7 +23,7 @@ export const LensSettingsToolbar = () => {
   const [size, setSize] = useAtom(settings.tools.lens.size);
   return (
     <Popover>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button variant="outline" size="icon">
           <ZoomIn className="h-4 w-4" />
         </Button>

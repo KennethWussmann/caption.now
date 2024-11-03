@@ -19,6 +19,7 @@ import { DisableAnimations } from "./lib/disable-animations.tsx";
 import { PreventCloseProvider } from "./hooks/provider/prevent-close-provider.tsx";
 import { ImageNavigationProvider } from "./hooks/provider/image-navigation-provider.tsx";
 import { DatabaseProvider } from "./lib/database/database-provider.tsx";
+import { ExportProgressProvider } from "./components/export/export-progress-provider.tsx";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +33,9 @@ const router = createBrowserRouter([
     element: (
       <RequireDatasetSelection>
         <ImageNavigationProvider>
-          <CaptionPage />
+          <ExportProgressProvider type="caption-txt">
+            <CaptionPage />
+          </ExportProgressProvider>
         </ImageNavigationProvider>
       </RequireDatasetSelection>
     ),

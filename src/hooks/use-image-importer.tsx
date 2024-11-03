@@ -6,11 +6,13 @@ import { useDatasetDirectory } from "./provider/dataset-directory-provider";
 import { getFilenameWithoutExtension } from "@/lib/utils";
 import { ImageDocTypeUpsert } from "@/lib/database/image-collection";
 import { useState } from "react";
+import { useImages } from "./use-images";
 
 export const useImageImporter = () => {
   const [separator] = useAtom(settings.caption.separator);
   const { directoryHandle } = useDatasetDirectory();
   const { database } = useDatabase()
+  const { allImages } = useImages()
   const [imported, setImported] = useState(false)
 
   const importImages = (imageFiles: ImageFile[]) => {
@@ -19,6 +21,7 @@ export const useImageImporter = () => {
     }
     (async () => {
       const imageDocs = await Promise.all(imageFiles.map(async (image): Promise<ImageDocTypeUpsert | null> => {
+        const existingImage = allImages.find(existingImage => existingImage.filename === image.name)
         let caption: Caption | null = null
         try {
           const captionFileHandle = await directoryHandle.getFileHandle(getFilenameWithoutExtension(image.name) + ".txt")
@@ -36,9 +39,10 @@ export const useImageImporter = () => {
         }
 
         return {
+          ...existingImage,
           filename: image.name,
-          caption: caption?.preview,
-          captionParts: caption?.parts || [],
+          caption: caption?.preview ?? undefined,
+          captionParts: caption?.parts ?? undefined
         }
       }))
 
