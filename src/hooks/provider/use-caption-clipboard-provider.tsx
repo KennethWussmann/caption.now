@@ -16,7 +16,7 @@ const CaptionClipboardContext = createContext<CaptionClipboardContextType | unde
 
 export const CaptionClipboardProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [caption, setCaption] = useState<Caption | null>(null);
-  const { parts, preview, addPart, setPreview } = useCaptionEditor();
+  const { parts, preview, addPart } = useCaptionEditor();
   useShortcut("copyCaptionParts", () => copy());
   useShortcut("pasteCaptionParts", () => paste());
 
@@ -36,7 +36,6 @@ export const CaptionClipboardProvider: React.FC<{ children: ReactNode }> = ({ ch
       return;
     }
     caption.parts.forEach(part => addPart(part.text));
-    setPreview(caption.preview ?? null);
   }
 
   return (

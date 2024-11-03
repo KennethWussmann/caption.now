@@ -1,32 +1,8 @@
 import { Card } from "@/components/ui";
 import { useCaptionEditor } from "@/hooks/provider/caption-editor-provider";
-import { settings } from "@/lib/settings";
-import { useAtom } from "jotai/react";
 
 export const CaptionPreview = () => {
-  const { parts } = useCaptionEditor();
-  const [separator] = useAtom(settings.caption.separator);
-  const [endWithSeparator] = useAtom(settings.caption.endWithSeparator);
-
-  let finalText = parts
-    .map((part) => part.text.trim())
-    .join(separator)
-    .trim();
-
-  if (endWithSeparator && !finalText.endsWith(separator.trim())) {
-    finalText += separator;
-  }
-
-  const isEmpty = parts.length === 0;
-
-  // TODO: Dont write caption to file, but to the database and then export from there to file
-  // useEffect(() => {
-  //   if (!imageFile || finalText.length < 3) {
-  //     return;
-  //   }
-  //   writeCaption(finalText, imageFile);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [finalText, writeCaption]);
+  const { preview } = useCaptionEditor();
 
   return (
     <div className="my-2 py-2">
@@ -34,13 +10,13 @@ export const CaptionPreview = () => {
         Preview
       </div>
 
-      {isEmpty && (
+      {!preview && (
         <Card className="p-1 px-2 italic text-muted-foreground text-center">
           No caption
         </Card>
       )}
 
-      {!isEmpty && <Card className="p-1 px-2">{finalText}</Card>}
+      {preview && <Card className="p-1 px-2">{preview}</Card>}
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { useDatabase } from "@/lib/database/database-provider";
 import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { deleteAllIndexedDBs } from "@/lib/utils";
 
 const AdvancedSettingsContent = () => {
   const { deleteAllTextFiles } = useDatasetDirectory();
@@ -24,9 +25,9 @@ const AdvancedSettingsContent = () => {
     })
   }
 
-  const reloadWithWarning = async () => {
+  const reloadWithWarning = async (title: string) => {
     toast({
-      title: "Database deleted",
+      title,
       description: "The page will reload now!",
     })
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -35,12 +36,13 @@ const AdvancedSettingsContent = () => {
 
   const deleteDatabase = async () => {
     await deleteDatabaseBackup();
-    await reloadWithWarning();
+    await deleteAllIndexedDBs();
+    await reloadWithWarning("Database deleted");
   }
 
   const resetSettings = async () => {
     await resetLocalStorage();
-    await reloadWithWarning();
+    await reloadWithWarning("Settings reset");
   };
 
   return (

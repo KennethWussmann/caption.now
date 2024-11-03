@@ -23,21 +23,23 @@ export const CaptionSuggestionsAI = () => {
         </Card>
       )}
 
-      {suggestions.length > 0 && (
-        <AnimatedGroup preset="blur-slide" className="flex flex-col gap-2">
-          {suggestions.map((text) => (
-            <Card
-              key={text}
-              className="p-2 px-4 hover:bg-muted cursor-pointer"
-              onClick={() => {
-                applySuggestion(text);
-              }}
-            >
-              {text}
-            </Card>
-          ))}
-        </AnimatedGroup>
-      )}
+      <div className="max-h-[200px] overflow-y-auto">
+        {suggestions.length > 0 && (
+          <AnimatedGroup preset="blur-slide" className="flex flex-col gap-2">
+            {suggestions.map((text) => (
+              <Card
+                key={text}
+                className="p-2 px-4 hover:bg-muted cursor-pointer"
+                onClick={() => {
+                  applySuggestion(text);
+                }}
+              >
+                {text}
+              </Card>
+            ))}
+          </AnimatedGroup>
+        )}
+      </div>
     </div>
   );
 };
