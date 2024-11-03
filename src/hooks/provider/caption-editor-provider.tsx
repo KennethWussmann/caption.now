@@ -8,18 +8,16 @@ import React, {
 import { CaptionPart } from "@/lib/types";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useImageNavigation } from "./image-navigation-provider";
-import { useAtom } from "jotai/react";
-import { settings } from "@/lib/settings";
 import { usePreventClose } from "./prevent-close-provider";
 import { uuid } from "@/lib/utils";
 import { usePrevious } from "@uidotdev/usehooks"
 import { useShortcut } from "../use-shortcut";
 import { database } from "@/lib/database/database";
+import { useCaptionPreview } from "../use-caption-preview";
 
 interface CaptionEditorContextType {
   parts: CaptionPart[];
   preview: string | null;
-  setPreview: (preview: string | null) => void;
   addPart: (part: string) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleDragEnd: (event: any) => void;
@@ -31,6 +29,8 @@ interface CaptionEditorContextType {
   save: () => void;
   isEditing: CaptionPart | null;
   isDirty: boolean;
+  refetchPreview: () => void;
+  isLoadingPreview: boolean;
 }
 
 const CaptionEditorContext = createContext<CaptionEditorContextType | undefined>(
@@ -44,13 +44,15 @@ interface CaptionEditorProviderProps {
 export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
   children,
 }) => {
-  const [separator] = useAtom(settings.caption.separator);
   const { currentImage } = useImageNavigation();
   const [isDirty, setDirty] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
   const [parts, setParts] = useState<CaptionPart[]>([]);
   const [editingPart, setEditingPart] = useState<CaptionPart | null>(null);
   const previousImage = usePrevious(currentImage);
+  const { preview, ai: { isLoading, refetch } } = useCaptionPreview({
+    parts,
+    initialValue: currentImage?.caption,
+  });
 
   usePreventClose(isDirty);
   useShortcut("save", () => {
@@ -134,7 +136,6 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
 
   const resetEditor = () => {
     setParts([]);
-    setPreview(null);
     setEditingPart(null);
     setDirty(false);
   };
@@ -151,7 +152,7 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
     await database.images.put({
       id: filename ?? currentImage.filename,
       filename: filename ?? currentImage.filename,
-      caption: parts.map((part) => part.text).join(separator),
+      caption: preview ?? undefined,
       captionParts: parts,
     })
     setDirty(false);
@@ -162,7 +163,6 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
       return
     }
     setParts(currentImage.captionParts?.map(part => part as CaptionPart) ?? [])
-    setPreview(currentImage.caption ?? null)
   }
 
   useEffect(() => {
@@ -177,7 +177,6 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
   const value: CaptionEditorContextType = {
     parts,
     preview,
-    setPreview,
     addPart,
     handleDragEnd,
     enterEditMode,
@@ -188,6 +187,8 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
     isDirty,
     save,
     clearParts,
+    refetchPreview: refetch,
+    isLoadingPreview: isLoading,
   };
 
   return (

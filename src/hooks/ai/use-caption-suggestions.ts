@@ -115,7 +115,7 @@ export const useCaptionSuggestions = () => {
 
   useEffect(() => {
     setSuggestions([]);
-  }, [currentImage]);
+  }, [currentImage?.id]);
 
   useEffect(() => {
     setDebounced(true);

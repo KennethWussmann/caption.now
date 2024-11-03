@@ -1,33 +1,27 @@
 import { settings } from "@/lib/settings";
 import { useAtom } from "jotai/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useOllamaStatus } from "../use-ollama-status";
 import { useQuery } from "@tanstack/react-query";
 import { chat } from "@/lib/ollama-api-client";
-import { useCaptionEditor } from "../provider/caption-editor-provider";
 import { useImageNavigation } from "../provider/image-navigation-provider";
 
 export const useCaptionRefiner = ({
   initialValue,
+  simplePreview,
   skip,
 }: {
   initialValue?: string | null;
+  simplePreview?: string;
   skip?: boolean;
 } = {}) => {
-  const [separator] = useAtom(settings.caption.separator);
   const [captionModel] = useAtom(settings.ai.caption.model);
   const [userPromptTemplate] = useAtom(settings.ai.caption.userPrompt);
   const { isOnline } = useOllamaStatus();
-  const { parts } = useCaptionEditor();
-  const { currentImage } = useImageNavigation()
-  const text = useMemo(() => {
-    return parts.map((part) => part.text.trim()).join(separator);
-  }, [parts, separator]);
+  const { currentImage } = useImageNavigation();
   const [captionSuggestion, setCaptionSuggestion] = useState<string | null>(
     initialValue ?? null
   );
-
-  const isEmpty = parts.length === 0;
 
   const {
     data: aiResponse,
@@ -35,15 +29,15 @@ export const useCaptionRefiner = ({
     isRefetching,
     refetch,
   } = useQuery({
-    enabled: isOnline && !isEmpty && !skip,
-    queryKey: ["caption", text],
+    enabled: isOnline && !skip,
+    queryKey: ["caption", simplePreview],
     queryFn: () =>
       chat({
         model: captionModel,
         messages: [
           {
             role: "user",
-            content: userPromptTemplate.replace("%text%", text),
+            content: userPromptTemplate.replace("%text%", simplePreview ?? ""),
           },
         ],
       }),
@@ -51,23 +45,20 @@ export const useCaptionRefiner = ({
   });
 
   useEffect(() => {
-    if (!aiResponse || aiResponse.length < 3 || parts.length === 0) {
+    if (!aiResponse || aiResponse.length < 3) {
       return;
     }
     setCaptionSuggestion(aiResponse);
-  }, [aiResponse, parts.length]);
+  }, [aiResponse]);
 
   useEffect(() => {
     setCaptionSuggestion(null);
-  }, [currentImage]);
+  }, [currentImage?.id]);
 
   return {
     captionSuggestion,
     isLoading: isLoading || isRefetching,
     refetch: () => {
-      if (parts.length === 0) {
-        return;
-      }
       refetch();
     },
   };
