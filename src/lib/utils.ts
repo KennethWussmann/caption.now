@@ -105,26 +105,29 @@ export const replaceShortcutSymbols = (
   if (Array.isArray(shortcut)) {
     shortcut = shortcut.join("");
   }
+
+  shortcut = shortcut.toUpperCase();
+
   if (isMacOS()) {
-    shortcut = shortcut.replace("meta", "⌘").replace("mod", "⌘");
+    shortcut = shortcut.replace("META", "⌘").replace("MOD", "⌘");
   }
 
   shortcut = replaceAll(shortcut, "+", "");
-  shortcut = shortcut.replace("shift", "⇧");
-  shortcut = shortcut.replace("alt", "⌥");
-  shortcut = shortcut.replace("ctrl", "⌃");
-  shortcut = shortcut.replace("enter", "↩");
-  shortcut = shortcut.replace("space", "␣");
-  shortcut = shortcut.replace("backspace", "⌫");
-  shortcut = shortcut.replace("delete", "⌦");
-  shortcut = shortcut.replace("escape", "⎋");
-  shortcut = shortcut.replace("tab", "⇥");
-  shortcut = shortcut.replace("pageup", "PgUp");
-  shortcut = shortcut.replace("pagedown", "PgDn");
-  shortcut = shortcut.replace("up", "↑");
-  shortcut = shortcut.replace("down", "↓");
-  shortcut = shortcut.replace("left", "←");
-  shortcut = shortcut.replace("right", "→");
-  shortcut = shortcut.replace("comma", ",");
+  shortcut = shortcut.replace("SHIFT", "⇧");
+  shortcut = shortcut.replace("ALT", "⌥");
+  shortcut = shortcut.replace("CTRL", "⌃");
+  shortcut = shortcut.replace("ENTER", "↩");
+  shortcut = shortcut.replace("SPACE", "␣");
+  shortcut = shortcut.replace("BACKSPACE", "⌫");
+  shortcut = shortcut.replace("DELETE", "⌦");
+  shortcut = shortcut.replace("ESCAPE", "⎋");
+  shortcut = shortcut.replace("TAB", "⇥");
+  shortcut = shortcut.replace("PAGEUP", "PgUp");
+  shortcut = shortcut.replace("PAGEDOWN", "PgDn");
+  shortcut = shortcut.replace("UP", "↑");
+  shortcut = shortcut.replace("DOWN", "↓");
+  shortcut = shortcut.replace("LEFT", "←");
+  shortcut = shortcut.replace("RIGHT", "→");
+  shortcut = shortcut.replace("COMMA", ",");
   return shortcut;
 };

@@ -14,6 +14,9 @@ const ShortcutsSettingsContent = () => {
         <ShortcutRow settingsKey="previousImage" title="Previous image" description="Load the previous image from the image sidebar" />
         <ShortcutRow settingsKey="nextImage" title="Next image" description="Load the next image from the image sidebar" />
         <ShortcutRow settingsKey="startExport" title="Start export" description="Immediately starts a new export" />
+        <ShortcutRow settingsKey="clearCaption" title="Clear current caption" description="Removes the caption of the currently open image" />
+        <ShortcutRow settingsKey="copyCaptionParts" title="Copy caption parts" description="Copies the currently open picture's caption parts into an internal clipboard" />
+        <ShortcutRow settingsKey="pasteCaptionParts" title="Paste caption parts" description="Adds the caption parts on the internal clipboard into the currently open image's caption" />
       </TableBody>
     </Table >
   );
