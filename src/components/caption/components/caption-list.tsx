@@ -16,11 +16,10 @@ import { CaptionListFooter } from "./caption-list-footer";
 import { AnimatedGroup } from "@/components/ui/animation/animated-group";
 import { useEffect, useRef } from "react";
 import { useCaptionEditor } from "@/hooks/provider/caption-editor-provider";
-import { Button } from "@/components/ui";
-import { Trash } from "lucide-react";
+import { CaptionListDropdown } from "./caption-list-dropdown";
 
 export const CaptionList = () => {
-  const { parts, handleDragEnd, clearParts } = useCaptionEditor();
+  const { parts, handleDragEnd } = useCaptionEditor();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -48,7 +47,7 @@ export const CaptionList = () => {
     <div className="border-l ml-2 h-full flex flex-col">
       <div className="flex flex-row gap-2 justify-between items-center mb-2">
         <h1 className="ml-4 font-semibold">Caption Parts </h1>
-        <Button variant={"ghost"} size={"icon"} onClick={clearParts}><Trash /></Button>
+        <CaptionListDropdown />
       </div>
       <div
         className="flex flex-col overflow-y-auto gap-1 pb-4"

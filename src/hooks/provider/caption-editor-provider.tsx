@@ -56,6 +56,9 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
   useShortcut("save", () => {
     save();
   });
+  useShortcut("clearCaption", () => {
+    clearParts();
+  });
 
   const addPart = (text: string) => {
     setParts((prevParts) => [...prevParts, {

@@ -29,13 +29,25 @@ export const settings = {
     ),
     save: atomWithStorage("settings.shortcuts.save", "mod+s"),
     previousImage: atomWithStorage(
-    "settings.shortcuts.previousImage",
+      "settings.shortcuts.previousImage",
       "pageup"
     ),
     nextImage: atomWithStorage("settings.shortcuts.previousImage", "pagedown"),
     startExport: atomWithStorage(
       "settings.shortcuts.startExport",
       "mod+shift+s"
+    ),
+    copyCaptionParts: atomWithStorage(
+      "settings.shortcuts.copyCaptionParts",
+      "mod+shift+c"
+    ),
+    pasteCaptionParts: atomWithStorage(
+      "settings.shortcuts.pasteCaptionParts",
+      "mod+shift+v"
+    ),
+    clearCaption: atomWithStorage(
+      "settings.shortcuts.clearCaption",
+      "mod+shift+delete"
     ),
   },
   caption: {
