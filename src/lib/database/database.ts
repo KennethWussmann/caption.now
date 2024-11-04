@@ -9,3 +9,9 @@ database.version(1).stores({
 });
 
 export type Database = typeof database;
+
+export const wipeDatabase = async () => {
+  database.close();
+  await database.delete();
+  await database.open();
+};

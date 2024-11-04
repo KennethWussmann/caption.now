@@ -40,14 +40,16 @@ export const tryJSONParse = (input: string) => {
 export const deleteAllIndexedDBs = async () => {
   const databases = await indexedDB.databases();
 
-  const deletePromises = databases.map(
-    (db) =>
-      new Promise<void>((resolve, reject) => {
-        const request = indexedDB.deleteDatabase(db.name!);
-        request.onsuccess = () => resolve();
-        request.onerror = () => reject(request.error);
-      })
-  );
+  const deletePromises = databases
+    .filter((db) => db.name?.includes("caption-now"))
+    .map(
+      (db) =>
+        new Promise<void>((resolve, reject) => {
+          const request = indexedDB.deleteDatabase(db.name!);
+          request.onsuccess = () => resolve();
+          request.onerror = () => reject(request.error);
+        })
+    );
 
   try {
     await Promise.all(deletePromises);
