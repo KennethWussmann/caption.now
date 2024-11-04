@@ -9,6 +9,7 @@ import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { deleteAllIndexedDBs } from "@/lib/utils";
+import { DoubleConfirmationDialog } from "@/components/common/double-confirmation-dialog";
 
 const AdvancedSettingsContent = () => {
   const { deleteAllTextFiles } = useDatasetDirectory();
@@ -60,9 +61,11 @@ const AdvancedSettingsContent = () => {
             </div>
           </TableCell>
           <TableCell className="text-right">
-            <Button variant={"destructive"} onClick={resetSettings}>
-              Reset
-            </Button>
+            <DoubleConfirmationDialog message="This cannot be undone! All your settings will be removed.">
+              <Button variant={"destructive"} onClick={resetSettings}>
+                Reset
+              </Button>
+            </DoubleConfirmationDialog>
           </TableCell>
         </TableRow>
         <TableRow>
@@ -75,9 +78,11 @@ const AdvancedSettingsContent = () => {
             </div>
           </TableCell>
           <TableCell className="text-right">
-            <Button variant={"destructive"} onClick={deleteDatabase}>
-              Permanently delete database
-            </Button>
+            <DoubleConfirmationDialog message={`This cannot be undone! All your labels data you entered via ${productName} will be lost if you didn't export them!`}>
+              <Button variant={"destructive"} onClick={deleteDatabase}>
+                Permanently delete database
+              </Button>
+            </DoubleConfirmationDialog>
           </TableCell>
         </TableRow>
         <TableRow>
@@ -90,9 +95,11 @@ const AdvancedSettingsContent = () => {
             </div>
           </TableCell>
           <TableCell className="text-right">
-            <Button variant={"destructive"} onClick={deleteTextFiles} disabled={isDeletingAllTextFiles}>
-              Permanently delete text files
-            </Button>
+            <DoubleConfirmationDialog title="Are you sure?" message="This cannot be undone. This will remove all files in your selected dataset directory that have the file extension .txt. This will not affect any other files in the directory.">
+              <Button variant={"destructive"} onClick={deleteTextFiles} disabled={isDeletingAllTextFiles}>
+                Permanently delete text files
+              </Button>
+            </DoubleConfirmationDialog>
           </TableCell>
         </TableRow>
       </TableBody>
