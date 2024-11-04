@@ -18,6 +18,7 @@ type DatabaseContextType = {
   isInitialized: boolean;
   isAutoBackupEnabled: boolean;
   setAutoBackupEnabled: (enabled: boolean) => void;
+  initializeDatabase: (handle: FileSystemDirectoryHandle) => Promise<void>;
 };
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(
@@ -32,7 +33,7 @@ export const useDatabase = () => {
 };
 
 export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
-  const { directoryHandle, writeTextFile, isDirectoryLoaded } =
+  const { directoryHandle, writeTextFile } =
     useDatasetDirectory();
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setInitialized] = useState(false);
@@ -50,6 +51,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
 
       const blob = await exportDB(db, {
         noTransaction: true,
+        prettyJson: true,
       });
       const str = await blob.text();
       await writeTextFile(
@@ -61,12 +63,10 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
     [directoryHandle, writeTextFile]
   );
 
-  const initializeDatabase = useCallback(async () => {
-    if (!directoryHandle || !isDirectoryLoaded || isInitialized) {
-      return;
-    }
+  const initializeDatabase = async (directoryHandle: FileSystemDirectoryHandle) => {
     setIsLoading(true);
 
+    console.log("Wiping existing database");
     await wipeDatabase();
 
     try {
@@ -89,7 +89,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
 
         if (isDexieExport) {
           await new Promise((resolve) => setTimeout(resolve, 1000));
-          console.log("Importing existing database");
+          console.log("Importing database from backup");
           await importDB(backupFile);
         } else {
           console.error("Unsupported database backup format", backupFileText);
@@ -105,7 +105,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [directoryHandle, isDirectoryLoaded, isInitialized]);
+  };
 
   const deleteDatabaseBackup = async () => {
     if (!directoryHandle) {
@@ -113,10 +113,6 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
     }
     await directoryHandle.removeEntry(`.caption-now`, { recursive: true });
   }
-
-  useEffect(() => {
-    initializeDatabase();
-  }, [initializeDatabase]);
 
   useEffect(() => {
     if (!isAutoBackupEnabled) {
@@ -145,6 +141,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
     deleteDatabaseBackup,
     isAutoBackupEnabled,
     setAutoBackupEnabled,
+    initializeDatabase
   };
 
   return (
