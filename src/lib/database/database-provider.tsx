@@ -7,8 +7,8 @@ import {
   useState,
 } from "react";
 import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
-import { deleteAllIndexedDBs, tryJSONParse } from "../utils";
-import { database, Database } from "./database";
+import { tryJSONParse } from "../utils";
+import { database, Database, wipeDatabase } from "./database";
 import { importDB, exportDB, } from "dexie-export-import";
 
 type DatabaseContextType = {
@@ -67,7 +67,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
     }
     setIsLoading(true);
 
-    await deleteAllIndexedDBs();
+    await wipeDatabase();
 
     try {
       const captionNowDir = await directoryHandle.getDirectoryHandle(
