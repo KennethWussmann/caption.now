@@ -10,7 +10,7 @@ import { ImageFile, TextFile } from "@/lib/types";
 
 type DatasetDirectoryContextType = {
   supported: boolean;
-  openDirectoryPicker: () => Promise<void>;
+  openDirectoryPicker: () => Promise<FileSystemDirectoryHandle | null>;
   isDirectorySelected: boolean;
   imageFiles: ImageFile[];
   textFiles: TextFile[];
@@ -25,6 +25,7 @@ type DatasetDirectoryContextType = {
   writeCaption: (caption: string, image: ImageFile) => Promise<void>;
   deleteAllTextFiles: () => Promise<void>;
   directoryHandle: FileSystemDirectoryHandle | null;
+  loadDirectory: (handle: FileSystemDirectoryHandle) => Promise<ImageFile[]>;
 };
 
 const DatasetDirectoryContext = createContext<
@@ -66,7 +67,7 @@ export const DatasetDirectoryProvider = ({
     setAccessDenied(false);
   }, []);
 
-  const loadDirectory = useCallback(
+  const loadDirectory =
     async (handle: FileSystemDirectoryHandle) => {
       setDirectoryLoaded(false);
       setImageFiles([]);
@@ -138,9 +139,9 @@ export const DatasetDirectoryProvider = ({
       setFailedImageFiles(failedImagesCount);
       setFailedTextFiles(orphanTextFilesCount);
       setDirectoryLoaded(true);
-    },
-    []
-  );
+
+      return finalImageFiles
+    }
 
   const openDirectoryPicker = useCallback(async () => {
     if (!supported || !window.showDirectoryPicker) {
@@ -152,13 +153,14 @@ export const DatasetDirectoryProvider = ({
       const dirHandle = await window.showDirectoryPicker({ mode: "readwrite" });
       setDirectoryHandle(dirHandle);
       setIsDirectorySelected(true);
-      await loadDirectory(dirHandle);
+      return dirHandle;
     } catch (err) {
       console.error("Error opening directory:", err);
       resetState();
       setAccessDenied(true);
     }
-  }, [supported, loadDirectory, resetState]);
+    return null
+  }, [supported, resetState]);
 
   const writeTextFile = useCallback(
     async (filePath: string, content: string) => {
@@ -313,7 +315,8 @@ export const DatasetDirectoryProvider = ({
     loadImage,
     writeCaption,
     directoryHandle,
-    deleteAllTextFiles
+    deleteAllTextFiles,
+    loadDirectory
   };
 
   return (

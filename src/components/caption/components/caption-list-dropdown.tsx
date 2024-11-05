@@ -9,7 +9,7 @@ export const CaptionListDropdown = () => {
   const { copy, paste, hasContent } = useCaptionClipboard();
   return (
     <DropdownMenu >
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button variant="ghost" size={"icon"}><EllipsisVertical /></Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

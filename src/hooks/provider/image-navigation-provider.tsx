@@ -3,7 +3,7 @@ import { useImages } from "../use-images";
 import { useShortcut } from "../use-shortcut";
 import { ImageEntity } from "@/lib/database/image-entity";
 import { useLiveQuery } from "dexie-react-hooks";
-import { database } from "@/lib/database/database";
+import { useDatabase } from "@/lib/database/database-provider";
 
 interface ImageNavigationContextType {
   currentImage?: ImageEntity;
@@ -17,6 +17,7 @@ interface ImageNavigationContextType {
 const ImageNavigationContext = createContext<ImageNavigationContextType | undefined>(undefined);
 
 export const ImageNavigationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { database } = useDatabase()
   const { images } = useImages();
   const [currentImageId, setCurrentImageId] = useState<string>();
   const [hasNextImage, setHasNextImage] = useState(false);
