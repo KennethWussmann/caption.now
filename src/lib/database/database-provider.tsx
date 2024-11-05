@@ -7,18 +7,21 @@ import {
   useState,
 } from "react";
 import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
-import { tryJSONParse } from "../utils";
-import { database, Database, wipeDatabase } from "./database";
-import { importDB, exportDB, } from "dexie-export-import";
+import { tryJSONParse, uuid } from "../utils";
+import { Database } from "./database";
+import { exportDB, importDB, } from "dexie-export-import";
+import Dexie from "dexie";
+import { DexieBackup, dexieBackupSchema } from "../types";
 
 type DatabaseContextType = {
+  database: Database;
   deleteDatabaseBackup: () => Promise<void>;
   isLoading: boolean;
   isSaving: boolean;
   isInitialized: boolean;
   isAutoBackupEnabled: boolean;
   setAutoBackupEnabled: (enabled: boolean) => void;
-  initializeDatabase: (handle: FileSystemDirectoryHandle) => Promise<void>;
+  initializeDatabase: (handle: FileSystemDirectoryHandle) => Promise<Database>;
 };
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(
@@ -39,9 +42,13 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
   const [isInitialized, setInitialized] = useState(false);
   const [isSaving, setSaving] = useState(false);
   const [isAutoBackupEnabled, setAutoBackupEnabled] = useState(false);
+  const [database, setDatabase] = useState<Database | null>(null);
 
   const saveDatabaseBackup = useCallback(
     async (localDb?: Database) => {
+      if (!database) {
+        return;
+      }
       console.log("Starting database backup")
       const db = localDb ?? database;
       if (!db || !directoryHandle) {
@@ -60,15 +67,10 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
       );
       setSaving(false);
     },
-    [directoryHandle, writeTextFile]
+    [directoryHandle, writeTextFile, database]
   );
 
-  const initializeDatabase = async (directoryHandle: FileSystemDirectoryHandle) => {
-    setIsLoading(true);
-
-    console.log("Wiping existing database");
-    await wipeDatabase();
-
+  const loadDexieBackup = async (directoryHandle: FileSystemDirectoryHandle): Promise<{ backup: DexieBackup, file: Blob } | null> => {
     try {
       const captionNowDir = await directoryHandle.getDirectoryHandle(
         ".caption-now",
@@ -85,26 +87,76 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
         );
         const backupFile = await backupFileHandle.getFile();
         const backupFileText = tryJSONParse(await backupFile.text());
-        const isDexieExport = backupFileText?.formatName === "dexie"
+        const dexieBackupParse = dexieBackupSchema.safeParse(backupFileText);
 
-        if (isDexieExport) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          console.log("Importing database from backup");
-          await importDB(backupFile);
+        if (dexieBackupParse.success) {
+          return {
+            backup: dexieBackupParse.data,
+            file: backupFile,
+          };
         } else {
-          console.error("Unsupported database backup format", backupFileText);
+          console.error("Unsupported database backup format", backupFileText, dexieBackupParse.error);
         }
       } catch (e) {
         console.error("Failed to import existing database", e);
       }
-
-      setInitialized(true);
       console.log("Database initialized with collections");
     } catch (error) {
       console.error("Error initializing database:", error);
-    } finally {
-      setIsLoading(false);
     }
+    return null
+  }
+
+  const deleteExistingDatabase = async (name: string) => {
+    const databases = await indexedDB.databases();
+    const db = databases.find((db) => db.name === name);
+    if (db) {
+      console.log("Deleting existing database", db.name);
+      await new Promise<void>((resolve, reject) => {
+        const request = indexedDB.deleteDatabase(db.name!);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    }
+  }
+
+  const importExistingDatabase = async (directoryHandle: FileSystemDirectoryHandle): Promise<Database | null> => {
+    const db: Database | null = null;
+    const backupFile = await loadDexieBackup(directoryHandle);
+
+    if (backupFile) {
+      await deleteExistingDatabase(backupFile.backup.data.databaseName);
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1000)
+      })
+      return await importDB(backupFile.file) as Database
+    }
+    return db
+  }
+
+  const createNewDatabase = () => {
+    const database = new Dexie(`caption-now-${uuid()}`) as Database;
+    database.version(1).stores({
+      images: "id, filename, tags, captionParts, caption",
+    });
+
+    return database
+  }
+
+  const initializeDatabase = async (directoryHandle: FileSystemDirectoryHandle) => {
+    setIsLoading(true);
+    setInitialized(false);
+
+    let db = await importExistingDatabase(directoryHandle);
+
+    if (!db) {
+      db = createNewDatabase();
+    }
+
+    setDatabase(db);
+    setInitialized(true);
+    setIsLoading(false);
+    return db
   };
 
   const deleteDatabaseBackup = async () => {
@@ -115,7 +167,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
   }
 
   useEffect(() => {
-    if (!isAutoBackupEnabled) {
+    if (!isAutoBackupEnabled || !database) {
       return
     }
 
@@ -132,7 +184,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
       database.images.hook("updating").unsubscribe(listener)
       database.images.hook("deleting").unsubscribe(listener)
     }
-  }, [isAutoBackupEnabled, saveDatabaseBackup])
+  }, [isAutoBackupEnabled, saveDatabaseBackup, database])
 
   const value = {
     isLoading,
@@ -141,7 +193,8 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
     deleteDatabaseBackup,
     isAutoBackupEnabled,
     setAutoBackupEnabled,
-    initializeDatabase
+    initializeDatabase,
+    database: database!
   };
 
   return (

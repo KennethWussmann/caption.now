@@ -2,7 +2,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui"
 import { Progress } from "@/components/ui/progress"
 import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider"
 import { useImageImporter } from "@/hooks/use-image-importer"
-import { database } from "@/lib/database/database"
 import { useDatabase } from "@/lib/database/database-provider"
 import { LoaderCircle } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
@@ -36,14 +35,14 @@ export const LoadingDatasetView = ({ onDone, onEmptyDataset, directoryHandle }: 
 
         console.log("Initializing database")
         setStep("database")
-        await initializeDatabase(directoryHandle)
+        const database = await initializeDatabase(directoryHandle)
         const existingImages = await database.images.toArray()
 
         console.log("Existing images in backup", existingImages.length)
 
         console.log("Importing images", imageFiles.length)
         setStep("import")
-        await importImages(existingImages, imageFiles)
+        await importImages(database, existingImages, imageFiles)
 
         onDone()
       } catch (error) {

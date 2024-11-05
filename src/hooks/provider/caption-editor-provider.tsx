@@ -12,8 +12,8 @@ import { usePreventClose } from "./prevent-close-provider";
 import { uuid } from "@/lib/utils";
 import { usePrevious } from "@uidotdev/usehooks"
 import { useShortcut } from "../use-shortcut";
-import { database } from "@/lib/database/database";
 import { useCaptionPreview } from "../use-caption-preview";
+import { useDatabase } from "@/lib/database/database-provider";
 
 interface CaptionEditorContextType {
   parts: CaptionPart[];
@@ -44,6 +44,7 @@ interface CaptionEditorProviderProps {
 export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
   children,
 }) => {
+  const { database } = useDatabase()
   const { currentImage } = useImageNavigation();
   const [isDirty, setDirty] = useState(false);
   const [parts, setParts] = useState<CaptionPart[]>([]);

@@ -5,8 +5,8 @@ import { useDatasetDirectory } from "./provider/dataset-directory-provider";
 import { getFilenameWithoutExtension } from "@/lib/utils";
 import { useState } from "react";
 import { ImageEntity } from "@/lib/database/image-entity";
-import { database } from "@/lib/database/database";
 import { useDatabase } from "@/lib/database/database-provider";
+import { Database } from "@/lib/database/database";
 
 export const useImageImporter = () => {
   const { setAutoBackupEnabled } = useDatabase()
@@ -15,6 +15,7 @@ export const useImageImporter = () => {
   const [imported, setImported] = useState(false)
 
   const importImages = async (
+    database: Database,
     existingImages: ImageEntity[],
     imageFiles: ImageFile[]
   ) => {
@@ -47,7 +48,7 @@ export const useImageImporter = () => {
           captionParts: caption.parts
         }
       } else if (existingImage) {
-        return existingImage
+        return null
       } else {
         return {
           id: image.name,

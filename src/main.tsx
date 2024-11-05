@@ -20,6 +20,7 @@ import { PreventCloseProvider } from "./hooks/provider/prevent-close-provider.ts
 import { ImageNavigationProvider } from "./hooks/provider/image-navigation-provider.tsx";
 import { DatabaseProvider } from "./lib/database/database-provider.tsx";
 import { ExportProgressProvider } from "./components/export/export-progress-provider.tsx";
+import { DatabaseManagerProvider } from "./lib/database/database-manager-provider.tsx";
 
 const queryClient = new QueryClient();
 
