@@ -1,14 +1,28 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui"
 import { Progress } from "@/components/ui/progress"
 import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider"
-import { useImageImporter } from "@/hooks/use-image-importer"
+import { CaptionFileConflict, ConflictError, ImportCaptionConflictStrategy, useImageImporter } from "@/hooks/use-image-importer"
 import { useDatabase } from "@/lib/database/database-provider"
 import { LoaderCircle } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
 type LoadingStep = "dataset" | "database" | "import"
 
-export const LoadingDatasetView = ({ onDone, onEmptyDataset, directoryHandle }: { onDone: VoidFunction, onEmptyDataset: VoidFunction, directoryHandle: FileSystemDirectoryHandle }) => {
+type LoadingDatasetViewProps = {
+  onDone: VoidFunction
+  onEmptyDataset: VoidFunction
+  onConflict: (conflicts: CaptionFileConflict[]) => void
+  directoryHandle: FileSystemDirectoryHandle,
+  conflictStrategy?: ImportCaptionConflictStrategy
+}
+
+export const LoadingDatasetView = ({
+  onDone,
+  onEmptyDataset,
+  onConflict,
+  directoryHandle,
+  conflictStrategy
+}: LoadingDatasetViewProps) => {
   const { importImages } = useImageImporter()
   const { initializeDatabase } = useDatabase()
   const { loadDirectory } = useDatasetDirectory()
@@ -42,9 +56,16 @@ export const LoadingDatasetView = ({ onDone, onEmptyDataset, directoryHandle }: 
 
         console.log("Importing images", imageFiles.length)
         setStep("import")
-        await importImages(database, existingImages, imageFiles)
-
-        onDone()
+        try {
+          await importImages(database, existingImages, imageFiles, conflictStrategy)
+          onDone()
+        } catch (error) {
+          if (error instanceof ConflictError) {
+            onConflict(error.conflicts)
+          } else {
+            throw error
+          }
+        }
       } catch (error) {
         console.error("Error during dataset loading:", error)
       }

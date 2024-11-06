@@ -4,15 +4,20 @@ import { SelectActionView } from "./select-action-view";
 import { SelectDirectoryView } from "./select-directory-view";
 import { LoadingDatasetView } from "./loading-dataset-view";
 import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
+import { ConflictView } from "./conflict-view";
+import { CaptionFileConflict, ImportCaptionConflictStrategy } from "@/hooks/use-image-importer";
 
-type SetupStep = "select-directory" | "loading" | "select-action";
+type SetupStep = "select-directory" | "loading" | "conflict" | "select-action";
 
 export default function Page() {
   const [step, setStep] = useState<SetupStep>("select-directory");
   const [directoryHandle, setDirectoryHandle] = useState<FileSystemDirectoryHandle | null>(null);
   const [isEmpty, setEmpty] = useState(false);
+  const [conflicts, setConflicts] = useState<CaptionFileConflict[]>([]);
+  const [conflictStrategy, setConflictStrategy] = useState<ImportCaptionConflictStrategy>();
+
   const { reset } = useDatasetDirectory()
-  
+
   const handleCancel = () => {
     reset()
     setStep("select-directory")
@@ -33,6 +38,21 @@ export default function Page() {
             onDone={() => setStep("select-action")} onEmptyDataset={() => {
               setStep("select-directory")
               setEmpty(true)
+            }}
+            onConflict={(conflicts) => {
+              setConflicts(conflicts)
+              setStep("conflict")
+            }}
+            conflictStrategy={conflictStrategy}
+          />
+        )}
+        {step === "conflict" && (
+          <ConflictView
+            conflicts={conflicts}
+            onCancel={handleCancel}
+            onSelect={(strategy) => {
+              setConflictStrategy(strategy)
+              setStep("loading")
             }}
           />
         )}
