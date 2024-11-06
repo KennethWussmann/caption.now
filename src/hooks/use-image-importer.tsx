@@ -56,7 +56,7 @@ export const useImageImporter = () => {
         // No caption file
       }
 
-      const isConflict = existingImage && caption && existingImage.caption !== caption.preview
+      const isConflict = existingImage?.caption && caption?.preview && existingImage.caption !== caption.preview
 
       if (isConflict && caption) {
         if (conflictStrategy === "replace") {

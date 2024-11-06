@@ -28,7 +28,7 @@ export default function Page() {
       className="flex items-center justify-center h-screen"
       disabled
     >
-      <div className="mx-auto max-w-md z-50">
+      <div className="mx-auto max-w-xl z-50">
         {step === "select-action" && (
           <SelectActionView onCancel={handleCancel} />
         )}

@@ -4,16 +4,30 @@ import { ActionSelector } from "./action-selector";
 import { ActionItem } from "./action-item";
 import { Replace, SkipForward } from "lucide-react";
 import { CaptionFileConflict, ImportCaptionConflictStrategy } from "@/hooks/use-image-importer";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import { truncateFilename } from "@/lib/utils";
+import { ColumnDef } from "@tanstack/react-table"
+import { DataTable } from "@/components/ui/data-table";
+import { Caption } from "@/lib/types";
+import { ImageEntity } from "@/lib/database/image-entity";
 
+
+const columns: ColumnDef<CaptionFileConflict>[] = [
+  {
+    accessorKey: "filename",
+    header: "Filename",
+    cell: ({ row }) => truncateFilename(row.getValue("filename")),
+  },
+  {
+    accessorKey: "txtCaption",
+    header: "File Content",
+    cell: ({ row }) => (row.getValue("txtCaption") as Caption).preview,
+  },
+  {
+    accessorKey: "dbCaption",
+    header: "Database",
+    cell: ({ row }) => (row.getValue("dbCaption") as ImageEntity).caption,
+  },
+]
 
 export type ConflictViewProps = {
   conflicts: CaptionFileConflict[];
@@ -32,27 +46,9 @@ export const ConflictView = ({ conflicts, onCancel, onSelect }: ConflictViewProp
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>File</TableHead>
-                <TableHead>File Content</TableHead>
-                <TableHead>Database</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {conflicts.map((conflict) => (
-                <TableRow key={conflict.filename}>
-                  <TableCell>{truncateFilename(conflict.filename)}</TableCell>
-                  <TableCell>{conflict.txtCaption.preview ?? ""}</TableCell>
-                  <TableCell>{conflict.dbCaption.caption ?? ""}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <DataTable columns={columns} data={conflicts} />
 
-
-          <p className="mt-6 text-center font-semibold">
+          <p className="text-center font-semibold">
             What do you want to do?
           </p>
           <ActionSelector>
