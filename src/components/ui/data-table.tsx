@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/table"
 import { Button } from "./button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { useState } from "react"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
