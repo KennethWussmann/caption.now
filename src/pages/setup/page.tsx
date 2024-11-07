@@ -6,6 +6,7 @@ import { LoadingDatasetView } from "./loading-dataset-view";
 import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
 import { ConflictView } from "./conflict-view";
 import { CaptionFileConflict, ImportCaptionConflictStrategy } from "@/hooks/use-image-importer";
+import { Footer } from "./footer";
 
 type SetupStep = "select-directory" | "loading" | "conflict" | "select-action";
 
@@ -66,6 +67,7 @@ export default function Page() {
             isEmpty={isEmpty}
           />
         )}
+        <Footer />
       </div>
     </BackgroundLines >
   );
