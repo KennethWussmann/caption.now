@@ -14,8 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/pnpm-install
+      - name: Get git commit
+        id: git-commit
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> "$GITHUB_OUTPUT"
       - run: pnpm lint
       - run: pnpm build
+        env:
+          VITE_APP_VERSION: ${{ steps.git-commit.outputs.SHORT_SHA }}
       - run: cp ./dist/index.html ./dist/404.html
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
