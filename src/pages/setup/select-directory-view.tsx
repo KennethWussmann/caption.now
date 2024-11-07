@@ -3,6 +3,7 @@ import LogoShadow from "@/assets/logo-shadow.png"
 import { FolderOpen, TriangleAlert } from "lucide-react"
 import { UnsupportedBrowserAlert } from "./unsupported-browser-alert"
 import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider"
+import { DataPrivacyAlert } from "./data-privacy-alert"
 
 export const SelectDirectoryView = ({
   onSelected,
@@ -31,7 +32,7 @@ export const SelectDirectoryView = ({
         <CardHeader>
           <CardTitle className="text-2xl">Welcome!</CardTitle>
           <CardDescription>
-            To start labeling your images, select a directory from your
+            To start working with your images, select a directory from your
             computer that contains all images.
           </CardDescription>
         </CardHeader>
@@ -66,6 +67,7 @@ export const SelectDirectoryView = ({
           ) : <UnsupportedBrowserAlert />}
         </CardContent>
       </Card>
+      <DataPrivacyAlert />
     </>
   )
 }

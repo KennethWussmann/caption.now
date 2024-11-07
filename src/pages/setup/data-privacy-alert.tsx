@@ -9,7 +9,7 @@ export const DataPrivacyAlert = () => {
       animate={{ opacity: 1, filter: "blur(0px)" }}
       exit={{ opacity: 0, filter: "blur(4px)" }}
       transition={{ duration: 1, delay: 0.5 }}
-      className="bg-transparent backdrop-blur-sm"
+      className="bg-transparent backdrop-blur-sm mt-6"
     >
       <Alert className="border-none">
         <Lock className="h-4 w-4" />
