@@ -22,6 +22,7 @@ type DatabaseContextType = {
   isAutoBackupEnabled: boolean;
   setAutoBackupEnabled: (enabled: boolean) => void;
   initializeDatabase: (handle: FileSystemDirectoryHandle) => Promise<Database>;
+  saveDatabaseBackup: (localDb?: Database) => Promise<void>;
 };
 
 const DatabaseContext = createContext<DatabaseContextType | undefined>(
@@ -194,6 +195,7 @@ export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
     isAutoBackupEnabled,
     setAutoBackupEnabled,
     initializeDatabase,
+    saveDatabaseBackup,
     database: database!
   };
 
