@@ -9,18 +9,25 @@ export default defineConfig({
     VitePWA({
       registerType: "prompt",
       devOptions: {
-        enabled: false,
+        enabled: true,
       },
       workbox: {
         runtimeCaching: [
           {
-            urlPattern: /.*/, // Cache everything
-            handler: "CacheFirst", // Serve from cache first
+            urlPattern: /.*\.(js|css|html)$/,
+            handler: "StaleWhileRevalidate",
             options: {
-              cacheName: "all-assets",
+              cacheName: "app",
+            },
+          },
+          {
+            urlPattern: /.*\.(png|jpg|jpeg|svg|gif)$/,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "image-assets",
               expiration: {
-                maxEntries: 1000, // Arbitrary high number to keep many assets
-                maxAgeSeconds: 60 * 60 * 24 * 365, // Cache for 1 year
+                maxEntries: 500,
+                maxAgeSeconds: 60 * 60 * 24 * 365,
               },
             },
           },
