@@ -1,6 +1,8 @@
 import { Input } from "@/components/ui/input";
 import { useCaptionEditor } from "@/hooks/provider/caption-editor-provider";
+import { settings } from "@/lib/settings";
 import clsx from "clsx";
+import { useAtom } from "jotai/react";
 import { ArrowUp, Pencil, X } from "lucide-react";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
 
@@ -28,6 +30,7 @@ export const EditBanner = ({ onCancel }: { onCancel?: VoidFunction }) => {
 };
 
 export const CaptionInput = () => {
+  const [separator] = useAtom(settings.caption.separator);
   const [value, setValue] = useState("");
   const {
     isEditing,
@@ -40,10 +43,15 @@ export const CaptionInput = () => {
   } = useCaptionEditor();
   const inputFieldRef = useRef<HTMLInputElement>(null);
 
-  const sanitizeValue = (value: string) => value.trim().replace(".", "");
+  const sanitizeValue = (value: string) => value.trim();
+  const splitIntoParts = (value: string) =>
+    value.split(separator.trim())
+      .map((text) => text.trim())
+      .filter((text) => text !== "");
 
   const onSubmit = () => {
     const sanitizedValue = sanitizeValue(value);
+    const parts = splitIntoParts(sanitizedValue);
     if (isEditing) {
       if (sanitizedValue === "") {
         cancelEditMode();
@@ -60,7 +68,7 @@ export const CaptionInput = () => {
       if (sanitizedValue === "") {
         return;
       }
-      addPart(sanitizedValue);
+      parts.forEach((part) => addPart(part));
     }
     setValue("");
   };
