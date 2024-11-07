@@ -19,7 +19,7 @@ export const PWAPrompt = () => {
       console.error("Failed to register service worker", err);
     },
     onOfflineReady: () => {
-      console.error("Ofline ready");
+      console.error("Offline ready");
       toast({
         title: "Work offline",
         description: `${productName} is ready to work offline`,
