@@ -1,4 +1,5 @@
 import { Badge, Separator } from "@/components/ui";
+import { config } from "@/lib/config";
 import clsx from "clsx";
 import { LucideProps } from "lucide-react";
 import { FC } from "react";
@@ -25,13 +26,14 @@ export const ActionItem = ({
 }: ActionItemProps) => {
   const Icon = icon;
   const navigate = useNavigate();
+  const isDisabled = soon && !config.isDev;
   return (
     <div
-      onClick={() => !soon && (href ? navigate(href) : onClick?.())}
+      onClick={() => !isDisabled && (href ? navigate(href) : onClick?.())}
       className={clsx(
         "p-6 border rounded-md select-none flex flex-col gap-4 flex-1 w-1/2 ",
-        { "cursor-not-allowed opacity-50": soon },
-        { "cursor-pointer hover:bg-muted": !soon }
+        { "cursor-not-allowed opacity-50": isDisabled },
+        { "cursor-pointer hover:bg-muted": !isDisabled }
       )}
     >
       <div className="flex flex-col gap-4 justify-center align-middle items-center font-semibold">

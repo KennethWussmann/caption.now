@@ -50,7 +50,9 @@ const router = createBrowserRouter([
     element: (
       <RequireDatasetSelection>
         <ImageNavigationProvider>
-          <SortPage />
+          <ExportProgressProvider type="sort">
+            <SortPage />
+          </ExportProgressProvider>
         </ImageNavigationProvider>
       </RequireDatasetSelection>
     ),

@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import { useCaptionEditor } from "@/hooks/provider/caption-editor-provider";
+import { useCaptionEditor } from "@/components/caption/caption-editor-provider";
 import { settings } from "@/lib/settings";
 import clsx from "clsx";
 import { useAtom } from "jotai/react";

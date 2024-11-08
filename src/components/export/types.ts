@@ -7,6 +7,7 @@ export type ExportItem = {
 };
 
 export type ExportTask = {
-  type: ExportType;
+  description: string;
+  filter: (item: ExportItem) => boolean;
   export: (item: ExportItem) => Promise<void>;
 };

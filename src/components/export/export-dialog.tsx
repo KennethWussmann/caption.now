@@ -2,21 +2,15 @@ import { useState } from "react";
 import { Button, Dialog, DialogFooter, DialogHeader } from "@/components/ui";
 import { DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "@/components/ui";
 import { Check, Download, LoaderCircle } from "lucide-react";
-import { ExportCaptionSummary } from "./export-caption-summary";
 import { ExportProgress } from "./export-progress";
 import { useExportProgress } from "./export-progress-provider";
 import clsx from "clsx";
-import { useImages } from "@/hooks/use-images";
+import { CaptionExportSummary } from "./task/caption-export-summary";
+import { SortExportSummary } from "./task/sort-export-summary";
 
 export const ExportDialog = () => {
   const [open, setOpen] = useState(false);
-  const { doneImages } = useImages()
-  const { startExport, isExporting, isDone } = useExportProgress();
-  const canExport = doneImages.length > 0;
-
-  const handleExport = () => {
-    startExport();
-  };
+  const { startExport, isExporting, isDone, type, task, isEnabled } = useExportProgress();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -30,12 +24,13 @@ export const ExportDialog = () => {
         <DialogHeader>
           <DialogTitle>Export</DialogTitle>
           <DialogDescription>
-            Export your labels as plain text files.
+            {task.description}
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-8">
-          <ExportCaptionSummary />
+          {type === "caption-txt" && <CaptionExportSummary />}
+          {type === "sort" && <SortExportSummary />}
           {isExporting && <ExportProgress />}
 
         </div>
@@ -47,7 +42,7 @@ export const ExportDialog = () => {
                 You can close this dialog while the export is running and we will let you know, once it's completed.
               </div>
             )}
-            <Button onClick={handleExport} disabled={isExporting || !canExport}>
+            <Button onClick={startExport} disabled={isExporting || !isEnabled}>
               {isExporting ?
                 <>
                   <LoaderCircle className="animate-spin" />

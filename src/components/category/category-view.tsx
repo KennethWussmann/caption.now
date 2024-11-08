@@ -1,9 +1,9 @@
-import { CaptionInput } from "./components/caption-input";
-import { CaptionList } from "./components/caption-list";
-import { ImageViewer } from "../common/image-viewer";
 import { useImageNavigation } from "@/hooks/provider/image-navigation-provider";
+import { ImageViewer } from "../common/image-viewer";
+import { CategoryInput } from "./components/category-input";
+import { CategoryList } from "./components/category-list";
 
-export const CaptionView = () => {
+export const CategoryView = () => {
   const { currentImage } = useImageNavigation();
   if (!currentImage) {
     return null;
@@ -17,11 +17,11 @@ export const CaptionView = () => {
 
         <div className="w-1/3 h-full flex flex-col">
           <div className="flex-grow overflow-y-auto">
-            <CaptionList />
+            <CategoryList />
           </div>
         </div>
       </div>
-      <CaptionInput />
+      <CategoryInput />
     </div>
   );
 };

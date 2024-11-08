@@ -12,6 +12,7 @@ const configSchema = z
       .optional(),
   })
   .transform((v) => ({
+    isDev: v.VITE_APP_VERSION === "develop",
     appVersion: v.VITE_APP_VERSION,
     imprintUrl: v.VITE_IMPRINT_URL,
     privacyUrl: v.VITE_PRIVACY_URL,

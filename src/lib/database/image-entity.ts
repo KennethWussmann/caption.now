@@ -1,9 +1,9 @@
-import { CaptionPart } from "../types";
+import { CaptionPart, Category } from "../types";
 
 export type ImageEntity = {
   id: string;
   filename: string;
-  tags?: string[];
+  categories?: Category[];
   captionParts?: CaptionPart[];
   caption?: string;
 };
@@ -16,7 +16,7 @@ export const isImageDone = (image: ImageEntity, action: "caption" | "sort") => {
       false
     );
   } else if (action === "sort") {
-    return (image.tags && image.tags.length > 0) || false;
+    return (image.categories && image.categories.length > 0) || false;
   }
   return false;
 };

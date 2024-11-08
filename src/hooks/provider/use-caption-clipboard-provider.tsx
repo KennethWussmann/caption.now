@@ -1,6 +1,6 @@
 import { Caption } from '@/lib/types';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { useCaptionEditor } from './caption-editor-provider';
+import { useCaptionEditor } from '../../components/caption/caption-editor-provider';
 import { useShortcut } from '../use-shortcut';
 
 type CaptionClipboardContextType = {

@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui";
-import { useCaptionEditor } from "@/hooks/provider/caption-editor-provider";
+import { useCaptionEditor } from "@/components/caption/caption-editor-provider";
 import { LoaderCircle, RefreshCw } from "lucide-react";
 
 export const CaptionPreviewAI = () => {

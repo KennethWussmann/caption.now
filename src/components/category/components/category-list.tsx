@@ -11,15 +11,14 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { CaptionListItem } from "./caption-list-item";
-import { CaptionListFooter } from "./caption-list-footer";
 import { AnimatedGroup } from "@/components/ui/animation/animated-group";
 import { useEffect, useRef } from "react";
-import { useCaptionEditor } from "@/components/caption/caption-editor-provider";
-import { CaptionListDropdown } from "./caption-list-dropdown";
+import { useCategoryEditor } from "../category-editor-provider";
+import { CategoryListDropdown } from "./category-list-dropdown";
+import { CategoryListItem } from "./category-list-item";
 
-export const CaptionList = () => {
-  const { parts, handleDragEnd } = useCaptionEditor();
+export const CategoryList = () => {
+  const { categories, handleDragEnd } = useCategoryEditor();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -30,24 +29,24 @@ export const CaptionList = () => {
   const lastLength = useRef(0);
 
   useEffect(() => {
-    const lastPart = parts[parts.length - 1];
-    if (parts.length === lastLength.current) {
+    const lastPart = categories[categories.length - 1];
+    if (categories.length === lastLength.current) {
       return;
     }
-    if (parts.length > 0 && lastPart && partRefs.current[lastPart.id]) {
+    if (categories.length > 0 && lastPart && partRefs.current[lastPart.id]) {
       partRefs.current[lastPart.id]?.scrollIntoView({
         behavior: "smooth",
         block: "nearest",
       });
-      lastLength.current = parts.length;
+      lastLength.current = categories.length;
     }
-  }, [parts]);
+  }, [categories]);
 
   return (
     <div className="border-l ml-2 h-full flex flex-col">
       <div className="flex flex-row gap-2 justify-between items-center mb-2">
-        <h1 className="ml-4 font-semibold">Caption Parts </h1>
-        <CaptionListDropdown />
+        <h1 className="ml-4 font-semibold">Categories </h1>
+        <CategoryListDropdown />
       </div>
       <div
         className="flex flex-col overflow-y-auto gap-1 pb-4"
@@ -59,25 +58,20 @@ export const CaptionList = () => {
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={parts}
+            items={categories}
             strategy={verticalListSortingStrategy}
           >
             <AnimatedGroup preset="blur-slide" className="flex flex-col gap-2">
-              {parts.map((item) => (
-                <CaptionListItem
+              {categories.map((item) => (
+                <CategoryListItem
                   key={item.id}
-                  part={item}
+                  category={item}
                   ref={(el) => (partRefs.current[item.id] = el)}
                 />
               ))}
             </AnimatedGroup>
           </SortableContext>
         </DndContext>
-      </div>
-      <div className="border-t">
-        <div className="ml-4">
-          <CaptionListFooter />
-        </div>
       </div>
     </div>
   );

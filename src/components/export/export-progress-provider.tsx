@@ -1,10 +1,10 @@
 import { useToast } from "@/hooks/use-toast";
-import { createContext, useState, useCallback, useContext, useEffect } from "react";
-import { ExportItem, ExportType } from "./types";
+import { createContext, useState, useCallback, useContext, useEffect, useMemo } from "react";
+import { ExportItem, ExportTask, ExportType } from "./types";
 import { useImages } from "@/hooks/use-images";
 import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider";
-import { CaptionTxtTask } from "./task/caption-txt-task";
 import { useShortcut } from "@/hooks/use-shortcut";
+import { tasks } from "./task";
 
 type Progress = {
   done: number;
@@ -14,59 +14,63 @@ type Progress = {
 
 type ExportProgressContextType = {
   type: ExportType;
+  task: ExportTask;
   progress: Progress;
   startExport: () => void;
   isExporting?: boolean;
   isDone?: boolean;
   reset: () => void;
+  items: ExportItem[];
+  isEnabled: boolean;
 }
 
 export const ExportProgressContext = createContext<ExportProgressContextType>({
   type: "caption-txt",
+  task: tasks["caption-txt"],
+  items: [],
   progress: { done: 0, total: 0, percentage: 0 },
   startExport: () => { },
   reset: () => { },
+  isEnabled: false,
 });
 
 export const ExportProgressProvider: React.FC<{ children: React.ReactNode, type: ExportType }> = ({
   children, type
 }) => {
+  const task = tasks[type];
   const { directoryHandle } = useDatasetDirectory();
-  const { doneImages } = useImages();
+  const { allImages } = useImages();
   const [progress, setProgress] = useState<Progress>({ done: 0, total: 10, percentage: 0 });
   const [isExporting, setExporting] = useState(false);
   const [isDone, setDone] = useState(false);
   const { toast } = useToast();
-  const canExport = doneImages.length > 0;
+  const items = useMemo(() => {
+    if (!directoryHandle) {
+      return []
+    }
+    return allImages
+      .map((image) => ({ image, directoryHandle }))
+      .filter((item) => task.filter(item))
+  }, [allImages, directoryHandle, task]);
+
   useShortcut("startExport", () => {
     startExport();
   })
 
   const startExport = useCallback(async () => {
-    if (!directoryHandle || isExporting || !canExport) {
+    if (isExporting || items.length === 0) {
       return
     }
     setExporting(true);
     setDone(false)
-    const totalItems = doneImages.length;
-    setProgress({ done: 0, total: doneImages.length, percentage: 0 });
 
+    const totalItems = items.length;
+    setProgress({ done: 0, total: items.length, percentage: 0 });
     for (let i = 1; i <= totalItems; i++) {
-      const image = doneImages[i - 1];
-      const item: ExportItem = {
-        image,
-        directoryHandle
-      }
-      switch (type) {
-        case "caption-txt":
-          await CaptionTxtTask.export(item);
-          break;
-        case "sort":
-          // TODO: Implement sort export
-          break;
-        default:
-          break;
-      }
+      const item = items[i - 1];
+
+      await task.export(item);
+
       setProgress({
         done: i,
         total: totalItems,
@@ -78,7 +82,7 @@ export const ExportProgressProvider: React.FC<{ children: React.ReactNode, type:
     toast({
       title: "Export complete",
     });
-  }, [directoryHandle, doneImages, isDone, isExporting, toast, type]);
+  }, [task, isExporting, items, toast]);
 
   const reset = () => {
     setProgress({ done: 0, total: 0, percentage: 0 });
@@ -98,8 +102,20 @@ export const ExportProgressProvider: React.FC<{ children: React.ReactNode, type:
     }
   }, [isDone])
 
+  useEffect(() => { }, [allImages])
+
   return (
-    <ExportProgressContext.Provider value={{ type, progress, startExport, isExporting, reset, isDone }}>
+    <ExportProgressContext.Provider value={{
+      type,
+      task,
+      progress,
+      startExport,
+      isExporting,
+      reset,
+      isDone,
+      items,
+      isEnabled: items.length > 0,
+    }}>
       {children}
     </ExportProgressContext.Provider>
   );

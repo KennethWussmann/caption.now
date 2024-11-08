@@ -7,7 +7,7 @@ import { useOllamaStatus } from "../use-ollama-status";
 import { useQuery } from "@tanstack/react-query";
 import { chat } from "@/lib/ollama-api-client";
 import { useHotkeys } from "react-hotkeys-hook";
-import { useCaptionEditor } from "../provider/caption-editor-provider";
+import { useCaptionEditor } from "../../components/caption/caption-editor-provider";
 import { useImageNavigation } from "../provider/image-navigation-provider";
 import { useImageBase64 } from "../use-image-base64";
 
