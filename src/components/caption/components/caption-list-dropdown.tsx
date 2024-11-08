@@ -1,6 +1,6 @@
 import { ShortcutText } from "@/components/common/shortcut-text"
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui"
-import { useCaptionEditor } from "@/hooks/provider/caption-editor-provider";
+import { useCaptionEditor } from "@/components/caption/caption-editor-provider";
 import { useCaptionClipboard } from "@/hooks/provider/use-caption-clipboard-provider";
 import { ClipboardCopy, ClipboardPaste, EllipsisVertical, Trash } from "lucide-react"
 

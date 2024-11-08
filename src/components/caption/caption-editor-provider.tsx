@@ -7,12 +7,12 @@ import React, {
 } from "react";
 import { CaptionPart } from "@/lib/types";
 import { arrayMove } from "@dnd-kit/sortable";
-import { useImageNavigation } from "./image-navigation-provider";
-import { usePreventClose } from "./prevent-close-provider";
+import { useImageNavigation } from "../../hooks/provider/image-navigation-provider";
+import { usePreventClose } from "../../hooks/provider/prevent-close-provider";
 import { uuid } from "@/lib/utils";
 import { usePrevious } from "@uidotdev/usehooks"
-import { useShortcut } from "../use-shortcut";
-import { useCaptionPreview } from "../use-caption-preview";
+import { useShortcut } from "../../hooks/use-shortcut";
+import { useCaptionPreview } from "../../hooks/use-caption-preview";
 import { useDatabase } from "@/lib/database/database-provider";
 
 interface CaptionEditorContextType {
@@ -56,7 +56,7 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
   });
 
   usePreventClose(isDirty);
-  useShortcut("save", () => {
+  useShortcut("saveCaption", () => {
     save();
   });
   useShortcut("clearCaption", () => {
@@ -151,6 +151,7 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
       return
     }
     await database.images.put({
+      ...currentImage,
       id: filename ?? currentImage.filename,
       filename: filename ?? currentImage.filename,
       caption: preview ?? undefined,

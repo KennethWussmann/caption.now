@@ -10,17 +10,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSortable } from "@dnd-kit/sortable";
 import clsx from "clsx";
-import { CaptionPart } from "@/lib/types";
+import { Category } from "@/lib/types";
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { motion } from "framer-motion";
-import { useCaptionEditor } from "@/components/caption/caption-editor-provider";
+import { useCategoryEditor } from "../category-editor-provider";
 
-export const CaptionListItem = forwardRef<
+export const CategoryListItem = forwardRef<
   HTMLDivElement,
-  { part: CaptionPart }
->(({ part }, ref) => {
-  const { enterEditMode, isEditing, deletePart } = useCaptionEditor();
-  const isCurrentItemEditing = isEditing?.id === part.id;
+  { category: Category }
+>(({ category }, ref) => {
+  const { enterEditMode, isEditing, deleteCategory } = useCategoryEditor();
+  const isCurrentItemEditing = isEditing?.id === category.id;
   const {
     attributes,
     listeners,
@@ -28,7 +28,7 @@ export const CaptionListItem = forwardRef<
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: part.id });
+  } = useSortable({ id: category.id });
   const customTransitions =
     "box-shadow 0.3s ease, margin 0.3s ease, background-color 0.3s ease";
   const finalTransition = transition
@@ -67,7 +67,7 @@ export const CaptionListItem = forwardRef<
           setNodeRef(node);
           localRef.current = node!;
         }}
-        onDoubleClick={() => enterEditMode(part)}
+        onDoubleClick={() => enterEditMode(category)}
         {...attributes}
         {...listeners}
       >
@@ -75,7 +75,7 @@ export const CaptionListItem = forwardRef<
           {isCurrentItemEditing && (
             <Pencil className="h-5 w-5 text-blue-600 dark:text-blue-200" />
           )}
-          {part.text}
+          {category.text}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -88,11 +88,11 @@ export const CaptionListItem = forwardRef<
             align="end"
             onPointerDown={(e) => e.stopPropagation()}
           >
-            <DropdownMenuItem onClick={() => deletePart(part.id)}>
+            <DropdownMenuItem onClick={() => deleteCategory(category.id)}>
               <Trash />
               <span>Delete</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => enterEditMode(part)}>
+            <DropdownMenuItem onClick={() => enterEditMode(category)}>
               <Pencil />
               <span>Edit</span>
             </DropdownMenuItem>

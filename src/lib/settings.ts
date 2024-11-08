@@ -27,7 +27,6 @@ export const settings = {
       "settings.shortcuts.applySuggestionModifier",
       "mod"
     ),
-    save: atomWithStorage("settings.shortcuts.save", "mod+s"),
     previousImage: atomWithStorage(
       "settings.shortcuts.previousImage",
       "pageup"
@@ -37,6 +36,8 @@ export const settings = {
       "settings.shortcuts.startExport",
       "mod+shift+s"
     ),
+
+    saveCaption: atomWithStorage("settings.shortcuts.saveCaption", "mod+s"),
     copyCaptionParts: atomWithStorage(
       "settings.shortcuts.copyCaptionParts",
       "mod+shift+c"
@@ -47,6 +48,15 @@ export const settings = {
     ),
     clearCaption: atomWithStorage(
       "settings.shortcuts.clearCaption",
+      "mod+shift+delete"
+    ),
+
+    saveCategories: atomWithStorage(
+      "settings.shortcuts.saveCategories",
+      "mod+s"
+    ),
+    clearCategories: atomWithStorage(
+      "settings.shortcuts.clearCategories",
       "mod+shift+delete"
     ),
   },
@@ -61,6 +71,9 @@ export const settings = {
       "settings.tools.caption.endWithSeparator",
       true
     ),
+  },
+  category: {
+    separator: atomWithStorage("settings.tools.category.separator", ","),
   },
   tools: {
     lens: {

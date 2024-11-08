@@ -133,3 +133,7 @@ export const replaceShortcutSymbols = (
   shortcut = shortcut.replace("COMMA", ",");
   return shortcut;
 };
+
+export const unique = <T>(array: T[]): T[] => {
+  return Array.from(new Set(array));
+};

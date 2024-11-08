@@ -26,6 +26,12 @@ export type Caption = {
   preview?: string;
 };
 
+export type Category = {
+  id: string;
+  index: number;
+  text: string;
+};
+
 export const dexieBackupSchema = z
   .object({
     formatName: z.literal("dexie"),

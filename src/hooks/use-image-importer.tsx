@@ -61,6 +61,7 @@ export const useImageImporter = () => {
       if (isConflict && caption) {
         if (conflictStrategy === "replace") {
           return {
+            ...existingImage,
             id: image.name,
             filename: image.name,
             caption: caption.preview,
@@ -80,6 +81,7 @@ export const useImageImporter = () => {
 
       if (caption) {
         return {
+          ...existingImage,
           id: image.name,
           filename: image.name,
           caption: caption.preview,
