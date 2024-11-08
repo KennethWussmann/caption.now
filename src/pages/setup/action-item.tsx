@@ -1,5 +1,4 @@
 import { Badge, Separator } from "@/components/ui";
-import { config } from "@/lib/config";
 import clsx from "clsx";
 import { LucideProps } from "lucide-react";
 import { FC } from "react";
@@ -26,7 +25,7 @@ export const ActionItem = ({
 }: ActionItemProps) => {
   const Icon = icon;
   const navigate = useNavigate();
-  const isDisabled = soon && !config.isDev;
+  const isDisabled = soon;
   return (
     <div
       onClick={() => !isDisabled && (href ? navigate(href) : onClick?.())}
