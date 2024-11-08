@@ -3,6 +3,7 @@ import { FileQuestion, Image, ImageOff, Pencil, Tags } from "lucide-react"
 import { ActionSelector } from "./action-selector"
 import { ActionItem } from "./action-item"
 import { useDatasetDirectory } from "@/hooks/provider/dataset-directory-provider"
+import { useFeatureEnabled } from "@/hooks/use-feature-enabled"
 
 export const SelectActionView = ({
   onCancel
@@ -15,6 +16,7 @@ export const SelectActionView = ({
     failedImageFiles,
     failedTextFiles,
   } = useDatasetDirectory();
+  const isSortWorkflowEnabled = useFeatureEnabled("sortWorkflow")
 
   return (
     <Card className="bg-transparent backdrop-blur-sm">
@@ -82,7 +84,7 @@ export const SelectActionView = ({
                 href="/sort"
                 title="Sort"
                 description="Pre-screen your dataset, sort images into categories and export them into new datasets"
-                soon
+                soon={!isSortWorkflowEnabled}
               />
             </ActionSelector>
           </div>
