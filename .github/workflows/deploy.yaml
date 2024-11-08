@@ -21,6 +21,9 @@ jobs:
       - run: pnpm build
         env:
           VITE_APP_VERSION: ${{ steps.git-commit.outputs.SHORT_SHA }}
+          VITE_DEMO_MODE: true
+          VITE_IMPRINT_URL: ${{ secrets.IMPRINT_URL }}
+          VITE_PRIVACY_URL: ${{ secrets.PRIVACY_URL }}
       - run: cp ./dist/index.html ./dist/404.html
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
