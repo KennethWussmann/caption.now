@@ -1,7 +1,8 @@
 import { useImages } from "@/hooks/use-images";
-import { Check, FileText, Images } from "lucide-react";
+import { FileText, Images } from "lucide-react";
 import { Separator } from "../../ui";
 import { useExportProgress } from "../export-progress-provider";
+import { ExportSuccessfulSummaryMessage } from "./export-successful-summary-message";
 
 export const CaptionExportSummary = () => {
   const { allImages } = useImages();
@@ -37,13 +38,7 @@ export const CaptionExportSummary = () => {
           You labeled {items.length} out of {allImages.length} images
         </div>
       </div>
-      {percentage === 100 && (<>
-        <Separator />
-        <div className="flex gap-4 items-center">
-          <Check className="h-8 w-8" />
-          Export successful
-        </div>
-      </>)}
-    </div>
+      {percentage === 100 && <ExportSuccessfulSummaryMessage />}
+    </div >
   );
 };
