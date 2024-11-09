@@ -46,7 +46,8 @@ export const PreventCloseProvider = ({
 };
 
 export const usePreventClose = (
-  initialValue = false
+  initialValue = false,
+  onBeforeUnload?: VoidFunction
 ): PreventCloseContextType => {
   const context = useContext(PreventCloseContext);
 
@@ -59,6 +60,20 @@ export const usePreventClose = (
   useEffect(() => {
     context.setUnsavedWork(initialValue);
   }, [context, initialValue]);
+
+  useEffect(() => {
+    if (!onBeforeUnload || !context.unsavedWork) {
+      return;
+    }
+    const handleBeforeUnload = () => {
+      onBeforeUnload();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [context.unsavedWork, onBeforeUnload]);
 
   return context;
 };

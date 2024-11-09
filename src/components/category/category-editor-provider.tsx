@@ -48,7 +48,7 @@ export const CategoryEditorProvider: React.FC<CategoryEditorProviderProps> = ({
   const [editingPart, setEditingPart] = useState<Category | null>(null);
   const previousImage = usePrevious(currentImage);
 
-  usePreventClose(isDirty);
+  usePreventClose(isDirty, () => save());
   useShortcut("saveCategories", () => {
     save();
   });

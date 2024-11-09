@@ -55,7 +55,7 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
     initialValue: currentImage?.caption,
   });
 
-  usePreventClose(isDirty);
+  usePreventClose(isDirty, () => save());
   useShortcut("saveCaption", () => {
     save();
   });
