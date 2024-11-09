@@ -19,12 +19,7 @@ export const settings = {
       false
     ),
   },
-  featureToggles: {
-    sortWorkflow: atomWithStorage(
-      "settings.featureToggles.sortWorkflow",
-      false
-    ),
-  },
+  featureToggles: {},
   shortcuts: {
     openSettings: atomWithStorage(
       "settings.shortcuts.openSettings",

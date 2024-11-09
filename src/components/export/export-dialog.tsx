@@ -32,7 +32,6 @@ export const ExportDialog = () => {
           {type === "caption-txt" && <CaptionExportSummary />}
           {type === "sort" && <SortExportSummary />}
           {isExporting && <ExportProgress />}
-
         </div>
 
         <DialogFooter>
