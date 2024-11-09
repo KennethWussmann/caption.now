@@ -3,10 +3,11 @@ import { settings } from "@/lib/settings";
 import clsx from "clsx";
 import { useAtom } from "jotai/react";
 import { Pencil, X } from "lucide-react";
-import { KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { KeyboardEvent, ReactNode, useEffect, useRef } from "react";
 import { useCategoryEditor } from "../category-editor-provider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useCategorySuggestions } from "../use-category-suggestions";
+import { useApplyTextReplacements } from "@/hooks/use-apply-text-replacements";
 
 const Suggestion = ({ children, onApply, active }: { children: ReactNode, onApply: VoidFunction, active?: boolean }) => {
   return (
@@ -53,7 +54,7 @@ const EditBanner = ({ onCancel }: { onCancel?: VoidFunction }) => {
 
 export const CategoryInput = () => {
   const [separator] = useAtom(settings.category.separator);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useApplyTextReplacements();
   const {
     isEditing,
     addCategory,

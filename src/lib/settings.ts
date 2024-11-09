@@ -88,6 +88,14 @@ export const settings = {
       zoomFactor: atomWithStorage("settings.tools.lens.zoomFactor", 3),
       size: atomWithStorage("settings.tools.lens.size", 300),
     },
+    textReplacement: {
+      enabled: atomWithStorage("settings.tools.textReplacement.enabled", true),
+      replacements: atomWithZod(
+        "settings.tools.textReplacement.replacements",
+        [],
+        z.array(z.object({ from: z.string(), to: z.string() }))
+      ),
+    },
   },
   ai: {
     ollamaEnabled: atomWithStorage("settings.ai.ollamaEnabled", false),
