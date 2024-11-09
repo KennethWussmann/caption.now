@@ -2,6 +2,7 @@ import { atomWithStorage } from "jotai/utils";
 import { createStore } from "jotai/vanilla";
 import { atomWithZod } from "./zod-atom";
 import { z } from "zod";
+import { config } from "./config";
 
 export const settingsStore = createStore();
 
@@ -124,8 +125,38 @@ export const settings = {
 
 export type Settings = typeof settings;
 
-export const resetLocalStorage = async () => {
+export const resetLocalStorage = () => {
   for (const key in localStorage) {
     localStorage.removeItem(key);
+  }
+};
+
+export const exportLocalStorageToJSON = () => {
+  const data: Record<string, string> = {
+    "_meta.version": config.appVersion,
+    "_meta.timestamp": new Date().toISOString(),
+  };
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key) {
+      data[key] = localStorage.getItem(key) ?? "";
+    }
+  }
+  return JSON.stringify(data, null, 2);
+};
+
+export const importLocalStorageFromJSON = (
+  json: string,
+  mode: "merge" | "replace" = "replace"
+) => {
+  if (mode === "replace") {
+    resetLocalStorage();
+  }
+  const data = JSON.parse(json);
+
+  for (const key in data) {
+    if (key.startsWith("settings.")) {
+      localStorage.setItem(key, data[key]);
+    }
   }
 };

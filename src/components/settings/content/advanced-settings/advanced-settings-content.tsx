@@ -10,6 +10,8 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { deleteAllIndexedDBs } from "@/lib/utils";
 import { DoubleConfirmationDialog } from "@/components/common/double-confirmation-dialog";
+import { DownloadSettingsRow } from "./download-settings-row";
+import { ImportSettingsRow } from "./import-settings-row";
 
 const AdvancedSettingsContent = () => {
   const { deleteAllTextFiles } = useDatasetDirectory();
@@ -42,7 +44,7 @@ const AdvancedSettingsContent = () => {
   }
 
   const resetSettings = async () => {
-    await resetLocalStorage();
+    resetLocalStorage();
     await reloadWithWarning("Settings reset");
   };
 
@@ -102,6 +104,8 @@ const AdvancedSettingsContent = () => {
             </DoubleConfirmationDialog>
           </TableCell>
         </TableRow>
+        <DownloadSettingsRow />
+        <ImportSettingsRow onImportCompleted={() => reloadWithWarning("Settings imported")} />
       </TableBody>
     </Table>
   );
