@@ -1,6 +1,5 @@
 import { useImages } from "@/hooks/use-images";
-import { Check, FolderInput } from "lucide-react";
-import { Separator } from "../../ui";
+import { FolderInput } from "lucide-react";
 import { useExportProgress } from "../export-progress-provider";
 import { ExportItem } from "../types";
 import { unique } from "@/lib/utils";
@@ -13,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { ExportSuccessfulSummaryMessage } from "./export-successful-summary-message";
 
 
 const getDirectoriesCreated = (items: ExportItem[]): Record<string, number> => {
@@ -78,13 +78,7 @@ export const SortExportSummary = () => {
           ))}
         </TableBody>
       </Table>
-      {percentage === 100 && (<>
-        <Separator />
-        <div className="flex gap-4 items-center">
-          <Check className="h-8 w-8" />
-          Export successful
-        </div>
-      </>)}
+      {percentage === 100 && <ExportSuccessfulSummaryMessage />}
     </div>
   );
 };
