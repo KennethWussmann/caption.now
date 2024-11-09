@@ -13,7 +13,7 @@ export const StrategySelector = () => {
   const [strategy, setStrategy] = useAtom(settings.caption.strategy);
 
   return (
-    <Select value={strategy} onValueChange={setStrategy}>
+    <Select value={strategy} onValueChange={(v) => setStrategy(v as "ai" | "separator")}>
       <SelectTrigger>
         <SelectValue placeholder="Strategy" />
       </SelectTrigger>

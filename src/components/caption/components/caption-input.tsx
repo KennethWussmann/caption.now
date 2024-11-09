@@ -4,7 +4,8 @@ import { settings } from "@/lib/settings";
 import clsx from "clsx";
 import { useAtom } from "jotai/react";
 import { ArrowUp, Pencil, X } from "lucide-react";
-import { KeyboardEvent, useEffect, useRef, useState } from "react";
+import { KeyboardEvent, useEffect, useRef } from "react";
+import { useApplyTextReplacements } from "@/hooks/use-apply-text-replacements";
 
 export const EditBanner = ({ onCancel }: { onCancel?: VoidFunction }) => {
   const { isEditing, cancelEditMode } = useCaptionEditor();
@@ -31,7 +32,7 @@ export const EditBanner = ({ onCancel }: { onCancel?: VoidFunction }) => {
 
 export const CaptionInput = () => {
   const [separator] = useAtom(settings.caption.separator);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useApplyTextReplacements();
   const {
     isEditing,
     addPart,
