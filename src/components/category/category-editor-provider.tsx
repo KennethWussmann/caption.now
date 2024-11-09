@@ -13,6 +13,7 @@ import { uuid } from "@/lib/utils";
 import { usePrevious } from "@uidotdev/usehooks"
 import { useShortcut } from "../../hooks/use-shortcut";
 import { useDatabase } from "@/lib/database/database-provider";
+import { ImageEntity } from "@/lib/database/image-entity";
 
 interface CategoryEditorContextType {
   categories: Category[];
@@ -141,13 +142,13 @@ export const CategoryEditorProvider: React.FC<CategoryEditorProviderProps> = ({
     setDirty(true);
   }
 
-  const save = async (filename?: string) => {
-    if (!currentImage || !isDirty) {
+  const save = async (image: ImageEntity | undefined = currentImage) => {
+    if (!image || !isDirty) {
       return
     }
     await database.images.put({
-      ...currentImage,
-      id: filename ?? currentImage.filename,
+      ...image,
+      id: image.filename,
       categories,
     })
     setDirty(false);
@@ -162,7 +163,7 @@ export const CategoryEditorProvider: React.FC<CategoryEditorProviderProps> = ({
 
   useEffect(() => {
     if (previousImage) {
-      save(previousImage?.filename)
+      save(previousImage)
     }
     resetEditor();
     load()

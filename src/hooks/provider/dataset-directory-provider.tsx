@@ -155,8 +155,11 @@ export const DatasetDirectoryProvider = ({
       setIsDirectorySelected(true);
       return dirHandle;
     } catch (err) {
-      console.error("Error opening directory:", err);
       resetState();
+      if (err instanceof DOMException && err.name === "AbortError") {
+        return null
+      }
+      console.error("Error opening directory:", err);
       setAccessDenied(true);
     }
     return null
@@ -297,7 +300,7 @@ export const DatasetDirectoryProvider = ({
     return () => clearInterval(intervalId);
   }, [directoryHandle, resetState]);
 
-  const value = {
+  const value: DatasetDirectoryContextType = {
     supported,
     openDirectoryPicker,
     isDirectorySelected,
