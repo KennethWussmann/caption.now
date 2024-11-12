@@ -11,7 +11,7 @@ export const useApplyTextReplacements = () => {
     let newValue = input
     if (isEnabled) {
       replacements.forEach((replacement) => {
-        const pattern = new RegExp(`${replacement.from}\\s$`)
+        const pattern = new RegExp(replacement.from)
         newValue = newValue.replace(pattern, replacement.to + " ")
       })
     }
