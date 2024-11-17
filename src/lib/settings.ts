@@ -25,6 +25,10 @@ export const settings = {
       "settings.shortcuts.openSettings",
       "mod+shift+p"
     ),
+    openCommandPalette: atomWithStorage(
+      "settings.shortcuts.openCommandPalette",
+      "mod+k"
+    ),
     applySuggestionModifier: atomWithStorage(
       "settings.shortcuts.applySuggestionModifier",
       "mod"
@@ -132,6 +136,7 @@ export const settings = {
 } as const;
 
 export type Settings = typeof settings;
+export type Shortcut = keyof Settings["shortcuts"];
 
 export const resetLocalStorage = () => {
   for (const key in localStorage) {

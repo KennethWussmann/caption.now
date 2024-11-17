@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { settings, Settings } from "@/lib/settings";
+import { settings, Shortcut } from "@/lib/settings";
 import { replaceShortcutSymbols } from "@/lib/utils";
 import clsx from "clsx";
 import { useAtom } from "jotai/react";
@@ -12,7 +12,7 @@ import { useRecordHotkeys } from "react-hotkeys-hook";
 type ShortcutRowProps = {
   title: string;
   description?: string;
-  settingsKey: keyof Settings["shortcuts"];
+  settingsKey: Shortcut;
 }
 
 export const ShortcutRow = ({ title, description, settingsKey }: ShortcutRowProps) => {
