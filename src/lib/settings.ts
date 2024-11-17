@@ -66,10 +66,6 @@ export const settings = {
       "settings.shortcuts.searchCurrentCaption",
       "mod+f"
     ),
-    searchAllCaptions: atomWithStorage(
-      "settings.shortcuts.searchAllCaptions",
-      "mod+shift+f"
-    ),
   },
   caption: {
     strategy: atomWithZod(
