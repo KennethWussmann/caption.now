@@ -17,6 +17,7 @@ const ShortcutsSettingsContent = () => {
         <ShortcutRow settingsKey="clearCaption" title="Clear current caption" description="Removes the caption of the currently open image" />
         <ShortcutRow settingsKey="copyCaptionParts" title="Copy caption parts" description="Copies the currently open picture's caption parts into an internal clipboard" />
         <ShortcutRow settingsKey="pasteCaptionParts" title="Paste caption parts" description="Adds the caption parts on the internal clipboard into the currently open image's caption" />
+        <ShortcutRow settingsKey="searchCurrentCaption" title="Search in current caption" description="Shows a search dialog to find text in the currently open caption" />
       </TableBody>
     </Table >
   );

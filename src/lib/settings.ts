@@ -61,6 +61,11 @@ export const settings = {
       "settings.shortcuts.clearCategories",
       "mod+shift+delete"
     ),
+
+    searchCurrentCaption: atomWithStorage(
+      "settings.shortcuts.searchCurrentCaption",
+      "mod+f"
+    ),
   },
   caption: {
     strategy: atomWithZod(
