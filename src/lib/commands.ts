@@ -73,6 +73,12 @@ export const commandDefinitions: Record<Shortcut, CommandDefinition> = {
     description: "Load the next image from the image sidebar",
     category: "Image",
   },
+  deleteImage: {
+    icon: Trash,
+    title: "Delete image",
+    description: "Delete the currently open image",
+    category: "Image",
+  },
   startExport: {
     icon: Download,
     title: "Start export",
