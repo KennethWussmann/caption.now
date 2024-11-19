@@ -23,6 +23,7 @@ import { NoImageSelected } from "@/components/common/no-image-selected";
 import { SettingsDialog } from "@/components/settings/settings-dialog";
 import { ExportDialog } from "@/components/export/export-dialog";
 import { CommandPalette } from "@/components/command-palette/command-palette";
+import { DeleteImageDialog } from "@/components/common/delete-image-dialog";
 
 type ImageListLayoutProps = {
   children: ReactNode;
@@ -41,6 +42,7 @@ export const ImageListLayout = ({
       <OnboardingDialog />
       <OllamaStatusNotification />
       <CommandPalette />
+      <DeleteImageDialog />
       <ImageListSidebar side="left" />
       <SidebarInset>
         <header className="flex justify-between items-center h-16 shrink-0 px-3 border-b w-full">

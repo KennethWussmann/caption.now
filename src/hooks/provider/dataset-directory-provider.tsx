@@ -26,6 +26,7 @@ type DatasetDirectoryContextType = {
   deleteAllTextFiles: () => Promise<void>;
   directoryHandle: FileSystemDirectoryHandle | null;
   loadDirectory: (handle: FileSystemDirectoryHandle) => Promise<ImageFile[]>;
+  deleteFile: (file: ImageFile | TextFile) => Promise<void>;
 };
 
 const DatasetDirectoryContext = createContext<
@@ -282,6 +283,30 @@ export const DatasetDirectoryProvider = ({
     }
   }
 
+  const deleteFile = async (file: ImageFile | TextFile) => {
+    if (!directoryHandle) {
+      return;
+    }
+
+    for await (const entry of directoryHandle.values()) {
+      if (entry.kind === "file" && entry.name === file.name) {
+        await directoryHandle.removeEntry(entry.name)
+        if (file.type === "text/plain") {
+          setImageFiles((prev) =>
+            prev.map((image) =>
+              image.captionFile?.name === file.name
+                ? { ...image, captionFile: undefined }
+                : image
+            )
+          );
+        } else {
+          setImageFiles((prev) => prev.filter((image) => image.name !== file.name));
+        }
+        return;
+      }
+    }
+  }
+
   useEffect(() => {
     const checkPermission = async () => {
       if (!directoryHandle) return;
@@ -319,7 +344,8 @@ export const DatasetDirectoryProvider = ({
     writeCaption,
     directoryHandle,
     deleteAllTextFiles,
-    loadDirectory
+    loadDirectory,
+    deleteFile,
   };
 
   return (

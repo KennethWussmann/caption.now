@@ -38,6 +38,10 @@ export const settings = {
       "pageup"
     ),
     nextImage: atomWithStorage("settings.shortcuts.previousImage", "pagedown"),
+    deleteImage: atomWithStorage(
+      "settings.shortcuts.deleteImage",
+      "mod+shift+backspace"
+    ),
     startExport: atomWithStorage(
       "settings.shortcuts.startExport",
       "mod+shift+s"
