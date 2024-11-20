@@ -12,6 +12,7 @@ import {
   Save,
   Search,
   Settings,
+  SquareMousePointer,
   Trash,
 } from "lucide-react";
 
@@ -46,6 +47,12 @@ export const commandDefinitions: Record<Shortcut, CommandDefinition> = {
     icon: Command,
     title: "Open command palette",
     description: "Opens the command palette to search for commands",
+    category: "General",
+  },
+  focusInput: {
+    icon: SquareMousePointer,
+    title: "Focus input",
+    description: "Focus the caption input field",
     category: "General",
   },
   applySuggestionModifier: {
