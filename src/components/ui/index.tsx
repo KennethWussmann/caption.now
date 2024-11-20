@@ -19,3 +19,5 @@ export * from "./switch";
 export * from "./textarea";
 export * from "./tooltip";
 export * from "./command";
+export * from "./collapsible";
+export * from "./toggle";
