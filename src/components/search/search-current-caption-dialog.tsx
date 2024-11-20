@@ -36,7 +36,7 @@ const renderHighlightedText = (text: string, query: string, replaceText: string,
 
 export const SearchCurrentCaptionDialog = () => {
   const { isDialogOpen, closeDialog } = useSearchCurrentCaptionDialog();
-  const { parts, enterEditMode } = useCaptionEditor();
+  const { parts, enterEditMode, updatePart } = useCaptionEditor();
   const [searchText, setSearchText] = useState("");
   const [replaceText, setReplaceText] = useState("");
   const [filteredParts, setFilteredParts] = useState<CaptionPart[]>([]);
@@ -46,6 +46,7 @@ export const SearchCurrentCaptionDialog = () => {
 
   const reset = () => {
     setSearchText("");
+    setReplaceText("");
     setFilteredParts([]);
     setSelectedIndex(0);
     setReplaceEnabled(false);
@@ -60,18 +61,44 @@ export const SearchCurrentCaptionDialog = () => {
     );
   };
 
-  useEffect(() => {
+  const updateFilteredParts = useCallback(() => {
     const results = fuzzySearch(searchText, parts);
     itemRefs.current = {};
     setFilteredParts(results);
     setSelectedIndex(0);
   }, [searchText, parts]);
 
-  const executeAction = useCallback((part: CaptionPart) => {
+  useEffect(() => {
+    updateFilteredParts();
+  }, [searchText, parts, updateFilteredParts]);
+
+  const replaceSingle = useCallback((part: CaptionPart) => {
+    updatePart({
+      ...part,
+      text: part.text.replace(new RegExp(searchText, "gi"), replaceText),
+    });
+  }, [replaceText, searchText, updatePart]);
+
+  const replaceAll = useCallback(() => {
+    filteredParts.forEach((part) => {
+      replaceSingle(part);
+    });
+
+  }, [filteredParts, replaceSingle]);
+
+  const editPart = useCallback((part: CaptionPart) => {
     enterEditMode(part);
     closeDialog();
     reset();
   }, [closeDialog, enterEditMode]);
+
+  const executeAction = useCallback((part: CaptionPart) => {
+    if (isReplaceEnabled && replaceText.length > 0) {
+      replaceSingle(part);
+    } else if (!isReplaceEnabled) {
+      editPart(part);
+    }
+  }, [editPart, isReplaceEnabled, replaceSingle, replaceText.length]);
 
   const handleArrowNavigation = useCallback(
     (e: KeyboardEvent) => {
@@ -146,20 +173,10 @@ export const SearchCurrentCaptionDialog = () => {
                   className="border-none outline-none focus-visible:ring-0"
                 />
                 <IconTooltipButton
-                  icon={Replace}
-                  tooltip="Replace selected result"
-                  disabled={replaceText.length === 0 || filteredParts.length === 0}
-                  onClick={() => {
-
-                  }}
-                />
-                <IconTooltipButton
                   icon={ReplaceAll}
                   tooltip="Replace all results"
                   disabled={replaceText.length === 0 || filteredParts.length === 0}
-                  onClick={() => {
-
-                  }}
+                  onClick={replaceAll}
                 />
               </div>
             </>
