@@ -8,6 +8,7 @@ import { useCategoryEditor } from "../category-editor-provider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useCategorySuggestions } from "../use-category-suggestions";
 import { useApplyTextReplacements } from "@/hooks/use-apply-text-replacements";
+import { useShortcut } from "@/hooks/use-shortcut";
 
 const Suggestion = ({ children, onApply, active }: { children: ReactNode, onApply: VoidFunction, active?: boolean }) => {
   return (
@@ -64,6 +65,9 @@ export const CategoryInput = () => {
   } = useCategoryEditor();
   const inputFieldRef = useRef<HTMLInputElement>(null);
   const { suggestions, selected, selectNext, selectPrevious } = useCategorySuggestions(value);
+  useShortcut("focusInput", () => {
+    inputFieldRef.current?.focus();
+  });
 
   const sanitizeValue = (value: string) => value.trim();
   const splitIntoCategories = (value: string) =>

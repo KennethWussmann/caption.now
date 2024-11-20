@@ -74,6 +74,11 @@ export const settings = {
       "settings.shortcuts.searchCurrentCaption",
       "mod+f"
     ),
+
+    focusInput: atomWithStorage(
+      "settings.shortcuts.focusInput",
+      "enter"
+    ),
   },
   caption: {
     strategy: atomWithZod(

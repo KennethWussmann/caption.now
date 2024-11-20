@@ -6,6 +6,7 @@ import { useAtom } from "jotai/react";
 import { ArrowUp, Pencil, X } from "lucide-react";
 import { KeyboardEvent, useEffect, useRef } from "react";
 import { useApplyTextReplacements } from "@/hooks/use-apply-text-replacements";
+import { useShortcut } from "@/hooks/use-shortcut";
 
 export const EditBanner = ({ onCancel }: { onCancel?: VoidFunction }) => {
   const { isEditing, cancelEditMode } = useCaptionEditor();
@@ -43,6 +44,9 @@ export const CaptionInput = () => {
     parts,
   } = useCaptionEditor();
   const inputFieldRef = useRef<HTMLInputElement>(null);
+  useShortcut("focusInput", () => {
+    inputFieldRef.current?.focus();
+  });
 
   const sanitizeValue = (value: string) => value.trim();
   const splitIntoParts = (value: string) =>
