@@ -1,24 +1,55 @@
-import { Button, Dialog, DialogContent, DialogDescription, DialogTitle, Input, Separator } from "@/components/ui";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, Input, Separator, Toggle } from "@/components/ui";
+import { useState, useEffect, useCallback, useRef, Fragment } from "react";
 import { useCaptionEditor } from "../caption/caption-editor-provider";
 import { CaptionPart } from "@/lib/types";
 import { useSearchCurrentCaptionDialog } from "./search-current-caption-dialog-provider";
-import { Search, X } from "lucide-react";
+import { ReplaceAll, Search, Settings2 } from "lucide-react";
 import clsx from "clsx";
 import { ScrollArea } from "../ui/scroll-area";
+import { IconTooltipButton } from "../common/icon-tooltip-button";
+
+const renderHighlightedText = (text: string, query: string, replaceText: string, isReplaceEnabled: boolean) => {
+  if (!query) return text;
+
+  const regex = new RegExp(`(${query})`, "gi");
+  const parts = text.split(regex);
+
+  return parts.map((part, index) => {
+    if (regex.test(part)) {
+      if (isReplaceEnabled && replaceText) {
+        return (
+          <Fragment key={index}>
+            <span className="bg-red-300 dark:bg-red-700 line-through">{part}</span>
+            <span className="bg-green-300 dark:bg-green-700">{replaceText}</span>
+          </Fragment>
+        );
+      }
+      return (
+        <span key={index} className="bg-yellow-300 dark:bg-yellow-700">
+          {part}
+        </span>
+      );
+    }
+    return part;
+  });
+};
 
 export const SearchCurrentCaptionDialog = () => {
   const { isDialogOpen, closeDialog } = useSearchCurrentCaptionDialog();
-  const { parts, enterEditMode } = useCaptionEditor();
+  const { parts, enterEditMode, updatePart } = useCaptionEditor();
   const [searchText, setSearchText] = useState("");
+  const [replaceText, setReplaceText] = useState("");
   const [filteredParts, setFilteredParts] = useState<CaptionPart[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isReplaceEnabled, setReplaceEnabled] = useState(false)
   const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const reset = () => {
     setSearchText("");
+    setReplaceText("");
     setFilteredParts([]);
     setSelectedIndex(0);
+    setReplaceEnabled(false);
     itemRefs.current = {};
   };
 
@@ -30,25 +61,44 @@ export const SearchCurrentCaptionDialog = () => {
     );
   };
 
-  useEffect(() => {
+  const updateFilteredParts = useCallback(() => {
     const results = fuzzySearch(searchText, parts);
     itemRefs.current = {};
     setFilteredParts(results);
     setSelectedIndex(0);
   }, [searchText, parts]);
 
-  const highlightText = (text: string, query: string) => {
-    if (!query) return text;
-    const regex = new RegExp(`(${query})`, "gi");
-    return text.replace(regex, "<span class='bg-yellow-300 dark:bg-yellow-700'>$1</span>");
-  };
+  useEffect(() => {
+    updateFilteredParts();
+  }, [searchText, parts, updateFilteredParts]);
 
+  const replaceSingle = useCallback((part: CaptionPart) => {
+    updatePart({
+      ...part,
+      text: part.text.replace(new RegExp(searchText, "gi"), replaceText),
+    });
+  }, [replaceText, searchText, updatePart]);
 
-  const executeAction = useCallback((part: CaptionPart) => {
+  const replaceAll = useCallback(() => {
+    filteredParts.forEach((part) => {
+      replaceSingle(part);
+    });
+
+  }, [filteredParts, replaceSingle]);
+
+  const editPart = useCallback((part: CaptionPart) => {
     enterEditMode(part);
     closeDialog();
     reset();
   }, [closeDialog, enterEditMode]);
+
+  const executeAction = useCallback((part: CaptionPart) => {
+    if (isReplaceEnabled && replaceText.length > 0) {
+      replaceSingle(part);
+    } else if (!isReplaceEnabled) {
+      editPart(part);
+    }
+  }, [editPart, isReplaceEnabled, replaceSingle, replaceText.length]);
 
   const handleArrowNavigation = useCallback(
     (e: KeyboardEvent) => {
@@ -98,7 +148,7 @@ export const SearchCurrentCaptionDialog = () => {
         <DialogTitle className="sr-only">Search</DialogTitle>
         <DialogDescription className="sr-only">Search inside captions of current image</DialogDescription>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           <div className="flex gap-2 items-center">
             <Search size={25} className="ml-2 text-muted-foreground" />
             <Input
@@ -108,10 +158,29 @@ export const SearchCurrentCaptionDialog = () => {
               className="border-none outline-none pl-0 focus-visible:ring-0"
               autoFocus
             />
-            <Button variant="link" size="icon" onClick={closeDialog}>
-              <X size={20} />
-            </Button>
+            <Toggle pressed={isReplaceEnabled} onPressedChange={setReplaceEnabled}>
+              <Settings2 />
+            </Toggle>
           </div>
+          {isReplaceEnabled && (
+            <>
+              <Separator />
+              <div className="flex items-center gap-1">
+                <Input
+                  value={replaceText}
+                  onChange={(e) => setReplaceText(e.target.value)}
+                  placeholder="Replace with ..."
+                  className="border-none outline-none focus-visible:ring-0"
+                />
+                <IconTooltipButton
+                  icon={ReplaceAll}
+                  tooltip="Replace all results"
+                  disabled={replaceText.length === 0 || filteredParts.length === 0}
+                  onClick={replaceAll}
+                />
+              </div>
+            </>
+          )}
           {searchText.length > 0 && filteredParts.length > 0 && (
             <>
               <Separator />
@@ -124,12 +193,11 @@ export const SearchCurrentCaptionDialog = () => {
                         "bg-muted": index === selectedIndex,
                       })}
                       onClick={() => executeAction(part)}
-                      dangerouslySetInnerHTML={{
-                        __html: highlightText(part.text, searchText),
-                      }}
                       onMouseEnter={() => setSelectedIndex(index)}
                       ref={(el) => (itemRefs.current[part.id] = el)}
-                    />
+                    >
+                      {renderHighlightedText(part.text, searchText, replaceText, isReplaceEnabled)}
+                    </div>
                   ))}
                 </div>
               </ScrollArea>
