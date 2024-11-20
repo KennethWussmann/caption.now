@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef, Fragment } from "react";
 import { useCaptionEditor } from "../caption/caption-editor-provider";
 import { CaptionPart } from "@/lib/types";
 import { useSearchCurrentCaptionDialog } from "./search-current-caption-dialog-provider";
-import { Replace, ReplaceAll, Search, Settings2 } from "lucide-react";
+import { ReplaceAll, Search, Settings2 } from "lucide-react";
 import clsx from "clsx";
 import { ScrollArea } from "../ui/scroll-area";
 import { IconTooltipButton } from "../common/icon-tooltip-button";
