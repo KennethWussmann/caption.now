@@ -1,8 +1,11 @@
-import { Dialog, DialogContent, DialogDescription, DialogTitle, Input, Separator } from "@/components/ui";
-import { useState, useEffect, useCallback } from "react";
+import { Button, Dialog, DialogContent, DialogDescription, DialogTitle, Input, Separator } from "@/components/ui";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useCaptionEditor } from "../caption/caption-editor-provider";
 import { CaptionPart } from "@/lib/types";
 import { useSearchCurrentCaptionDialog } from "./search-current-caption-dialog-provider";
+import { Search, X } from "lucide-react";
+import clsx from "clsx";
+import { ScrollArea } from "../ui/scroll-area";
 
 export const SearchCurrentCaptionDialog = () => {
   const { isDialogOpen, closeDialog } = useSearchCurrentCaptionDialog();
@@ -10,11 +13,13 @@ export const SearchCurrentCaptionDialog = () => {
   const [searchText, setSearchText] = useState("");
   const [filteredParts, setFilteredParts] = useState<CaptionPart[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const reset = () => {
     setSearchText("");
     setFilteredParts([]);
     setSelectedIndex(0);
+    itemRefs.current = {};
   };
 
   const fuzzySearch = (query: string, items: CaptionPart[]) => {
@@ -27,6 +32,7 @@ export const SearchCurrentCaptionDialog = () => {
 
   useEffect(() => {
     const results = fuzzySearch(searchText, parts);
+    itemRefs.current = {};
     setFilteredParts(results);
     setSelectedIndex(0);
   }, [searchText, parts]);
@@ -72,6 +78,14 @@ export const SearchCurrentCaptionDialog = () => {
     return () => window.removeEventListener("keydown", handleArrowNavigation);
   }, [handleArrowNavigation, isDialogOpen]);
 
+  useEffect(() => {
+    if (!isDialogOpen || !filteredParts.length) return;
+    itemRefs.current[filteredParts[selectedIndex].id]?.scrollIntoView({
+      behavior: "instant",
+      block: "nearest",
+    });
+  }, [filteredParts, isDialogOpen, selectedIndex]);
+
   return (
     <Dialog
       open={isDialogOpen}
@@ -85,29 +99,40 @@ export const SearchCurrentCaptionDialog = () => {
         <DialogDescription className="sr-only">Search inside captions of current image</DialogDescription>
 
         <div className="flex flex-col gap-2">
-          <Input
-            className="h-14 pl-4 text-xl"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            placeholder={`Search in current caption ...`}
-            autoFocus
-          />
+          <div className="flex gap-2 items-center">
+            <Search size={25} className="ml-2 text-muted-foreground" />
+            <Input
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder={`Search in current caption ...`}
+              className="border-none outline-none pl-0 focus-visible:ring-0"
+              autoFocus
+            />
+            <Button variant="link" size="icon" onClick={closeDialog}>
+              <X size={20} />
+            </Button>
+          </div>
           {searchText.length > 0 && filteredParts.length > 0 && (
             <>
               <Separator />
-              <div className="flex flex-col gap-1">
-                {filteredParts.map((part, index) => (
-                  <div
-                    key={part.id}
-                    className={`p-1 px-2 border rounded-md ${selectedIndex === index ? "bg-muted" : ""
-                      }`}
-                    onClick={() => executeAction(part)}
-                    dangerouslySetInnerHTML={{
-                      __html: highlightText(part.text, searchText),
-                    }}
-                  />
-                ))}
-              </div>
+              <ScrollArea className="max-h-[400px]">
+                <div className="flex flex-col gap-1">
+                  {filteredParts.map((part, index) => (
+                    <div
+                      key={part.id}
+                      className={clsx(`p-1 px-2 rounded-md`, {
+                        "bg-muted": index === selectedIndex,
+                      })}
+                      onClick={() => executeAction(part)}
+                      dangerouslySetInnerHTML={{
+                        __html: highlightText(part.text, searchText),
+                      }}
+                      onMouseEnter={() => setSelectedIndex(index)}
+                      ref={(el) => (itemRefs.current[part.id] = el)}
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
             </>
           )}
         </div>
