@@ -10,7 +10,7 @@ import { useShortcut } from "@/hooks/use-shortcut";
 
 
 export const DeleteImageDialog = () => {
-  const { currentImage } = useImageNavigation();
+  const { currentImage, loadNextImage, loadPreviousImage, hasNextImage, hasPreviousImage } = useImageNavigation();
   const { imageFiles, deleteFile } = useDatasetDirectory();
   const imageFile = useMemo(() =>
     imageFiles.find((file) => file.name === currentImage?.filename),
@@ -36,6 +36,11 @@ export const DeleteImageDialog = () => {
     setOpen(false);
     if (!imageFile) {
       return;
+    }
+    if (hasNextImage) {
+      loadNextImage();
+    } else if (hasPreviousImage) {
+      loadPreviousImage();
     }
     await deleteFile(imageFile);
     if (deleteCaptionFile && imageFile.captionFile) {
