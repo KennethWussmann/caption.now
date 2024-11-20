@@ -10,7 +10,7 @@ import { useShortcut } from "@/hooks/use-shortcut";
 
 
 export const DeleteImageDialog = () => {
-  const { currentImage } = useImageNavigation();
+  const { currentImage, loadNextImage, loadPreviousImage, hasNextImage, hasPreviousImage } = useImageNavigation();
   const { imageFiles, deleteFile } = useDatasetDirectory();
   const imageFile = useMemo(() =>
     imageFiles.find((file) => file.name === currentImage?.filename),
@@ -37,6 +37,11 @@ export const DeleteImageDialog = () => {
     if (!imageFile) {
       return;
     }
+    if (hasNextImage) {
+      loadNextImage();
+    } else if (hasPreviousImage) {
+      loadPreviousImage();
+    }
     await deleteFile(imageFile);
     if (deleteCaptionFile && imageFile.captionFile) {
       await deleteFile(imageFile.captionFile);
@@ -60,7 +65,7 @@ export const DeleteImageDialog = () => {
         <DialogHeader>
           <DialogTitle>Delete image?</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete <b>{currentImage?.filename}</b>? This will remove the file from your disk and cannot be undone.
+            Are you sure you want to delete <b>{currentImage?.filename}</b>? This will remove the file from your computer and cannot be undone.
           </DialogDescription>
         </DialogHeader>
         {imageFile?.captionFile && (
