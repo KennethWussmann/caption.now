@@ -3,10 +3,11 @@ import { useCaptionEditor } from "@/components/caption/caption-editor-provider";
 import { settings } from "@/lib/settings";
 import clsx from "clsx";
 import { useAtom } from "jotai/react";
-import { ArrowUp, Pencil, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Pencil, X } from "lucide-react";
 import { KeyboardEvent, useEffect, useRef } from "react";
 import { useApplyTextReplacements } from "@/hooks/use-apply-text-replacements";
 import { useShortcut } from "@/hooks/use-shortcut";
+import { useArrowKeyNavigation } from "@/components/common/arrow-key-navigation-provider";
 
 export const EditBanner = ({ onCancel }: { onCancel?: VoidFunction }) => {
   const { isEditing, cancelEditMode } = useCaptionEditor();
@@ -38,17 +39,17 @@ export const CaptionInput = () => {
     isEditing,
     addPart,
     updatePart,
-    enterEditMode,
     cancelEditMode,
     deletePart,
-    parts,
   } = useCaptionEditor();
   const inputFieldRef = useRef<HTMLInputElement>(null);
   useShortcut("focusInput", () => {
     inputFieldRef.current?.focus();
   });
+  const { enable, isEnabled, selectFirst, selectLast } = useArrowKeyNavigation()
 
   const sanitizeValue = (value: string) => value.trim();
+  const isEmpty = sanitizeValue(value).length === 0
   const splitIntoParts = (value: string) =>
     value.split(separator.trim())
       .map((text) => text.trim())
@@ -78,13 +79,6 @@ export const CaptionInput = () => {
     setValue("");
   };
 
-  const onEditLast = () => {
-    if (isEditing || value.trim() !== "" || parts.length === 0) {
-      return;
-    }
-    enterEditMode(parts[parts.length - 1]);
-  };
-
   const onCancelEditing = () => {
     setValue("");
     cancelEditMode();
@@ -112,10 +106,24 @@ export const CaptionInput = () => {
             }
             onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
               if (event.key === "Enter") {
+                if (isEnabled) {
+                  return
+                }
                 onSubmit(event.shiftKey);
               }
-              if (event.key === "ArrowUp") {
-                onEditLast();
+              if (event.key === "ArrowUp" && !isEditing) {
+                if (!isEnabled) {
+                  event.preventDefault()
+                  enable()
+                  setTimeout(selectLast, 10)
+                }
+              }
+              if (event.key === "ArrowDown" && !isEditing) {
+                if (!isEnabled) {
+                  event.preventDefault()
+                  enable()
+                  setTimeout(selectFirst, 10)
+                }
               }
               if (event.key === "Escape" && isEditing) {
                 onCancelEditing();
@@ -125,21 +133,23 @@ export const CaptionInput = () => {
             onChange={(event) => setValue(event.target.value)}
             ref={inputFieldRef}
             autoFocus
+            disabled={isEnabled}
           />
         </div>
       </div>
       <div className="flex gap-1 text-xs text-muted-foreground">
-        Hit <kbd>Enter</kbd> to submit{" "}
+        Hit <kbd>Enter</kbd>
+        {isEnabled && !isEditing ? <>to edit highlighted part or <kbd>Escape</kbd> to cancel</> : isEmpty && isEditing ? "to delete part " : "to submit "}
         {isEditing && (
           <>
             or <kbd>Escape</kbd>
             to cancel editing
           </>
         )}
-        {!isEditing && sanitizeValue(value).length === 0 && (
+        {!isEditing && !isEnabled && isEmpty && (
           <>
-            or <ArrowUp className="h-4 w-4" />
-            to edit last caption
+            or <ArrowUp className="h-4 w-4" /><ArrowDown className="h-4 w-4" />
+            to navigate caption parts
           </>
         )}
       </div>

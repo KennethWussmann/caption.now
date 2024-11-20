@@ -17,6 +17,7 @@ import { AnimatedGroup } from "@/components/ui/animation/animated-group";
 import { useEffect, useRef } from "react";
 import { useCaptionEditor } from "@/components/caption/caption-editor-provider";
 import { CaptionListDropdown } from "./caption-list-dropdown";
+import { useArrowKeyNavigation } from "@/components/common/arrow-key-navigation-provider";
 
 export const CaptionList = () => {
   const { parts, handleDragEnd } = useCaptionEditor();
@@ -26,8 +27,13 @@ export const CaptionList = () => {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+  const { setLength } = useArrowKeyNavigation()
   const partRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const lastLength = useRef(0);
+
+  useEffect(() => {
+    setLength(parts.length)
+  }, [parts.length, setLength])
 
   useEffect(() => {
     const lastPart = parts[parts.length - 1];

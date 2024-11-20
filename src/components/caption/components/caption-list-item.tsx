@@ -14,6 +14,7 @@ import { CaptionPart } from "@/lib/types";
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { motion } from "framer-motion";
 import { useCaptionEditor } from "@/components/caption/caption-editor-provider";
+import { useArrowKeyNavigation } from "@/components/common/arrow-key-navigation-provider";
 
 export const CaptionListItem = forwardRef<
   HTMLDivElement,
@@ -29,6 +30,7 @@ export const CaptionListItem = forwardRef<
     transition,
     isDragging,
   } = useSortable({ id: part.id });
+  const { isSelected } = useArrowKeyNavigation();
   const customTransitions =
     "box-shadow 0.3s ease, margin 0.3s ease, background-color 0.3s ease";
   const finalTransition = transition
@@ -50,6 +52,8 @@ export const CaptionListItem = forwardRef<
           {
             "border-blue-600 border-2 border-dashed bg-blue-50 dark:bg-blue-600 dark:bg-opacity-40":
               isCurrentItemEditing,
+            "border-blue-600 border":
+              isSelected(part.index),
           }
         )}
         style={{
