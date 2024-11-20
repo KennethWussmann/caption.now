@@ -75,7 +75,7 @@ export const CategoryInput = () => {
       .map((text) => text.trim())
       .filter((text) => text !== "");
 
-  const onSubmit = () => {
+  const onSubmit = (prepend = false) => {
     const sanitizedValue = sanitizeValue(value);
     const categories = splitIntoCategories(sanitizedValue);
     if (isEditing) {
@@ -94,7 +94,7 @@ export const CategoryInput = () => {
       if (sanitizedValue === "") {
         return;
       }
-      categories.forEach((category) => addCategory(category));
+      categories.forEach((category) => addCategory(category, prepend));
     }
     setValue("");
   };
@@ -139,7 +139,7 @@ export const CategoryInput = () => {
                     if (selected && !isEditing) {
                       applySuggestion(selected);
                     } else {
-                      onSubmit();
+                      onSubmit(event.shiftKey);
                     }
                   }
                   if (!isEditing && event.key === "ArrowUp") {

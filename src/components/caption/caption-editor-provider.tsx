@@ -18,7 +18,7 @@ import { useDatabase } from "@/lib/database/database-provider";
 interface CaptionEditorContextType {
   parts: CaptionPart[];
   preview: string | null;
-  addPart: (part: string) => void;
+  addPart: (part: string, prepend?: boolean) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleDragEnd: (event: any) => void;
   enterEditMode: (part: CaptionPart) => void;
@@ -63,12 +63,23 @@ export const CaptionEditorProvider: React.FC<CaptionEditorProviderProps> = ({
     clearParts();
   });
 
-  const addPart = (text: string) => {
-    setParts((prevParts) => [...prevParts, {
-      id: uuid(),
-      text,
-      index: prevParts.length,
-    }]);
+  const addPart = (text: string, prepend?: boolean) => {
+    if (prepend) {
+      setParts((prevParts) => [{
+        id: uuid(),
+        text,
+        index: 0,
+      }, ...prevParts.map((part) => ({
+        ...part,
+        index: part.index + 1,
+      }))]);
+    } else {
+      setParts((prevParts) => [...prevParts, {
+        id: uuid(),
+        text,
+        index: prevParts.length,
+      }]);
+    }
     setDirty(true);
   };
 

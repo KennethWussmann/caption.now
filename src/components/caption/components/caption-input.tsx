@@ -54,7 +54,7 @@ export const CaptionInput = () => {
       .map((text) => text.trim())
       .filter((text) => text !== "");
 
-  const onSubmit = () => {
+  const onSubmit = (prepend = false) => {
     const sanitizedValue = sanitizeValue(value);
     const parts = splitIntoParts(sanitizedValue);
     if (isEditing) {
@@ -73,7 +73,7 @@ export const CaptionInput = () => {
       if (sanitizedValue === "") {
         return;
       }
-      parts.forEach((part) => addPart(part));
+      parts.forEach((part) => addPart(part, prepend));
     }
     setValue("");
   };
@@ -112,7 +112,7 @@ export const CaptionInput = () => {
             }
             onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
               if (event.key === "Enter") {
-                onSubmit();
+                onSubmit(event.shiftKey);
               }
               if (event.key === "ArrowUp") {
                 onEditLast();

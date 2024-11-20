@@ -17,7 +17,7 @@ import { ImageEntity } from "@/lib/database/image-entity";
 
 interface CategoryEditorContextType {
   categories: Category[];
-  addCategory: (category: string) => void;
+  addCategory: (category: string, prepend?: boolean) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleDragEnd: (event: any) => void;
   enterEditMode: (category: Category) => void;
@@ -56,15 +56,27 @@ export const CategoryEditorProvider: React.FC<CategoryEditorProviderProps> = ({
     clearCategories();
   });
 
-  const addCategory = (text: string) => {
+  const addCategory = (text: string, prepend?: boolean) => {
     if (categories.some((item) => item.text === text)) {
       return
     }
-    setCategories((prevCategory) => [...prevCategory, {
-      id: uuid(),
-      text,
-      index: prevCategory.length,
-    }]);
+
+    if (prepend) {
+      setCategories((prevCategory) => [{
+        id: uuid(),
+        text,
+        index: 0,
+      }, ...prevCategory.map((category) => ({
+        ...category,
+        index: category.index + 1,
+      }))]);
+    } else {
+      setCategories((prevCategory) => [...prevCategory, {
+        id: uuid(),
+        text,
+        index: prevCategory.length,
+      }]);
+    }
     setDirty(true);
   };
 
