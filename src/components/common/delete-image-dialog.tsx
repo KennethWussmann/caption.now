@@ -60,7 +60,7 @@ export const DeleteImageDialog = () => {
         <DialogHeader>
           <DialogTitle>Delete image?</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete <b>{currentImage?.filename}</b>? This will remove the file from your disk and cannot be undone.
+            Are you sure you want to delete <b>{currentImage?.filename}</b>? This will remove the file from your computer and cannot be undone.
           </DialogDescription>
         </DialogHeader>
         {imageFile?.captionFile && (
