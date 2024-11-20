@@ -115,7 +115,7 @@ export const SearchCurrentCaptionDialog = () => {
           {searchText.length > 0 && filteredParts.length > 0 && (
             <>
               <Separator />
-              <ScrollArea className="max-h-[200px]">
+              <ScrollArea className="max-h-[400px]">
                 <div className="flex flex-col gap-1">
                   {filteredParts.map((part, index) => (
                     <div
