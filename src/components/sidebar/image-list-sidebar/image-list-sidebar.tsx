@@ -70,7 +70,9 @@ export function ImageListSidebar({
                     <ImageListItem
                       key={image.id}
                       image={image}
-                      ref={(el) => (itemRefs.current[image.filename] = el)}
+                      ref={(el) => {
+                        itemRefs.current[image.filename] = el;
+                      }}
                     />
                   ))}
               </AnimatedGroup>

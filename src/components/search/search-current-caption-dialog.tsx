@@ -155,7 +155,7 @@ export const SearchCurrentCaptionDialog = () => {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               placeholder={`Search in current caption ...`}
-              className="border-none outline-none pl-0 focus-visible:ring-0"
+              className="border-none outline-hidden pl-0 focus-visible:ring-0"
               autoFocus
             />
             <Toggle pressed={isReplaceEnabled} onPressedChange={setReplaceEnabled}>
@@ -170,7 +170,7 @@ export const SearchCurrentCaptionDialog = () => {
                   value={replaceText}
                   onChange={(e) => setReplaceText(e.target.value)}
                   placeholder="Replace with ..."
-                  className="border-none outline-none focus-visible:ring-0"
+                  className="border-none outline-hidden focus-visible:ring-0"
                 />
                 <IconTooltipButton
                   icon={ReplaceAll}
@@ -194,7 +194,9 @@ export const SearchCurrentCaptionDialog = () => {
                       })}
                       onClick={() => executeAction(part)}
                       onMouseEnter={() => setSelectedIndex(index)}
-                      ref={(el) => (itemRefs.current[part.id] = el)}
+                      ref={(el) => {
+                        itemRefs.current[part.id] = el;
+                      }}
                     >
                       {renderHighlightedText(part.text, searchText, replaceText, isReplaceEnabled)}
                     </div>

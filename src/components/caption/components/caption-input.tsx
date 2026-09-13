@@ -74,7 +74,9 @@ export const CaptionInput = () => {
       if (sanitizedValue === "") {
         return;
       }
-      parts.forEach((part) => addPart(part, prepend));
+      parts.forEach((part) => {
+        addPart(part, prepend);
+      });
     }
     setValue("");
   };

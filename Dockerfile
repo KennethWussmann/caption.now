@@ -1,8 +1,8 @@
-FROM node:20-alpine AS build
+FROM node:24-alpine AS build
 ARG VERSION
 ENV VERSION ${VERSION}
 
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10.33.0
 WORKDIR /app
 
 COPY pnpm-lock.yaml ./

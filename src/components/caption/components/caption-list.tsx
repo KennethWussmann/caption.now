@@ -73,7 +73,9 @@ export const CaptionList = () => {
                 <CaptionListItem
                   key={item.id}
                   part={item}
-                  ref={(el) => (partRefs.current[item.id] = el)}
+                  ref={(el) => {
+                    partRefs.current[item.id] = el;
+                  }}
                 />
               ))}
             </AnimatedGroup>

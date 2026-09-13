@@ -50,7 +50,7 @@ export const CaptionListItem = forwardRef<
         className={clsx(
           "flex justify-between align-middle items-center gap-2 p-1 pl-4 ml-4",
           {
-            "border-blue-600 border-2 border-dashed bg-blue-50 dark:bg-blue-600 dark:bg-opacity-40":
+            "border-blue-600 border-2 border-dashed bg-blue-50 dark:bg-blue-600/40":
               isCurrentItemEditing,
             "border-blue-600 border":
               isSelected(part.index),

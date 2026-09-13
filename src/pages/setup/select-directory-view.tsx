@@ -28,7 +28,7 @@ export const SelectDirectoryView = ({
   return (
     <>
       <img src={LogoShadow} alt="Logo" className="w-64 h-6w-64 mx-auto" draggable="false" />
-      <Card className="bg-transparent backdrop-blur-sm">
+      <Card className="bg-transparent backdrop-blur-xs">
         <CardHeader>
           <CardTitle className="text-2xl">Welcome!</CardTitle>
           <CardDescription>

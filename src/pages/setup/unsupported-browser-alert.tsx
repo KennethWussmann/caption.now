@@ -15,7 +15,7 @@ export const UnsupportedBrowserAlert = () => {
           <a
             className="text-blue-500 hover:underline"
             target="_blank"
-            href="https://caniuse.com/native-filesystem-api"
+            href="https://caniuse.com/native-filesystem-api" rel="noopener"
           >
             Learn more ...
           </a>
