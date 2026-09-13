@@ -94,7 +94,9 @@ export const CategoryInput = () => {
       if (sanitizedValue === "") {
         return;
       }
-      categories.forEach((category) => addCategory(category, prepend));
+      categories.forEach((category) => {
+        addCategory(category, prepend);
+      });
     }
     setValue("");
   };

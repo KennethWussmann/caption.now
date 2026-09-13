@@ -91,7 +91,7 @@ export const ExportProgressProvider: React.FC<{ children: React.ReactNode, type:
   }
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
     if (isDone) {
       timeout = setTimeout(() => {
         reset();

@@ -91,3 +91,7 @@ Each caption is automatically saved as a text file alongside your images, making
 Once opened, [caption.now](https://caption.now) is accessible offline, anytime. For an app-like experience, install caption.now as a [Progressive Web App (PWA)](./docs/usage.md#installing-the-progressive-web-app).
 
 With the PWA, you can access caption.now straight from your desktop, even when offline.
+
+## Development
+
+See the [development guide](./docs/development.md) for the toolchain, verification commands and Biome setup.

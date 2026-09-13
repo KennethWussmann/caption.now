@@ -9,9 +9,9 @@ export const AutoSaveAlert = () => {
       animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
       exit={{ opacity: 0, filter: "blur(4px)", y: 20 }}
       transition={{ duration: 0.2, delay: 0.5 }}
-      className="bg-transparent backdrop-blur-sm"
+      className="bg-transparent backdrop-blur-xs"
     >
-      <Alert className="border-none bg-transparent backdrop-blur-sm">
+      <Alert className="border-none bg-transparent backdrop-blur-xs">
         <Save className="h-4 w-4" />
         <AlertTitle>We save automatically</AlertTitle>
         <AlertDescription>

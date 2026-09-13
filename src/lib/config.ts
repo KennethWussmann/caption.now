@@ -26,7 +26,7 @@ const configResult = configSchema.safeParse(import.meta.env);
 if (!configResult.success) {
   console.error("Failed to parse config", {
     env: import.meta.env,
-    errors: configResult.error.errors,
+    errors: configResult.error.issues,
   });
   throw configResult.error;
 }

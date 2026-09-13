@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, Dialog
 type DoubleConfirmationDialogProps = {
   title?: string;
   message?: string;
-  children: ReactElement;
+  children: ReactElement<{ onClick?: React.MouseEventHandler }>;
 };
 
 export const DoubleConfirmationDialog = ({
@@ -20,7 +20,8 @@ export const DoubleConfirmationDialog = ({
     event.stopPropagation();
 
     if (children.props.onClick) {
-      setOnConfirm(() => children.props.onClick);
+      const onClick = children.props.onClick;
+      setOnConfirm(() => () => onClick(event));
     }
 
     setOpen(true);

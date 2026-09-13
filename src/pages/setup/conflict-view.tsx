@@ -6,12 +6,12 @@ import { Replace, SkipForward } from "lucide-react";
 import { CaptionFileConflict, ImportCaptionConflictStrategy } from "@/hooks/use-image-importer";
 import { truncateFilename } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "@/components/ui/data-table";
+import { DataTable, DataTableFeatures } from "@/components/ui/data-table";
 import { Caption } from "@/lib/types";
 import { ImageEntity } from "@/lib/database/image-entity";
 
 
-const columns: ColumnDef<CaptionFileConflict>[] = [
+const columns: ColumnDef<DataTableFeatures, CaptionFileConflict>[] = [
   {
     accessorKey: "filename",
     header: "Filename",

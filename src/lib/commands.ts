@@ -5,7 +5,7 @@ import {
   ClipboardCopy,
   ClipboardPaste,
   ClipboardPlus,
-  Command,
+  Command as CommandIcon,
   Download,
   ImageDown,
   ImageUp,
@@ -44,7 +44,7 @@ export const commandDefinitions: Record<Shortcut, CommandDefinition> = {
     category: "General",
   },
   openCommandPalette: {
-    icon: Command,
+    icon: CommandIcon,
     title: "Open command palette",
     description: "Opens the command palette to search for commands",
     category: "General",

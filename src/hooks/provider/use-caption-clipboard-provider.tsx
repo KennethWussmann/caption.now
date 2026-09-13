@@ -35,7 +35,9 @@ export const CaptionClipboardProvider: React.FC<{ children: ReactNode }> = ({ ch
     if (!caption) {
       return;
     }
-    caption.parts.forEach(part => addPart(part.text));
+    caption.parts.forEach((part) => {
+      addPart(part.text);
+    });
   }
 
   return (

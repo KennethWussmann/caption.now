@@ -66,7 +66,9 @@ export const CategoryList = () => {
                 <CategoryListItem
                   key={item.id}
                   category={item}
-                  ref={(el) => (partRefs.current[item.id] = el)}
+                  ref={(el) => {
+                    partRefs.current[item.id] = el;
+                  }}
                 />
               ))}
             </AnimatedGroup>

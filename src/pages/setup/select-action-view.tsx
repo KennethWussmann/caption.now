@@ -17,7 +17,7 @@ export const SelectActionView = ({
   } = useDatasetDirectory();
 
   return (
-    <Card className="bg-transparent backdrop-blur-sm">
+    <Card className="bg-transparent backdrop-blur-xs">
       <CardHeader>
         <CardTitle>Let's Go!</CardTitle>
         <CardDescription>
